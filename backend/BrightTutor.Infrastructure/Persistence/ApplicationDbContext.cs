@@ -1,9 +1,10 @@
+using BrightTutor.Application.Abstractions.Persistence;
 using BrightTutor.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BrightTutor.Infrastructure.Persistence;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
