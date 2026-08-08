@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BrightTutor.Api/BrightTutor.Api.csproj" />
+  <Project Path="BrightTutor.Application/BrightTutor.Application.csproj" />
+  <Project Path="BrightTutor.Domain/BrightTutor.Domain.csproj" />
+  <Project Path="BrightTutor.Infrastructure/BrightTutor.Infrastructure.csproj" />
+</Solution>

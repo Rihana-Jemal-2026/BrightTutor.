@@ -1,0 +1,6 @@
+@BrightTutor.Api_HostAddress = http://localhost:5198
+
+GET {{BrightTutor.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
