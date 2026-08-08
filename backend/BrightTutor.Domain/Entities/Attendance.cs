@@ -17,4 +17,5 @@ public class Attendance : BaseEntity
     public DateTime? CheckOutTime { get; set; }
 
     public string? Notes { get; set; }
+    public string? LessonCovered { get; set; }
 }
