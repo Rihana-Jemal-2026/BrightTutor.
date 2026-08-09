@@ -11,7 +11,8 @@ builder.Services.AddScoped<BrightTutor.Application.Abstractions.Persistence.IApp
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddAutoMapper(cfg =>
+    cfg.AddProfile<BrightTutor.Application.Common.Mappings.AttendanceMappingProfile>());
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(BrightTutor.Application.Attendance.Commands.MarkGroupAttendance.MarkGroupAttendanceCommand).Assembly));
 

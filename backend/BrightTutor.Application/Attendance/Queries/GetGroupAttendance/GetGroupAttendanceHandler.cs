@@ -1,3 +1,4 @@
+using AutoMapper;
 using BrightTutor.Application.Abstractions.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,25 +9,22 @@ public class GetGroupAttendanceHandler
     : IRequestHandler<GetGroupAttendanceQuery, List<GetGroupAttendanceResponse>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public GetGroupAttendanceHandler(IApplicationDbContext context)
+    public GetGroupAttendanceHandler(IApplicationDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<List<GetGroupAttendanceResponse>> Handle(
         GetGroupAttendanceQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Attendances
+        var attendances = await _context.Attendances
             .Where(a => a.ClassGroupId == request.ClassGroupId
                      && a.AttendanceDate == request.AttendanceDate)
-            .Select(a => new GetGroupAttendanceResponse
-            {
-                Id = a.Id,
-                StudentId = a.StudentId,
-                Status = a.Status,
-                Notes = a.Notes
-            })
             .ToListAsync(cancellationToken);
+
+        return _mapper.Map<List<GetGroupAttendanceResponse>>(attendances);
     }
 }
