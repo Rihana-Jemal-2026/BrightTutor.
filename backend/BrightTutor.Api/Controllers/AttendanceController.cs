@@ -4,6 +4,8 @@ using BrightTutor.Application.Attendance.Commands.MarkTeacherAttendance;
 using BrightTutor.Application.Attendance.Commands.CheckInHomeAttendance;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using BrightTutor.Application.Attendance.Queries.GetTeacherAttendance;
+using BrightTutor.Application.Attendance.Queries.GetHomeAttendance;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -51,4 +53,27 @@ public class AttendanceController : ControllerBase
         var result = await _mediator.Send(command);
         return Ok(result);
     }
+[HttpGet("teacher")]
+public async Task<ActionResult<List<GetTeacherAttendanceResponse>>> GetTeacherAttendance(
+    [FromQuery] Guid teacherId, [FromQuery] DateOnly attendanceDate)
+{
+    var result = await _mediator.Send(new GetTeacherAttendanceQuery
+    {
+        TeacherId = teacherId,
+        AttendanceDate = attendanceDate
+    });
+    return Ok(result);
+}
+
+[HttpGet("home")]
+public async Task<ActionResult<List<GetHomeAttendanceResponse>>> GetHomeAttendance(
+    [FromQuery] Guid studentId, [FromQuery] DateOnly attendanceDate)
+{
+    var result = await _mediator.Send(new GetHomeAttendanceQuery
+    {
+        StudentId = studentId,
+        AttendanceDate = attendanceDate
+    });
+    return Ok(result);
+}
 }
