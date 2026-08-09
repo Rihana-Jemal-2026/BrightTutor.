@@ -11,6 +11,7 @@ using BrightTutor.Application.Attendance.Commands.MarkOnlineAttendance;
 using BrightTutor.Application.Attendance.Queries.GetOnlineAttendance;
 using FluentValidation;
 using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceSummary;
+using BrightTutor.Application.Attendance.Commands.VerifyHomeAttendance;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -129,5 +130,14 @@ public async Task<ActionResult<GetStudentAttendanceSummaryResponse>> GetStudentA
         EndDate = endDate
     });
     return Ok(result);
+}
+[HttpPost("home/verify")]
+public async Task<IActionResult> VerifyHomeAttendance([FromBody] VerifyHomeAttendanceCommand command)
+{
+    var success = await _mediator.Send(command);
+    if (!success)
+        return NotFound("Home attendance record not found.");
+
+    return Ok(new { message = "Verification updated." });
 }
 }
