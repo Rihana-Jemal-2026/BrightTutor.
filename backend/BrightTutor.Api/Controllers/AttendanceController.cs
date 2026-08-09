@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using BrightTutor.Application.Attendance.Queries.GetTeacherAttendance;
 using BrightTutor.Application.Attendance.Queries.GetHomeAttendance;
 using BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendance;
+using BrightTutor.Application.Attendance.Commands.MarkOnlineAttendance;
+using BrightTutor.Application.Attendance.Queries.GetOnlineAttendance;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -85,5 +87,23 @@ public async Task<IActionResult> CheckOutHomeAttendance([FromBody] CheckOutHomeA
         return NotFound("Attendance record not found for check-out.");
 
     return Ok(new { message = "Checked out successfully." });
+}
+[HttpPost("online")]
+public async Task<ActionResult<Guid>> MarkOnlineAttendance([FromBody] MarkOnlineAttendanceCommand command)
+{
+    var result = await _mediator.Send(command);
+    return Ok(result);
+}
+
+[HttpGet("online")]
+public async Task<ActionResult<List<GetOnlineAttendanceResponse>>> GetOnlineAttendance(
+    [FromQuery] Guid classGroupId, [FromQuery] DateOnly attendanceDate)
+{
+    var result = await _mediator.Send(new GetOnlineAttendanceQuery
+    {
+        ClassGroupId = classGroupId,
+        AttendanceDate = attendanceDate
+    });
+    return Ok(result);
 }
 }

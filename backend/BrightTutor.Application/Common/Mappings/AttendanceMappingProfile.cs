@@ -10,5 +10,6 @@ public class AttendanceMappingProfile : Profile
     {
         CreateMap<BrightTutor.Domain.Entities.Attendance, GetGroupAttendanceResponse>();
         CreateMap<BrightTutor.Domain.Entities.TeacherAttendance, GetTeacherAttendanceResponse>();
+        CreateMap<BrightTutor.Domain.Entities.Attendance, BrightTutor.Application.Attendance.Queries.GetOnlineAttendance.GetOnlineAttendanceResponse>();
     }
 }
