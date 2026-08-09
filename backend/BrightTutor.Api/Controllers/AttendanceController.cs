@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BrightTutor.Application.Attendance.Queries.GetTeacherAttendance;
 using BrightTutor.Application.Attendance.Queries.GetHomeAttendance;
+using BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendance;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -75,5 +76,14 @@ public async Task<ActionResult<List<GetHomeAttendanceResponse>>> GetHomeAttendan
         AttendanceDate = attendanceDate
     });
     return Ok(result);
+}
+[HttpPost("home/checkout")]
+public async Task<IActionResult> CheckOutHomeAttendance([FromBody] CheckOutHomeAttendanceCommand command)
+{
+    var success = await _mediator.Send(command);
+    if (!success)
+        return NotFound("Attendance record not found for check-out.");
+
+    return Ok(new { message = "Checked out successfully." });
 }
 }
