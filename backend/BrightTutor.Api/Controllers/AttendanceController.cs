@@ -13,6 +13,7 @@ using FluentValidation;
 using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceSummary;
 using BrightTutor.Application.Attendance.Commands.VerifyHomeAttendance;
 using BrightTutor.Application.Attendance.Queries.GetClassAttendanceReport;
+using BrightTutor.Application.Attendance.Commands.UpdateAttendance;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -152,5 +153,17 @@ public async Task<ActionResult<GetClassAttendanceReportResponse>> GetClassAttend
         EndDate = endDate
     });
     return Ok(result);
+}
+[HttpPut("{attendanceId}")]
+public async Task<IActionResult> UpdateAttendance(Guid attendanceId, [FromBody] UpdateAttendanceCommand command)
+{
+    if (attendanceId != command.AttendanceId)
+        command.AttendanceId = attendanceId;
+
+    var success = await _mediator.Send(command);
+    if (!success)
+        return NotFound("Attendance record not found.");
+
+    return Ok(new { message = "Attendance record updated." });
 }
 }
