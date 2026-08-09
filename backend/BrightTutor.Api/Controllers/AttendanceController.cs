@@ -9,6 +9,7 @@ using BrightTutor.Application.Attendance.Queries.GetHomeAttendance;
 using BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendance;
 using BrightTutor.Application.Attendance.Commands.MarkOnlineAttendance;
 using BrightTutor.Application.Attendance.Queries.GetOnlineAttendance;
+using FluentValidation;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -27,8 +28,15 @@ public class AttendanceController : ControllerBase
     public async Task<ActionResult<MarkGroupAttendanceResponse>> MarkGroupAttendance(
         [FromBody] MarkGroupAttendanceCommand command)
     {
-        var result = await _mediator.Send(command);
-        return Ok(result);
+        try
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Errors.Select(e => e.ErrorMessage));
+        }
     }
 
     [HttpGet("group")]
@@ -50,60 +58,63 @@ public class AttendanceController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("teacher")]
+    public async Task<ActionResult<List<GetTeacherAttendanceResponse>>> GetTeacherAttendance(
+        [FromQuery] Guid teacherId, [FromQuery] DateOnly attendanceDate)
+    {
+        var result = await _mediator.Send(new GetTeacherAttendanceQuery
+        {
+            TeacherId = teacherId,
+            AttendanceDate = attendanceDate
+        });
+        return Ok(result);
+    }
+
     [HttpPost("home/checkin")]
     public async Task<ActionResult<Guid>> CheckInHomeAttendance([FromBody] CheckInHomeAttendanceCommand command)
     {
         var result = await _mediator.Send(command);
         return Ok(result);
     }
-[HttpGet("teacher")]
-public async Task<ActionResult<List<GetTeacherAttendanceResponse>>> GetTeacherAttendance(
-    [FromQuery] Guid teacherId, [FromQuery] DateOnly attendanceDate)
-{
-    var result = await _mediator.Send(new GetTeacherAttendanceQuery
-    {
-        TeacherId = teacherId,
-        AttendanceDate = attendanceDate
-    });
-    return Ok(result);
-}
 
-[HttpGet("home")]
-public async Task<ActionResult<List<GetHomeAttendanceResponse>>> GetHomeAttendance(
-    [FromQuery] Guid studentId, [FromQuery] DateOnly attendanceDate)
-{
-    var result = await _mediator.Send(new GetHomeAttendanceQuery
+    [HttpPost("home/checkout")]
+    public async Task<IActionResult> CheckOutHomeAttendance([FromBody] CheckOutHomeAttendanceCommand command)
     {
-        StudentId = studentId,
-        AttendanceDate = attendanceDate
-    });
-    return Ok(result);
-}
-[HttpPost("home/checkout")]
-public async Task<IActionResult> CheckOutHomeAttendance([FromBody] CheckOutHomeAttendanceCommand command)
-{
-    var success = await _mediator.Send(command);
-    if (!success)
-        return NotFound("Attendance record not found for check-out.");
+        var success = await _mediator.Send(command);
+        if (!success)
+            return NotFound("Attendance record not found for check-out.");
 
-    return Ok(new { message = "Checked out successfully." });
-}
-[HttpPost("online")]
-public async Task<ActionResult<Guid>> MarkOnlineAttendance([FromBody] MarkOnlineAttendanceCommand command)
-{
-    var result = await _mediator.Send(command);
-    return Ok(result);
-}
+        return Ok(new { message = "Checked out successfully." });
+    }
 
-[HttpGet("online")]
-public async Task<ActionResult<List<GetOnlineAttendanceResponse>>> GetOnlineAttendance(
-    [FromQuery] Guid classGroupId, [FromQuery] DateOnly attendanceDate)
-{
-    var result = await _mediator.Send(new GetOnlineAttendanceQuery
+    [HttpGet("home")]
+    public async Task<ActionResult<List<GetHomeAttendanceResponse>>> GetHomeAttendance(
+        [FromQuery] Guid studentId, [FromQuery] DateOnly attendanceDate)
     {
-        ClassGroupId = classGroupId,
-        AttendanceDate = attendanceDate
-    });
-    return Ok(result);
-}
+        var result = await _mediator.Send(new GetHomeAttendanceQuery
+        {
+            StudentId = studentId,
+            AttendanceDate = attendanceDate
+        });
+        return Ok(result);
+    }
+
+    [HttpPost("online")]
+    public async Task<ActionResult<Guid>> MarkOnlineAttendance([FromBody] MarkOnlineAttendanceCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    [HttpGet("online")]
+    public async Task<ActionResult<List<GetOnlineAttendanceResponse>>> GetOnlineAttendance(
+        [FromQuery] Guid classGroupId, [FromQuery] DateOnly attendanceDate)
+    {
+        var result = await _mediator.Send(new GetOnlineAttendanceQuery
+        {
+            ClassGroupId = classGroupId,
+            AttendanceDate = attendanceDate
+        });
+        return Ok(result);
+    }
 }
