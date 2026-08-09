@@ -10,6 +10,7 @@ using BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendance;
 using BrightTutor.Application.Attendance.Commands.MarkOnlineAttendance;
 using BrightTutor.Application.Attendance.Queries.GetOnlineAttendance;
 using FluentValidation;
+using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceSummary;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -117,4 +118,16 @@ public class AttendanceController : ControllerBase
         });
         return Ok(result);
     }
+[HttpGet("student-summary")]
+public async Task<ActionResult<GetStudentAttendanceSummaryResponse>> GetStudentAttendanceSummary(
+    [FromQuery] Guid studentId, [FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate)
+{
+    var result = await _mediator.Send(new GetStudentAttendanceSummaryQuery
+    {
+        StudentId = studentId,
+        StartDate = startDate,
+        EndDate = endDate
+    });
+    return Ok(result);
+}
 }
