@@ -16,6 +16,7 @@ using BrightTutor.Application.Attendance.Queries.GetClassAttendanceReport;
 using BrightTutor.Application.Attendance.Commands.UpdateAttendance;
 using BrightTutor.Application.Attendance.Queries.GetTeacherAttendanceReport;
 using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceCalendar;
+using BrightTutor.Application.Attendance.Queries.GetDailyAttendanceOverview;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -190,6 +191,13 @@ public async Task<ActionResult<List<CalendarDayDto>>> GetStudentAttendanceCalend
         Year = year,
         Month = month
     });
+    return Ok(result);
+}
+[HttpGet("daily-overview")]
+public async Task<ActionResult<GetDailyAttendanceOverviewResponse>> GetDailyAttendanceOverview(
+    [FromQuery] DateOnly date)
+{
+    var result = await _mediator.Send(new GetDailyAttendanceOverviewQuery { Date = date });
     return Ok(result);
 }
 }
