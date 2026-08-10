@@ -15,6 +15,7 @@ using BrightTutor.Application.Attendance.Commands.VerifyHomeAttendance;
 using BrightTutor.Application.Attendance.Queries.GetClassAttendanceReport;
 using BrightTutor.Application.Attendance.Commands.UpdateAttendance;
 using BrightTutor.Application.Attendance.Queries.GetTeacherAttendanceReport;
+using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceCalendar;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -176,6 +177,18 @@ public async Task<ActionResult<GetTeacherAttendanceReportResponse>> GetTeacherAt
         TeacherId = teacherId,
         StartDate = startDate,
         EndDate = endDate
+    });
+    return Ok(result);
+}
+[HttpGet("student-calendar")]
+public async Task<ActionResult<List<CalendarDayDto>>> GetStudentAttendanceCalendar(
+    [FromQuery] Guid studentId, [FromQuery] int year, [FromQuery] int month)
+{
+    var result = await _mediator.Send(new GetStudentAttendanceCalendarQuery
+    {
+        StudentId = studentId,
+        Year = year,
+        Month = month
     });
     return Ok(result);
 }
