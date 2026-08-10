@@ -14,6 +14,7 @@ using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceSummary;
 using BrightTutor.Application.Attendance.Commands.VerifyHomeAttendance;
 using BrightTutor.Application.Attendance.Queries.GetClassAttendanceReport;
 using BrightTutor.Application.Attendance.Commands.UpdateAttendance;
+using BrightTutor.Application.Attendance.Queries.GetTeacherAttendanceReport;
 
 namespace BrightTutor.Api.Controllers;
 
@@ -165,5 +166,17 @@ public async Task<IActionResult> UpdateAttendance(Guid attendanceId, [FromBody] 
         return NotFound("Attendance record not found.");
 
     return Ok(new { message = "Attendance record updated." });
+}
+[HttpGet("teacher-report")]
+public async Task<ActionResult<GetTeacherAttendanceReportResponse>> GetTeacherAttendanceReport(
+    [FromQuery] Guid teacherId, [FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate)
+{
+    var result = await _mediator.Send(new GetTeacherAttendanceReportQuery
+    {
+        TeacherId = teacherId,
+        StartDate = startDate,
+        EndDate = endDate
+    });
+    return Ok(result);
 }
 }
