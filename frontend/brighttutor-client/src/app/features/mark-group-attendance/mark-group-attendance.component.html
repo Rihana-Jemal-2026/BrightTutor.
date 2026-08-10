@@ -1,0 +1,59 @@
+<div class="page">
+  <h1>Mark Group Attendance</h1>
+
+  @if (resultMessage()) {
+    <div class="success">{{ resultMessage() }}</div>
+  }
+
+  @if (errorMessage()) {
+    <div class="error">{{ errorMessage() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label for="classGroupId">Class Group ID</label>
+    <input id="classGroupId" formControlName="classGroupId" placeholder="e.g. 11111111-1111-1111-1111-111111111111" />
+    @if (form.controls.classGroupId.touched && form.controls.classGroupId.invalid) {
+      <span class="field-error">Class Group ID is required.</span>
+    }
+
+    <label for="teacherId">Teacher ID</label>
+    <input id="teacherId" formControlName="teacherId" placeholder="e.g. 22222222-2222-2222-2222-222222222222" />
+    @if (form.controls.teacherId.touched && form.controls.teacherId.invalid) {
+      <span class="field-error">Teacher ID is required.</span>
+    }
+
+    <label for="attendanceDate">Attendance Date</label>
+    <input id="attendanceDate" type="date" formControlName="attendanceDate" />
+    @if (form.controls.attendanceDate.touched && form.controls.attendanceDate.invalid) {
+      <span class="field-error">Date is required.</span>
+    }
+
+    <h2>Students</h2>
+
+    @for (student of students.controls; track $index) {
+      <div class="student-row" [formGroup]="student">
+        <input formControlName="studentId" placeholder="Student ID (GUID)" />
+
+        <select formControlName="status">
+          @for (option of statusOptions; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
+        </select>
+
+        <input formControlName="notes" placeholder="Notes (optional)" />
+
+        <button type="button" (click)="removeStudent($index)">Remove</button>
+      </div>
+    } @empty {
+      <p class="empty-hint">No students added yet. Click "Add Student" below.</p>
+    }
+
+    <button type="button" (click)="addStudent()">Add Student</button>
+
+    <hr />
+
+    <button type="submit" [disabled]="form.invalid || students.length === 0">
+      Submit Attendance
+    </button>
+  </form>
+</div>
