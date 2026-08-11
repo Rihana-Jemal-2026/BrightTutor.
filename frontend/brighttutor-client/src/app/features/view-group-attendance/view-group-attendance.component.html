@@ -1,0 +1,37 @@
+<div class="page">
+  <h1>View Group Attendance</h1>
+
+  <div class="search-bar">
+    <div class="field">
+      <label for="classGroupId">Class Group ID</label>
+      <input id="classGroupId" [(ngModel)]="classGroupId" name="classGroupId" />
+    </div>
+
+    <div class="field">
+      <label for="attendanceDate">Date</label>
+      <input id="attendanceDate" type="date" [(ngModel)]="attendanceDate" name="attendanceDate" />
+    </div>
+
+    <button type="button" (click)="search()">Search</button>
+  </div>
+
+  @if (recordsResource.isLoading()) {
+    <div class="spinner">Loading attendance records...</div>
+  } @else if (recordsResource.error()) {
+    <div class="error">Could not load attendance. Make sure the backend is running.</div>
+  } @else {
+    <div class="records">
+      @for (record of recordsResource.value()!; track record.id) {
+        <div class="record-row">
+          <span class="student-id">{{ record.studentId }}</span>
+          <span class="status-badge" [attr.data-status]="record.status">
+            {{ statusLabels[record.status] }}
+          </span>
+          <span class="notes">{{ record.notes || "—" }}</span>
+        </div>
+      } @empty {
+        <p class="empty-hint">No attendance records found for this class and date.</p>
+      }
+    </div>
+  }
+</div>
