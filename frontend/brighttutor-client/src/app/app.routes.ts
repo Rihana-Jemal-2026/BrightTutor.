@@ -8,5 +8,12 @@ export const routes: Routes = [
         (m) => m.MarkGroupAttendanceComponent
       ),
   },
+  {
+    path: "view-group-attendance",
+    loadComponent: () =>
+      import("./features/view-group-attendance/view-group-attendance.component").then(
+        (m) => m.ViewGroupAttendanceComponent
+      ),
+  },
   { path: "", redirectTo: "mark-group-attendance", pathMatch: "full" },
 ];

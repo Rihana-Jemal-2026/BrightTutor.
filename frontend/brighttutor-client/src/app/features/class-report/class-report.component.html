@@ -1,0 +1,82 @@
+<div class="page">
+  <h1>Class Attendance Report</h1>
+
+  <div class="search-bar">
+    <div class="field">
+      <label for="classGroupId">Class Group ID</label>
+      <input id="classGroupId" [(ngModel)]="classGroupId" name="classGroupId" />
+    </div>
+    <div class="field">
+      <label for="startDate">Start Date</label>
+      <input id="startDate" type="date" [(ngModel)]="startDate" name="startDate" />
+    </div>
+    <div class="field">
+      <label for="endDate">End Date</label>
+      <input id="endDate" type="date" [(ngModel)]="endDate" name="endDate" />
+    </div>
+    <button type="button" (click)="search()">Search</button>
+  </div>
+
+  @if (reportResource.isLoading()) {
+    <div class="spinner">Loading report...</div>
+  } @else if (reportResource.error()) {
+    <div class="error">Could not load the report. Make sure the backend is running.</div>
+  } @else if (reportResource.value(); as report) {
+
+    <div class="summary-cards">
+      <div class="summary-card total">
+        <span class="value">{{ report.totalRecords }}</span>
+        <span class="label">Total Records</span>
+      </div>
+      <div class="summary-card present">
+        <span class="value">{{ report.presentCount }}</span>
+        <span class="label">Present</span>
+      </div>
+      <div class="summary-card absent">
+        <span class="value">{{ report.absentCount }}</span>
+        <span class="label">Absent</span>
+      </div>
+      <div class="summary-card late">
+        <span class="value">{{ report.lateCount }}</span>
+        <span class="label">Late</span>
+      </div>
+      <div class="summary-card excused">
+        <span class="value">{{ report.excusedCount }}</span>
+        <span class="label">Excused</span>
+      </div>
+      <div class="summary-card percentage">
+        <span class="value">{{ report.overallAttendancePercentage }}%</span>
+        <span class="label">Attendance Rate</span>
+      </div>
+    </div>
+
+    <h2>Per-Student Breakdown</h2>
+
+    <div class="breakdown-table">
+      <div class="breakdown-header">
+        <span>Student ID</span>
+        <span>Present</span>
+        <span>Absent</span>
+        <span>Late</span>
+        <span>Excused</span>
+        <span>Rate</span>
+      </div>
+
+      @for (student of report.studentBreakdown; track student.studentId) {
+        <div class="breakdown-row">
+          <span class="student-id">{{ student.studentId }}</span>
+          <span class="count present">{{ student.presentCount }}</span>
+          <span class="count absent">{{ student.absentCount }}</span>
+          <span class="count late">{{ student.lateCount }}</span>
+          <span class="count excused">{{ student.excusedCount }}</span>
+          <span class="rate-bar-wrapper">
+            <span class="rate-bar" [style.width.%]="student.attendancePercentage"></span>
+            <span class="rate-text">{{ student.attendancePercentage }}%</span>
+          </span>
+        </div>
+      } @empty {
+        <p class="empty-hint">No students found for this class and date range.</p>
+      }
+    </div>
+  }
+</div>

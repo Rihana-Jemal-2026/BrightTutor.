@@ -2,7 +2,7 @@ import { Component, inject, signal } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
-import { AttendanceStatus } from "../../models/attendance.model";
+import { AttendanceStatus, GroupAttendanceRecord } from "../../models/attendance.model";
 
 @Component({
   selector: "app-view-group-attendance",
@@ -24,10 +24,8 @@ export class ViewGroupAttendanceComponent {
     [AttendanceStatus.Excused]: "Excused",
   };
 
-  // rxResource re-runs the loader automatically whenever any signal read inside
-  // it changes — so typing a new classGroupId or date automatically refetches.
-  recordsResource = rxResource({
-    loader: () => this.api.getGroupAttendance(this.classGroupId(), this.attendanceDate()),
+  recordsResource = rxResource<GroupAttendanceRecord[], unknown>({
+    stream: () => this.api.getGroupAttendance(this.classGroupId(), this.attendanceDate()),
   });
 
   search() {
