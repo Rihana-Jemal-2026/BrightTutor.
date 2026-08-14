@@ -1,12 +1,13 @@
 import { Component, inject, signal } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
+import { SlicePipe } from "@angular/common";
 import { AttendanceService } from "../../services/attendance.service";
 
 @Component({
   selector: "app-student-calendar",
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, SlicePipe],
   templateUrl: "./student-calendar.component.html",
   styleUrl: "./student-calendar.component.scss",
 })
