@@ -15,5 +15,31 @@ export const routes: Routes = [
         (m) => m.ViewGroupAttendanceComponent
       ),
   },
+  {
+    path: "class-report",
+    loadComponent: () =>
+      import("./features/class-report/class-report.component").then((m) => m.ClassReportComponent),
+  },
+  {
+    path: "mark-teacher-attendance",
+    loadComponent: () =>
+      import("./features/mark-teacher-attendance/mark-teacher-attendance.component").then(
+        (m) => m.MarkTeacherAttendanceComponent
+      ),
+  },
+  {
+    path: "mark-online-attendance",
+    loadComponent: () =>
+      import("./features/mark-online-attendance/mark-online-attendance.component").then(
+        (m) => m.MarkOnlineAttendanceComponent
+      ),
+  },
+  {
+    path: "home-attendance",
+    loadComponent: () =>
+      import("./features/home-attendance/home-attendance.component").then(
+        (m) => m.HomeAttendanceComponent
+      ),
+  },
   { path: "", redirectTo: "mark-group-attendance", pathMatch: "full" },
 ];

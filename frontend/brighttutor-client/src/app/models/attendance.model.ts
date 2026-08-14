@@ -78,3 +78,42 @@ export interface StudentAttendanceSummary {
   excusedCount: number;
   attendancePercentage: number;
 }
+
+/** Request body for POST /api/attendance/teacher */
+export interface MarkTeacherAttendanceRequest {
+  teacherId: string;
+  attendanceDate: string;
+  status: AttendanceStatus;
+  checkInTime?: string;
+  checkOutTime?: string;
+  notes?: string;
+}
+
+/** Request body for POST /api/attendance/online */
+export interface MarkOnlineAttendanceRequest {
+  studentId: string;
+  teacherId: string;
+  classGroupId: string;
+  attendanceDate: string;
+  status: AttendanceStatus;
+  notes?: string;
+}
+
+/** Request body for POST /api/attendance/home/checkin */
+export interface CheckInHomeAttendanceRequest {
+  studentId: string;
+  teacherId: string;
+  classGroupId: string;
+  attendanceDate: string;
+  checkInLatitude: number;
+  checkInLongitude: number;
+  address?: string;
+  lessonCovered?: string;
+}
+
+/** Request body for POST /api/attendance/home/checkout */
+export interface CheckOutHomeAttendanceRequest {
+  attendanceId: string;
+  checkOutLatitude: number;
+  checkOutLongitude: number;
+}
