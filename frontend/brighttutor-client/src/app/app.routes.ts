@@ -41,5 +41,10 @@ export const routes: Routes = [
         (m) => m.HomeAttendanceComponent
       ),
   },
+{
+  path: "student-summary",
+  loadComponent: () =>
+    import("./features/student-summary/student-summary.component").then((m) => m.StudentSummaryComponent),
+},
   { path: "", redirectTo: "mark-group-attendance", pathMatch: "full" },
 ];
