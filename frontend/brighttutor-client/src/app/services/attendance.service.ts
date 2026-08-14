@@ -41,6 +41,12 @@ checkOutHomeAttendance(request: CheckOutHomeAttendanceRequest) {
   return this.http.post<{ message: string }>(`${this.baseUrl}/home/checkout`, request);
 }
 
+getTeacherReport(teacherId: string, startDate: string, endDate: string) {
+  return this.http.get<any>(`${this.baseUrl}/teacher-report`, {
+    params: { teacherId, startDate, endDate },
+  });
+}
+
   getGroupAttendance(classGroupId: string, attendanceDate: string) {
     return this.http.get<GroupAttendanceRecord[]>(`${this.baseUrl}/group`, {
       params: { classGroupId, attendanceDate },
@@ -52,10 +58,30 @@ checkOutHomeAttendance(request: CheckOutHomeAttendanceRequest) {
       params: { classGroupId, startDate, endDate },
     });
   }
+getDailyOverview(date: string) {
+  return this.http.get<any>(`${this.baseUrl}/daily-overview`, { params: { date } });
+}
+
+getStudentCalendar(studentId: string, year: number, month: number) {
+  return this.http.get<any[]>(`${this.baseUrl}/student-calendar`, {
+    params: { studentId, year: year.toString(), month: month.toString() },
+  });
+}
 
   getStudentSummary(studentId: string, startDate: string, endDate: string) {
     return this.http.get<StudentAttendanceSummary>(`${this.baseUrl}/student-summary`, {
       params: { studentId, startDate, endDate },
     });
   }
+updateAttendance(attendanceId: string, newStatus: number, notes?: string) {
+  return this.http.put<{ message: string }>(`${this.baseUrl}/${attendanceId}`, {
+    attendanceId, newStatus, notes,
+  });
+}
+
+verifyHomeAttendance(attendanceId: string, isVerified: boolean, distanceFromStudentHomeInMeters?: number) {
+  return this.http.post<{ message: string }>(`${this.baseUrl}/home/verify`, {
+    attendanceId, isVerified, distanceFromStudentHomeInMeters,
+  });
+}
 }

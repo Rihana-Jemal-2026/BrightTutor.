@@ -1,0 +1,25 @@
+<div class="page">
+  <h1>Teacher Attendance Report</h1>
+
+  <div class="search-bar">
+    <div class="field"><label>Teacher ID</label><input [(ngModel)]="teacherId" name="teacherId" /></div>
+    <div class="field"><label>Start Date</label><input type="date" [(ngModel)]="startDate" name="startDate" /></div>
+    <div class="field"><label>End Date</label><input type="date" [(ngModel)]="endDate" name="endDate" /></div>
+    <button type="button" (click)="search()">Search</button>
+  </div>
+
+  @if (reportResource.isLoading()) {
+    <div class="spinner">Loading...</div>
+  } @else if (reportResource.error()) {
+    <div class="error">Could not load. Make sure the backend is running.</div>
+  } @else if (reportResource.value(); as r) {
+    <div class="summary-cards">
+      <div class="summary-card total"><span class="value">{{ r.totalRecords }}</span><span class="label">Total</span></div>
+      <div class="summary-card present"><span class="value">{{ r.presentCount }}</span><span class="label">Present</span></div>
+      <div class="summary-card absent"><span class="value">{{ r.absentCount }}</span><span class="label">Absent</span></div>
+      <div class="summary-card late"><span class="value">{{ r.lateCount }}</span><span class="label">Late</span></div>
+      <div class="summary-card excused"><span class="value">{{ r.excusedCount }}</span><span class="label">Excused</span></div>
+      <div class="summary-card percentage"><span class="value">{{ r.attendancePercentage }}%</span><span class="label">Rate</span></div>
+    </div>
+  }
+</div>

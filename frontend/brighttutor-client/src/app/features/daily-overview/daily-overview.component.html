@@ -1,0 +1,37 @@
+<div class="page">
+  <h1>Daily Attendance Overview</h1>
+
+  <div class="search-bar">
+    <div class="field"><label>Date</label><input type="date" [(ngModel)]="date" name="date" /></div>
+    <button type="button" (click)="search()">Search</button>
+  </div>
+
+  @if (overviewResource.isLoading()) {
+    <div class="spinner">Loading...</div>
+  } @else if (overviewResource.error()) {
+    <div class="error">Could not load. Make sure the backend is running.</div>
+  } @else if (overviewResource.value(); as o) {
+    <h2>Students</h2>
+    <div class="summary-cards">
+      <div class="summary-card total"><span class="value">{{ o.totalStudentRecords }}</span><span class="label">Total</span></div>
+      <div class="summary-card present"><span class="value">{{ o.presentCount }}</span><span class="label">Present</span></div>
+      <div class="summary-card absent"><span class="value">{{ o.absentCount }}</span><span class="label">Absent</span></div>
+      <div class="summary-card late"><span class="value">{{ o.lateCount }}</span><span class="label">Late</span></div>
+      <div class="summary-card excused"><span class="value">{{ o.excusedCount }}</span><span class="label">Excused</span></div>
+    </div>
+
+    <h2>By Type</h2>
+    <div class="summary-cards">
+      <div class="summary-card total"><span class="value">{{ o.groupCount }}</span><span class="label">Group</span></div>
+      <div class="summary-card total"><span class="value">{{ o.onlineCount }}</span><span class="label">Online</span></div>
+      <div class="summary-card total"><span class="value">{{ o.homeCount }}</span><span class="label">Home</span></div>
+    </div>
+
+    <h2>Teachers</h2>
+    <div class="summary-cards">
+      <div class="summary-card total"><span class="value">{{ o.teacherRecordsCount }}</span><span class="label">Total</span></div>
+      <div class="summary-card present"><span class="value">{{ o.teacherPresentCount }}</span><span class="label">Present</span></div>
+      <div class="summary-card absent"><span class="value">{{ o.teacherAbsentCount }}</span><span class="label">Absent</span></div>
+    </div>
+  }
+</div>

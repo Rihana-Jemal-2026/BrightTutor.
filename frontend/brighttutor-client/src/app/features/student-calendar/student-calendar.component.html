@@ -1,0 +1,32 @@
+<div class="page">
+  <h1>Student Attendance Calendar</h1>
+
+  <div class="search-bar">
+    <div class="field"><label>Student ID</label><input [(ngModel)]="studentId" name="studentId" /></div>
+    <div class="field"><label>Year</label><input type="number" [(ngModel)]="year" name="year" /></div>
+    <div class="field"><label>Month</label><input type="number" min="1" max="12" [(ngModel)]="month" name="month" /></div>
+    <button type="button" (click)="search()">Search</button>
+  </div>
+
+  @if (calendarResource.isLoading()) {
+    <div class="spinner">Loading...</div>
+  } @else if (calendarResource.error()) {
+    <div class="error">Could not load. Make sure the backend is running.</div>
+  } @else {
+    <div class="day-list">
+      @for (day of calendarResource.value()!; track $index) {
+        <div class="day-row">
+          <span class="date">{{ day.date }}</span>
+          <span class="type-badge">{{ typeLabels[day.attendanceType] }}</span>
+          <span class="status-badge" [attr.data-status]="day.status">{{ statusLabels[day.status] }}</span>
+          <span class="times">
+            @if (day.checkInTime) { In: {{ day.checkInTime | slice:11:16 }} }
+            @if (day.checkOutTime) { &nbsp;Out: {{ day.checkOutTime | slice:11:16 }} }
+          </span>
+        </div>
+      } @empty {
+        <p class="empty-hint">No attendance records for this student in this month.</p>
+      }
+    </div>
+  }
+</div>

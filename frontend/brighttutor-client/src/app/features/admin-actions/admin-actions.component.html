@@ -1,0 +1,48 @@
+<div class="page">
+  <h1>Admin Actions</h1>
+
+  <div class="card">
+    <h2>Correct Attendance Record</h2>
+    @if (updateResult()) { <div class="success">{{ updateResult() }}</div> }
+    @if (updateError()) { <div class="error">{{ updateError() }}</div> }
+
+    <form [formGroup]="updateForm" (ngSubmit)="submitUpdate()">
+      <label>Attendance ID</label>
+      <input formControlName="attendanceId" placeholder="GUID of the record to correct" />
+
+      <label>New Status</label>
+      <select formControlName="newStatus">
+        @for (option of statusOptions; track option.value) {
+          <option [ngValue]="option.value">{{ option.label }}</option>
+        }
+      </select>
+
+      <label>Notes</label>
+      <input formControlName="notes" />
+
+      <button type="submit" [disabled]="updateForm.invalid">Update Record</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Verify Home Attendance</h2>
+    @if (verifyResult()) { <div class="success">{{ verifyResult() }}</div> }
+    @if (verifyError()) { <div class="error">{{ verifyError() }}</div> }
+
+    <form [formGroup]="verifyForm" (ngSubmit)="submitVerify()">
+      <label>Attendance ID</label>
+      <input formControlName="attendanceId" placeholder="GUID of the home visit" />
+
+      <label>Verified?</label>
+      <select formControlName="isVerified">
+        <option [ngValue]="true">Yes - Verified</option>
+        <option [ngValue]="false">No - Rejected</option>
+      </select>
+
+      <label>Distance from Student Home (meters)</label>
+      <input type="number" formControlName="distanceFromStudentHomeInMeters" />
+
+      <button type="submit" [disabled]="verifyForm.invalid">Verify</button>
+    </form>
+  </div>
+</div>
