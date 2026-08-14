@@ -9,4 +9,13 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('brighttutor-client');
+  protected readonly isMobileMenuOpen = signal(false);
+
+  protected toggleMobileMenu(): void {
+    this.isMobileMenuOpen.update((open) => !open);
+  }
+
+  protected closeMobileMenu(): void {
+    this.isMobileMenuOpen.set(false);
+  }
 }

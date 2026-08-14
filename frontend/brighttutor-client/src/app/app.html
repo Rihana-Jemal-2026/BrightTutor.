@@ -1,16 +1,155 @@
-<nav class="top-nav">
-  <span class="brand">Bright Tutor</span>
-  <a routerLink="/mark-group-attendance" routerLinkActive="active">Group</a>
-  <a routerLink="/mark-teacher-attendance" routerLinkActive="active">Teacher</a>
-  <a routerLink="/mark-online-attendance" routerLinkActive="active">Online</a>
-  <a routerLink="/home-attendance" routerLinkActive="active">Home</a>
-  <a routerLink="/view-group-attendance" routerLinkActive="active">View</a>
-  <a routerLink="/class-report" routerLinkActive="active">Class Report</a>
-  <a routerLink="/student-summary" routerLinkActive="active">Student Summary</a>
-  <a routerLink="/teacher-report" routerLinkActive="active">Teacher Report</a>
-  <a routerLink="/student-calendar" routerLinkActive="active">Calendar</a>
-  <a routerLink="/daily-overview" routerLinkActive="active">Daily Overview</a>
-  <a routerLink="/admin-actions" routerLinkActive="active">Admin</a>
-</nav>
+<header class="app-header">
+  <div class="header-container">
+    <!-- Brand -->
+    <a routerLink="/mark-group-attendance" class="brand" (click)="closeMobileMenu()">
+      <div class="brand-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+          <path d="M5 13.18v4.27l7 3.82 7-3.82v-4.27l-7 3.82-7-3.82z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">BrightTutor</span>
+        <span class="brand-tag">Academic Portal</span>
+      </div>
+    </a>
 
-<router-outlet />
+    <!-- Mobile Hamburger Toggle Button -->
+    <button
+      class="mobile-toggle"
+      [class.active]="isMobileMenuOpen()"
+      (click)="toggleMobileMenu()"
+      aria-label="Toggle navigation menu"
+    >
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav">
+      <div class="nav-section">
+        <span class="nav-section-title">Marking</span>
+        <div class="nav-group">
+          <a routerLink="/mark-group-attendance" routerLinkActive="active">Group</a>
+          <a routerLink="/mark-teacher-attendance" routerLinkActive="active">Teacher</a>
+          <a routerLink="/mark-online-attendance" routerLinkActive="active">Online</a>
+          <a routerLink="/home-attendance" routerLinkActive="active">Home</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">Reports</span>
+        <div class="nav-group">
+          <a routerLink="/view-group-attendance" routerLinkActive="active">View</a>
+          <a routerLink="/class-report" routerLinkActive="active">Class</a>
+          <a routerLink="/student-summary" routerLinkActive="active">Summary</a>
+          <a routerLink="/teacher-report" routerLinkActive="active">Teacher</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-section">
+        <span class="nav-section-title">Overview</span>
+        <div class="nav-group">
+          <a routerLink="/student-calendar" routerLinkActive="active">Calendar</a>
+          <a routerLink="/daily-overview" routerLinkActive="active">Daily</a>
+        </div>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <a routerLink="/admin-actions" routerLinkActive="active" class="admin-badge-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        Admin
+      </a>
+    </nav>
+  </div>
+
+  <!-- Mobile Navigation Drawer -->
+  @if (isMobileMenuOpen()) {
+    <div class="mobile-drawer">
+      <div class="mobile-drawer-backdrop" (click)="closeMobileMenu()"></div>
+      <nav class="mobile-menu">
+        <div class="mobile-category">
+          <div class="mobile-category-title">
+            <span class="dot"></span>
+            Attendance Marking
+          </div>
+          <div class="mobile-links-grid">
+            <a routerLink="/mark-group-attendance" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">👥</span> Group Attendance
+            </a>
+            <a routerLink="/mark-teacher-attendance" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">👨‍🏫</span> Teacher Attendance
+            </a>
+            <a routerLink="/mark-online-attendance" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">💻</span> Online Attendance
+            </a>
+            <a routerLink="/home-attendance" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">🏠</span> Home Attendance
+            </a>
+          </div>
+        </div>
+
+        <div class="mobile-category">
+          <div class="mobile-category-title">
+            <span class="dot"></span>
+            Reports & Statistics
+          </div>
+          <div class="mobile-links-grid">
+            <a routerLink="/view-group-attendance" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">📋</span> View Group
+            </a>
+            <a routerLink="/class-report" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">📊</span> Class Report
+            </a>
+            <a routerLink="/student-summary" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">🎓</span> Student Summary
+            </a>
+            <a routerLink="/teacher-report" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">📈</span> Teacher Report
+            </a>
+          </div>
+        </div>
+
+        <div class="mobile-category">
+          <div class="mobile-category-title">
+            <span class="dot"></span>
+            Overview & Schedule
+          </div>
+          <div class="mobile-links-grid">
+            <a routerLink="/student-calendar" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">📅</span> Student Calendar
+            </a>
+            <a routerLink="/daily-overview" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="icon">🌅</span> Daily Overview
+            </a>
+          </div>
+        </div>
+
+        <div class="mobile-category">
+          <div class="mobile-category-title">
+            <span class="dot"></span>
+            Administration
+          </div>
+          <div class="mobile-links-grid">
+            <a routerLink="/admin-actions" routerLinkActive="active" (click)="closeMobileMenu()" class="admin-link">
+              <span class="icon">⚙️</span> Admin Actions
+            </a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  }
+</header>
+
+<main class="main-content">
+  <router-outlet />
+</main>
