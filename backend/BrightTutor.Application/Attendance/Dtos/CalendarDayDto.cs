@@ -1,6 +1,6 @@
 using BrightTutor.Domain.Enums;
 
-namespace BrightTutor.Application.Attendance.Queries.GetStudentAttendanceCalendar;
+namespace BrightTutor.Application.Attendance.Dtos;
 
 public class CalendarDayDto
 {

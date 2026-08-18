@@ -1,8 +1,8 @@
-namespace BrightTutor.Application.Attendance.Queries.GetTeacherAttendanceReport;
+namespace BrightTutor.Application.Attendance.Dtos;
 
-public class GetTeacherAttendanceReportResponse
+public class GetStudentAttendanceSummaryResponse
 {
-    public Guid TeacherId { get; set; }
+    public Guid StudentId { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
 
@@ -11,5 +11,6 @@ public class GetTeacherAttendanceReportResponse
     public int AbsentCount { get; set; }
     public int LateCount { get; set; }
     public int ExcusedCount { get; set; }
+
     public double AttendancePercentage { get; set; }
 }

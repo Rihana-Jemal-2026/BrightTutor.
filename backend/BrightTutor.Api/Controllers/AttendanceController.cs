@@ -1,22 +1,15 @@
-using BrightTutor.Application.Attendance.Commands.MarkGroupAttendance;
-using BrightTutor.Application.Attendance.Queries.GetGroupAttendance;
-using BrightTutor.Application.Attendance.Commands.MarkTeacherAttendance;
+using BrightTutor.Application.Attendance.Commands;
 using BrightTutor.Application.Attendance.Commands.CheckInHomeAttendance;
+using BrightTutor.Application.Attendance.Commands.MarkGroupAttendance;
+using BrightTutor.Application.Attendance.Commands.MarkOnlineAttendance;
+using BrightTutor.Application.Attendance.Commands.MarkTeacherAttendance;
+using BrightTutor.Application.Attendance.Commands.UpdateAttendance;
+using BrightTutor.Application.Attendance.Commands.VerifyHomeAttendance;
+using BrightTutor.Application.Attendance.Queries;
+using BrightTutor.Application.Attendance.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using BrightTutor.Application.Attendance.Queries.GetTeacherAttendance;
-using BrightTutor.Application.Attendance.Queries.GetHomeAttendance;
-using BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendance;
-using BrightTutor.Application.Attendance.Commands.MarkOnlineAttendance;
-using BrightTutor.Application.Attendance.Queries.GetOnlineAttendance;
 using FluentValidation;
-using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceSummary;
-using BrightTutor.Application.Attendance.Commands.VerifyHomeAttendance;
-using BrightTutor.Application.Attendance.Queries.GetClassAttendanceReport;
-using BrightTutor.Application.Attendance.Commands.UpdateAttendance;
-using BrightTutor.Application.Attendance.Queries.GetTeacherAttendanceReport;
-using BrightTutor.Application.Attendance.Queries.GetStudentAttendanceCalendar;
-using BrightTutor.Application.Attendance.Queries.GetDailyAttendanceOverview;
 
 namespace BrightTutor.Api.Controllers;
 

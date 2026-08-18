@@ -1,9 +1,16 @@
 using BrightTutor.Application.Abstractions.Persistence;
+using BrightTutor.Application.Attendance.Dtos;
 using BrightTutor.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrightTutor.Application.Attendance.Queries.GetHomeAttendance;
+namespace BrightTutor.Application.Attendance.Queries;
+
+public class GetHomeAttendanceQuery : IRequest<List<GetHomeAttendanceResponse>>
+{
+    public Guid StudentId { get; set; }
+    public DateOnly AttendanceDate { get; set; }
+}
 
 public class GetHomeAttendanceHandler
     : IRequestHandler<GetHomeAttendanceQuery, List<GetHomeAttendanceResponse>>

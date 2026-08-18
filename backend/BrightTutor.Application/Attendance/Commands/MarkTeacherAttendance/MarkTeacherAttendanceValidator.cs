@@ -7,9 +7,7 @@ public class MarkTeacherAttendanceValidator : AbstractValidator<MarkTeacherAtten
     public MarkTeacherAttendanceValidator()
     {
         RuleFor(x => x.TeacherId).NotEmpty();
-        RuleFor(x => x.AttendanceDate)
-            .NotEmpty()
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
-            .WithMessage("AttendanceDate cannot be in the future.");
+        RuleFor(x => x.AttendanceDate).NotEmpty();
+        RuleFor(x => x.Status).IsInEnum();
     }
 }

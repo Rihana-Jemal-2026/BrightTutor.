@@ -2,7 +2,14 @@ using BrightTutor.Application.Abstractions.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendance;
+namespace BrightTutor.Application.Attendance.Commands;
+
+public class CheckOutHomeAttendanceCommand : IRequest<bool>
+{
+    public Guid AttendanceId { get; set; }
+    public decimal CheckOutLatitude { get; set; }
+    public decimal CheckOutLongitude { get; set; }
+}
 
 public class CheckOutHomeAttendanceHandler : IRequestHandler<CheckOutHomeAttendanceCommand, bool>
 {

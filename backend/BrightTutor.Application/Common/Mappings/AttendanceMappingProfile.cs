@@ -1,6 +1,5 @@
 using AutoMapper;
-using BrightTutor.Application.Attendance.Queries.GetGroupAttendance;
-using BrightTutor.Application.Attendance.Queries.GetTeacherAttendance;
+using BrightTutor.Application.Attendance.Dtos;
 
 namespace BrightTutor.Application.Common.Mappings;
 
@@ -10,6 +9,6 @@ public class AttendanceMappingProfile : Profile
     {
         CreateMap<BrightTutor.Domain.Entities.Attendance, GetGroupAttendanceResponse>();
         CreateMap<BrightTutor.Domain.Entities.TeacherAttendance, GetTeacherAttendanceResponse>();
-        CreateMap<BrightTutor.Domain.Entities.Attendance, BrightTutor.Application.Attendance.Queries.GetOnlineAttendance.GetOnlineAttendanceResponse>();
+        CreateMap<BrightTutor.Domain.Entities.Attendance, GetOnlineAttendanceResponse>();
     }
 }

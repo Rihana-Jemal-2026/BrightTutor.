@@ -1,4 +1,4 @@
-namespace BrightTutor.Application.Attendance.Queries.GetHomeAttendance;
+namespace BrightTutor.Application.Attendance.Dtos;
 
 public class GetHomeAttendanceResponse
 {

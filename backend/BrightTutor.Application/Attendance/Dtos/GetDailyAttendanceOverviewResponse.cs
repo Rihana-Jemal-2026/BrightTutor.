@@ -1,4 +1,4 @@
-namespace BrightTutor.Application.Attendance.Queries.GetDailyAttendanceOverview;
+namespace BrightTutor.Application.Attendance.Dtos;
 
 public class GetDailyAttendanceOverviewResponse
 {

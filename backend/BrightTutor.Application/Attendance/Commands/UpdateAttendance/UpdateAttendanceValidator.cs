@@ -7,5 +7,6 @@ public class UpdateAttendanceValidator : AbstractValidator<UpdateAttendanceComma
     public UpdateAttendanceValidator()
     {
         RuleFor(x => x.AttendanceId).NotEmpty();
+        RuleFor(x => x.NewStatus).IsInEnum();
     }
 }

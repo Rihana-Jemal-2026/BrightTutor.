@@ -1,6 +1,6 @@
 using BrightTutor.Domain.Enums;
 
-namespace BrightTutor.Application.Attendance.Queries.GetTeacherAttendance;
+namespace BrightTutor.Application.Attendance.Dtos;
 
 public class GetTeacherAttendanceResponse
 {

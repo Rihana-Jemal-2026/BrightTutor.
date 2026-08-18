@@ -1,8 +1,16 @@
 using BrightTutor.Application.Abstractions.Persistence;
+using BrightTutor.Application.Attendance.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrightTutor.Application.Attendance.Queries.GetStudentAttendanceCalendar;
+namespace BrightTutor.Application.Attendance.Queries;
+
+public class GetStudentAttendanceCalendarQuery : IRequest<List<CalendarDayDto>>
+{
+    public Guid StudentId { get; set; }
+    public int Year { get; set; }
+    public int Month { get; set; }
+}
 
 public class GetStudentAttendanceCalendarHandler
     : IRequestHandler<GetStudentAttendanceCalendarQuery, List<CalendarDayDto>>

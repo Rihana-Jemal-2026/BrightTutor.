@@ -1,8 +1,8 @@
-namespace BrightTutor.Application.Attendance.Queries.GetStudentAttendanceSummary;
+namespace BrightTutor.Application.Attendance.Dtos;
 
-public class GetStudentAttendanceSummaryResponse
+public class GetTeacherAttendanceReportResponse
 {
-    public Guid StudentId { get; set; }
+    public Guid TeacherId { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
 

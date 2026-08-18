@@ -21,12 +21,12 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-builder.Services.AddValidatorsFromAssembly(typeof(BrightTutor.Application.Attendance.Commands.MarkGroupAttendance.MarkGroupAttendanceCommand).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendanceCommand).Assembly);
 builder.Services.AddTransient(typeof(MediatR.IPipelineBehavior<,>), typeof(BrightTutor.Application.Common.Behaviors.ValidationBehavior<,>));
 builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<BrightTutor.Application.Common.Mappings.AttendanceMappingProfile>());
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(BrightTutor.Application.Attendance.Commands.MarkGroupAttendance.MarkGroupAttendanceCommand).Assembly));
+    cfg.RegisterServicesFromAssembly(typeof(BrightTutor.Application.Attendance.Commands.CheckOutHomeAttendanceCommand).Assembly));
 
 var app = builder.Build();
 

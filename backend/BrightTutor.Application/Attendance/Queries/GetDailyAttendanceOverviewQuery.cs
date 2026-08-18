@@ -1,9 +1,15 @@
 using BrightTutor.Application.Abstractions.Persistence;
+using BrightTutor.Application.Attendance.Dtos;
 using BrightTutor.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrightTutor.Application.Attendance.Queries.GetDailyAttendanceOverview;
+namespace BrightTutor.Application.Attendance.Queries;
+
+public class GetDailyAttendanceOverviewQuery : IRequest<GetDailyAttendanceOverviewResponse>
+{
+    public DateOnly Date { get; set; }
+}
 
 public class GetDailyAttendanceOverviewHandler
     : IRequestHandler<GetDailyAttendanceOverviewQuery, GetDailyAttendanceOverviewResponse>

@@ -1,9 +1,17 @@
 using BrightTutor.Application.Abstractions.Persistence;
+using BrightTutor.Application.Attendance.Dtos;
 using BrightTutor.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrightTutor.Application.Attendance.Queries.GetClassAttendanceReport;
+namespace BrightTutor.Application.Attendance.Queries;
+
+public class GetClassAttendanceReportQuery : IRequest<GetClassAttendanceReportResponse>
+{
+    public Guid ClassGroupId { get; set; }
+    public DateOnly StartDate { get; set; }
+    public DateOnly EndDate { get; set; }
+}
 
 public class GetClassAttendanceReportHandler
     : IRequestHandler<GetClassAttendanceReportQuery, GetClassAttendanceReportResponse>
@@ -24,41 +32,41 @@ public class GetClassAttendanceReportHandler
                      && a.AttendanceDate <= request.EndDate)
             .ToListAsync(cancellationToken);
 
-        var total = records.Count;
+        var totalSessions = records.Select(a => a.AttendanceDate).Distinct().Count();
+        var totalStudentRecords = records.Count;
         var present = records.Count(r => r.Status == AttendanceStatus.Present);
         var absent = records.Count(r => r.Status == AttendanceStatus.Absent);
         var late = records.Count(r => r.Status == AttendanceStatus.Late);
         var excused = records.Count(r => r.Status == AttendanceStatus.Excused);
 
-        var overallPercentage = total == 0 ? 0 : Math.Round((double)present / total * 100, 1);
+        var overallPercentage = totalStudentRecords == 0
+            ? 0
+            : Math.Round((double)present / totalStudentRecords * 100, 1);
 
         var studentBreakdown = records
-            .GroupBy(r => r.StudentId)
-            .Select(group =>
+            .GroupBy(a => a.StudentId)
+            .Select(g =>
             {
-                var groupTotal = group.Count();
-                var groupPresent = group.Count(r => r.Status == AttendanceStatus.Present);
-
-                return new StudentBreakdownDto
+                var sTotal = g.Count();
+                var sPresent = g.Count(r => r.Status == AttendanceStatus.Present);
+                return new StudentReportItemDto
                 {
-                    StudentId = group.Key,
-                    PresentCount = groupPresent,
-                    AbsentCount = group.Count(r => r.Status == AttendanceStatus.Absent),
-                    LateCount = group.Count(r => r.Status == AttendanceStatus.Late),
-                    ExcusedCount = group.Count(r => r.Status == AttendanceStatus.Excused),
-                    AttendancePercentage = groupTotal == 0
-                        ? 0
-                        : Math.Round((double)groupPresent / groupTotal * 100, 1)
+                    StudentId = g.Key,
+                    Present = sPresent,
+                    Absent = g.Count(r => r.Status == AttendanceStatus.Absent),
+                    Late = g.Count(r => r.Status == AttendanceStatus.Late),
+                    Excused = g.Count(r => r.Status == AttendanceStatus.Excused),
+                    Percentage = sTotal == 0 ? 0 : Math.Round((double)sPresent / sTotal * 100, 1)
                 };
-            })
-            .ToList();
+            }).ToList();
 
         return new GetClassAttendanceReportResponse
         {
             ClassGroupId = request.ClassGroupId,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
-            TotalRecords = total,
+            TotalSessions = totalSessions,
+            TotalStudentRecords = totalStudentRecords,
             PresentCount = present,
             AbsentCount = absent,
             LateCount = late,

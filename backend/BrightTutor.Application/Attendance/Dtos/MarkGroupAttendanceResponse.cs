@@ -1,4 +1,4 @@
-namespace BrightTutor.Application.Attendance.Commands.MarkGroupAttendance;
+namespace BrightTutor.Application.Attendance.Dtos;
 
 public class MarkGroupAttendanceResponse
 {

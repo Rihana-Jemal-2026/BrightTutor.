@@ -1,6 +1,6 @@
 using BrightTutor.Domain.Enums;
 
-namespace BrightTutor.Application.Attendance.Queries.GetGroupAttendance;
+namespace BrightTutor.Application.Attendance.Dtos;
 
 public class GetGroupAttendanceResponse
 {

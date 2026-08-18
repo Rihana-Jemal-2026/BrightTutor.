@@ -6,24 +6,15 @@ public class MarkGroupAttendanceValidator : AbstractValidator<MarkGroupAttendanc
 {
     public MarkGroupAttendanceValidator()
     {
-        RuleFor(x => x.ClassGroupId)
-            .NotEmpty().WithMessage("ClassGroupId is required.");
-
-        RuleFor(x => x.TeacherId)
-            .NotEmpty().WithMessage("TeacherId is required.");
-
-        RuleFor(x => x.AttendanceDate)
-            .NotEmpty().WithMessage("AttendanceDate is required.")
-            .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
-            .WithMessage("AttendanceDate cannot be in the future.");
-
-        RuleFor(x => x.Students)
-            .NotEmpty().WithMessage("At least one student is required to mark group attendance.");
+        RuleFor(x => x.ClassGroupId).NotEmpty();
+        RuleFor(x => x.TeacherId).NotEmpty();
+        RuleFor(x => x.AttendanceDate).NotEmpty();
+        RuleFor(x => x.Students).NotEmpty().WithMessage("At least one student attendance record is required.");
 
         RuleForEach(x => x.Students).ChildRules(student =>
         {
-            student.RuleFor(s => s.StudentId)
-                .NotEmpty().WithMessage("StudentId is required for each student.");
+            student.RuleFor(s => s.StudentId).NotEmpty();
+            student.RuleFor(s => s.Status).IsInEnum();
         });
     }
 }

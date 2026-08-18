@@ -1,10 +1,17 @@
 using AutoMapper;
 using BrightTutor.Application.Abstractions.Persistence;
+using BrightTutor.Application.Attendance.Dtos;
 using BrightTutor.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrightTutor.Application.Attendance.Queries.GetOnlineAttendance;
+namespace BrightTutor.Application.Attendance.Queries;
+
+public class GetOnlineAttendanceQuery : IRequest<List<GetOnlineAttendanceResponse>>
+{
+    public Guid ClassGroupId { get; set; }
+    public DateOnly AttendanceDate { get; set; }
+}
 
 public class GetOnlineAttendanceHandler
     : IRequestHandler<GetOnlineAttendanceQuery, List<GetOnlineAttendanceResponse>>

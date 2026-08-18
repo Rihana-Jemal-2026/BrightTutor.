@@ -1,9 +1,16 @@
 using AutoMapper;
 using BrightTutor.Application.Abstractions.Persistence;
+using BrightTutor.Application.Attendance.Dtos;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BrightTutor.Application.Attendance.Queries.GetGroupAttendance;
+namespace BrightTutor.Application.Attendance.Queries;
+
+public class GetGroupAttendanceQuery : IRequest<List<GetGroupAttendanceResponse>>
+{
+    public Guid ClassGroupId { get; set; }
+    public DateOnly AttendanceDate { get; set; }
+}
 
 public class GetGroupAttendanceHandler
     : IRequestHandler<GetGroupAttendanceQuery, List<GetGroupAttendanceResponse>>
