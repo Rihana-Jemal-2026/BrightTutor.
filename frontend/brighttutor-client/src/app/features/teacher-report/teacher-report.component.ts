@@ -13,7 +13,7 @@ import { AttendanceService } from "../../services/attendance.service";
 export class TeacherReportComponent {
   private api = inject(AttendanceService);
 
-  teacherId = signal("22222222-2222-2222-2222-222222222222");
+  teacherId = signal("TCH-001");
   startDate = signal("2026-08-01");
   endDate = signal(new Date().toISOString().slice(0, 10));
 

@@ -6,7 +6,7 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <label for="teacherId">Teacher ID</label>
-    <input id="teacherId" formControlName="teacherId" placeholder="e.g. 22222222-2222-2222-2222-222222222222" />
+    <input id="teacherId" formControlName="teacherId" placeholder="e.g. TCH-001" />
     @if (form.controls.teacherId.touched && form.controls.teacherId.invalid) {
       <span class="field-error">Teacher ID is required.</span>
     }

@@ -14,7 +14,7 @@ import { AttendanceService } from "../../services/attendance.service";
 export class StudentCalendarComponent {
   private api = inject(AttendanceService);
 
-  studentId = signal("33333333-3333-3333-3333-333333333333");
+  studentId = signal("STD-001");
   year = signal(2026);
   month = signal(8);
 

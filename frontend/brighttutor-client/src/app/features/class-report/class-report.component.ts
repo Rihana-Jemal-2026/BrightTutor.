@@ -11,10 +11,10 @@ import { ClassAttendanceReport } from "../../models/attendance.model";
   templateUrl: "./class-report.component.html",
   styleUrl: "./class-report.component.scss",
 })
-export class ClassReportComponent {
+export class ClassReportComponent { // Use ANGULAR MATERIAL UI COMPONENTS INSTEAD OF HARDCODED STYLES
   private api = inject(AttendanceService);
 
-  classGroupId = signal("11111111-1111-1111-1111-111111111111");
+  classGroupId = signal("GRP-001");
   startDate = signal("2026-08-01");
   endDate = signal(new Date().toISOString().slice(0, 10));
 

@@ -2,7 +2,7 @@
   <h1>Student Attendance Calendar</h1>
 
   <div class="search-bar">
-    <div class="field"><label>Student ID</label><input [(ngModel)]="studentId" name="studentId" /></div>
+    <div class="field"><label>Student ID</label><input [(ngModel)]="studentId" name="studentId" placeholder="e.g. STD-001" /></div>
     <div class="field"><label>Year</label><input type="number" [(ngModel)]="year" name="year" /></div>
     <div class="field"><label>Month</label><input type="number" min="1" max="12" [(ngModel)]="month" name="month" /></div>
     <button type="button" (click)="search()">Search</button>

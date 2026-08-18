@@ -2,7 +2,7 @@
   <h1>Teacher Attendance Report</h1>
 
   <div class="search-bar">
-    <div class="field"><label>Teacher ID</label><input [(ngModel)]="teacherId" name="teacherId" /></div>
+    <div class="field"><label>Teacher ID</label><input [(ngModel)]="teacherId" name="teacherId" placeholder="e.g. TCH-001" /></div>
     <div class="field"><label>Start Date</label><input type="date" [(ngModel)]="startDate" name="startDate" /></div>
     <div class="field"><label>End Date</label><input type="date" [(ngModel)]="endDate" name="endDate" /></div>
     <button type="button" (click)="search()">Search</button>

@@ -14,7 +14,7 @@ import { StudentAttendanceSummary } from "../../models/attendance.model";
 export class StudentSummaryComponent {
   private api = inject(AttendanceService);
 
-  studentId = signal("33333333-3333-3333-3333-333333333333");
+  studentId = signal("STD-001");
   startDate = signal("2026-08-01");
   endDate = signal(new Date().toISOString().slice(0, 10));
 

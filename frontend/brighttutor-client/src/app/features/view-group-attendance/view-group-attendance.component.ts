@@ -14,7 +14,7 @@ import { AttendanceStatus, GroupAttendanceRecord } from "../../models/attendance
 export class ViewGroupAttendanceComponent {
   private api = inject(AttendanceService);
 
-  classGroupId = signal("11111111-1111-1111-1111-111111111111");
+  classGroupId = signal("GRP-001");
   attendanceDate = signal(new Date().toISOString().slice(0, 10));
 
   statusLabels: Record<AttendanceStatus, string> = {
