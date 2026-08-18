@@ -1,68 +1,228 @@
-<div class="page">
-  <h1>Home Attendance</h1>
-
-  <div class="card">
-    <h2>Check In</h2>
-
-    @if (checkInResult()) { <div class="success">{{ checkInResult() }}</div> }
-    @if (checkInError()) { <div class="error">{{ checkInError() }}</div> }
-
-    <form [formGroup]="checkInForm" (ngSubmit)="submitCheckIn()">
-      <label>Student ID</label>
-      <input formControlName="studentId" placeholder="e.g. 33333333-3333-3333-3333-333333333333" />
-
-      <label>Teacher ID</label>
-      <input formControlName="teacherId" placeholder="e.g. 22222222-2222-2222-2222-222222222222" />
-
-      <label>Class Group ID</label>
-      <input formControlName="classGroupId" placeholder="e.g. 11111111-1111-1111-1111-111111111111" />
-
-      <label>Date</label>
-      <input type="date" formControlName="attendanceDate" />
-
-      <div class="row">
-        <div>
-          <label>Latitude</label>
-          <input type="number" step="0.0001" formControlName="checkInLatitude" />
-        </div>
-        <div>
-          <label>Longitude</label>
-          <input type="number" step="0.0001" formControlName="checkInLongitude" />
-        </div>
+<div class="home-attendance-page">
+  <!-- Page Header -->
+  <div class="header-card">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
       </div>
-
-      <label>Address (optional)</label>
-      <input formControlName="address" placeholder="e.g. Bole, Addis Ababa" />
-
-      <label>Lesson Covered (optional)</label>
-      <input formControlName="lessonCovered" placeholder="e.g. Fractions review" />
-
-      <button type="submit" [disabled]="checkInForm.invalid">Check In</button>
-    </form>
+      <div>
+        <h1>Home Tutoring Attendance</h1>
+        <p class="subtitle">Select a home tutoring student to check in and check out.</p>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Check Out</h2>
+  @if (checkInResult()) {
+    <div class="alert alert-success">
+      <span class="icon">✓</span>
+      <span>{{ checkInResult() }}</span>
+    </div>
+  }
 
-    @if (checkOutResult()) { <div class="success">{{ checkOutResult() }}</div> }
-    @if (checkOutError()) { <div class="error">{{ checkOutError() }}</div> }
+  @if (checkInError()) {
+    <div class="alert alert-danger">
+      <span class="icon">⚠</span>
+      <span>{{ checkInError() }}</span>
+    </div>
+  }
 
-    <form [formGroup]="checkOutForm" (ngSubmit)="submitCheckOut()">
-      <label>Attendance ID</label>
-      <input formControlName="attendanceId" placeholder="Auto-filled after check-in, or paste one" />
+  @if (checkOutResult()) {
+    <div class="alert alert-success">
+      <span class="icon">✓</span>
+      <span>{{ checkOutResult() }}</span>
+    </div>
+  }
 
-      <div class="row">
-        <div>
-          <label>Check-Out Latitude</label>
-          <input type="number" step="0.0001" formControlName="checkOutLatitude" />
+  @if (checkOutError()) {
+    <div class="alert alert-danger">
+      <span class="icon">⚠</span>
+      <span>{{ checkOutError() }}</span>
+    </div>
+  }
+
+  <!-- View Mode / Portal Switcher -->
+  <div class="role-control-bar">
+    <div class="role-toggle-group">
+      <span class="role-label">Portal View:</span>
+      <button
+        type="button"
+        class="role-btn"
+        [class.active]="userRole() === 'teacher'"
+        (click)="setRole('teacher')"
+      >
+        👨‍🏫 Teacher View
+      </button>
+      <button
+        type="button"
+        class="role-btn"
+        [class.active]="userRole() === 'admin'"
+        (click)="setRole('admin')"
+      >
+        👑 Admin View (All Students)
+      </button>
+    </div>
+
+    @if (userRole() === 'teacher') {
+      <div class="teacher-select-box">
+        <label for="activeTeacherSelect">Logged-in Teacher:</label>
+        <select
+          id="activeTeacherSelect"
+          [value]="activeTeacherId()"
+          (change)="onTeacherChange($any($event.target).value)"
+        >
+          @for (t of teachers; track t.id) {
+            <option [value]="t.id">{{ t.name }} ({{ t.id }})</option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+
+  <!-- Assigned Home Tutoring Students Roster -->
+  <div class="roster-section">
+    <div class="section-header-flex">
+      <label class="section-label">
+        @if (userRole() === 'teacher') {
+          My Assigned Home Tutoring Students ({{ visibleStudents.length }})
+        } @else {
+          All Home Tutoring Students ({{ visibleStudents.length }})
+        }
+      </label>
+
+      <span class="filter-badge">
+        @if (userRole() === 'teacher') {
+          Assigned to Teacher {{ activeTeacherId() }}
+        } @else {
+          Admin Mode — Showing All Home Students
+        }
+      </span>
+    </div>
+
+    <div class="students-list">
+      @for (student of visibleStudents; track student.studentId) {
+        <div
+          class="student-card"
+          [class.selected]="checkInForm.controls.studentId.value === student.studentId"
+          (click)="selectStudent(student)"
+        >
+          <div class="student-info">
+            <div class="avatar">🏠</div>
+            <div class="details">
+              <span class="student-name">{{ student.studentName }}</span>
+              <span class="subject-tag">{{ student.subject }}</span>
+              <span class="address-text">📍 {{ student.address }}</span>
+              <span class="student-meta">ID: {{ student.studentId }} | Group: {{ student.classGroupId }} | GPS Home: [{{ student.homeLatitude }}, {{ student.homeLongitude }}]</span>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            @if (activeCheckInStudentId() === student.studentId && lastAttendanceId()) {
+              <div class="checked-in-badge">
+                <span>✓ Currently Checked-In</span>
+                <button
+                  type="button"
+                  class="btn-action btn-checkout"
+                  (click)="submitCheckOut(); $event.stopPropagation()"
+                >
+                  🏁 Quick Check-Out
+                </button>
+              </div>
+            } @else {
+              <button
+                type="button"
+                class="btn-action btn-checkin"
+                (click)="quickCheckIn(student); $event.stopPropagation()"
+              >
+                📍 Quick Check-In
+              </button>
+            }
+          </div>
         </div>
-        <div>
-          <label>Check-Out Longitude</label>
-          <input type="number" step="0.0001" formControlName="checkOutLongitude" />
+      } @empty {
+        <div class="empty-notice">
+          <p>No 1-on-1 home tutoring students currently assigned to Teacher ID <strong>{{ activeTeacherId() }}</strong>.</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Manual Visit Forms -->
+  <div class="forms-grid">
+    <!-- Check In Form -->
+    <form [formGroup]="checkInForm" (ngSubmit)="submitCheckIn()" class="form-card">
+      <h3>1. Check-In Home Visit</h3>
+
+      <div class="form-group">
+        <label for="studentId">Student ID</label>
+        <input id="studentId" formControlName="studentId" placeholder="e.g. STD-HOME" />
+      </div>
+
+      <div class="form-group">
+        <label for="teacherId">Teacher ID</label>
+        <input id="teacherId" formControlName="teacherId" placeholder="e.g. TCH-001" />
+      </div>
+
+      <div class="form-group">
+        <label for="classGroupId">Class Group ID</label>
+        <input id="classGroupId" formControlName="classGroupId" placeholder="e.g. GRP-001" />
+      </div>
+
+      <div class="form-group">
+        <label for="attendanceDate">Visit Date</label>
+        <input id="attendanceDate" type="date" formControlName="attendanceDate" />
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="checkInLatitude">Latitude</label>
+          <input id="checkInLatitude" type="number" step="any" formControlName="checkInLatitude" />
+        </div>
+        <div class="form-group">
+          <label for="checkInLongitude">Longitude</label>
+          <input id="checkInLongitude" type="number" step="any" formControlName="checkInLongitude" />
         </div>
       </div>
 
-      <button type="submit" [disabled]="checkOutForm.invalid">Check Out</button>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input id="address" formControlName="address" placeholder="e.g. 124 Maple Street" />
+      </div>
+
+      <div class="form-group">
+        <label for="lessonCovered">Lesson Covered</label>
+        <input id="lessonCovered" formControlName="lessonCovered" placeholder="e.g. Algebra Chapter 3" />
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="checkInForm.invalid">
+        Submit Visit Check-In
+      </button>
+    </form>
+
+    <!-- Check Out Form -->
+    <form [formGroup]="checkOutForm" (ngSubmit)="submitCheckOut()" class="form-card">
+      <h3>2. Check-Out Home Visit</h3>
+
+      <div class="form-group">
+        <label for="attendanceId">Attendance Visit ID</label>
+        <input id="attendanceId" formControlName="attendanceId" placeholder="Generated upon Check-In" />
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="checkOutLatitude">Check-Out Latitude</label>
+          <input id="checkOutLatitude" type="number" step="any" formControlName="checkOutLatitude" />
+        </div>
+        <div class="form-group">
+          <label for="checkOutLongitude">Check-Out Longitude</label>
+          <input id="checkOutLongitude" type="number" step="any" formControlName="checkOutLongitude" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit btn-checkout-submit" [disabled]="checkOutForm.invalid">
+        Submit Visit Check-Out
+      </button>
     </form>
   </div>
 </div>
