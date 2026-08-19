@@ -167,15 +167,15 @@
 
     <div class="roster-list">
       @for (student of students.controls; track $index) {
-        <div class="student-card" [formGroup]="student">
+        <div class="student-card" [formGroup]="asFormGroup(student)">
           <!-- Student info -->
           <div class="student-info">
             <div class="avatar">
-              {{ (student.controls.studentName.value || 'S').charAt(0) }}
+              {{ (asFormGroup(student).controls['studentName'].value || 'S').charAt(0) }}
             </div>
             <div class="name-box">
-              <span class="student-name">{{ student.controls.studentName.value || 'Registered Student' }}</span>
-              <span class="student-id">{{ student.controls.studentId.value }}</span>
+              <span class="student-name">{{ asFormGroup(student).controls['studentName'].value || 'Registered Student' }}</span>
+              <span class="student-id">{{ asFormGroup(student).controls['studentId'].value }}</span>
             </div>
           </div>
 
@@ -184,7 +184,7 @@
             <button
               type="button"
               class="tick-btn tick-present"
-              [class.selected]="+student.controls.status.value === AttendanceStatus.Present"
+              [class.selected]="asFormGroup(student).controls['status'].value !== null && +asFormGroup(student).controls['status'].value === AttendanceStatus.Present"
               (click)="setStatus($index, AttendanceStatus.Present)"
               title="Tick Present"
             >
@@ -195,7 +195,7 @@
             <button
               type="button"
               class="tick-btn tick-absent"
-              [class.selected]="+student.controls.status.value === AttendanceStatus.Absent"
+              [class.selected]="asFormGroup(student).controls['status'].value !== null && +asFormGroup(student).controls['status'].value === AttendanceStatus.Absent"
               (click)="setStatus($index, AttendanceStatus.Absent)"
               title="Tick Absent"
             >
@@ -206,7 +206,7 @@
             <button
               type="button"
               class="tick-btn tick-late"
-              [class.selected]="+student.controls.status.value === AttendanceStatus.Late"
+              [class.selected]="asFormGroup(student).controls['status'].value !== null && +asFormGroup(student).controls['status'].value === AttendanceStatus.Late"
               (click)="setStatus($index, AttendanceStatus.Late)"
               title="Tick Late"
             >
@@ -217,7 +217,7 @@
             <button
               type="button"
               class="tick-btn tick-excused"
-              [class.selected]="+student.controls.status.value === AttendanceStatus.Excused"
+              [class.selected]="asFormGroup(student).controls['status'].value !== null && +asFormGroup(student).controls['status'].value === AttendanceStatus.Excused"
               (click)="setStatus($index, AttendanceStatus.Excused)"
               title="Tick Excused"
             >

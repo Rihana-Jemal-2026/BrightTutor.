@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
-import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormArray, AbstractControl } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
 import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus, StudentAttendanceEntry } from "../../models/attendance.model";
@@ -34,85 +34,68 @@ export class MarkGroupAttendanceComponent implements OnInit {
   private api = inject(AttendanceService);
   private toast = inject(ToastService);
 
-  // Enum references for template bindings
   readonly AttendanceStatus = AttendanceStatus;
 
-  // Registered Teachers
   teachers: TeacherOption[] = [
     { id: "TCH-001", name: "Mr. Robert Davis" },
     { id: "TCH-002", name: "Dr. Sarah Jenkins" },
     { id: "TCH-003", name: "Ms. Amanda Clark" },
   ];
 
-  // Role Filtering State ('admin' sees all groups; 'teacher' sees ONLY assigned groups)
-  userRole = signal<"admin" | "teacher">("teacher");
-  activeTeacherId = signal<string>("TCH-001");
-
-  // Registered class groups & rosters
   classGroups: ClassGroupMeta[] = [
     {
       groupId: "GRP-001",
-      groupName: "Grade 10 - Mathematics (Group A)",
+      groupName: "Grade 10 Mathematics - Group A",
       defaultTeacherId: "TCH-001",
       defaultTeacherName: "Mr. Robert Davis",
       students: [
-        { studentId: "STD-001", studentName: "Alex Morgan" },
-        { studentId: "STD-002", studentName: "Sophia Chen" },
-        { studentId: "STD-003", studentName: "Marcus Johnson" },
-        { studentId: "STD-004", studentName: "Emma Watson" },
-        { studentId: "STD-005", studentName: "Daniel Kim" },
-        { studentId: "STD-006", studentName: "Olivia Taylor" },
+        { studentId: "STD-001", studentName: "Michael Brown" },
+        { studentId: "STD-002", studentName: "Emily Davis" },
+        { studentId: "STD-003", studentName: "James Wilson" },
+        { studentId: "STD-004", studentName: "Sophia Taylor" },
+        { studentId: "STD-005", studentName: "Daniel Anderson" },
       ],
     },
     {
       groupId: "GRP-002",
-      groupName: "Grade 11 - Physics (Group B)",
+      groupName: "Physics Advanced - Group B",
       defaultTeacherId: "TCH-002",
       defaultTeacherName: "Dr. Sarah Jenkins",
       students: [
-        { studentId: "STD-007", studentName: "Liam Smith" },
-        { studentId: "STD-008", studentName: "Noah Williams" },
-        { studentId: "STD-009", studentName: "Ava Brown" },
-        { studentId: "STD-010", studentName: "Isabella Davis" },
+        { studentId: "STD-006", studentName: "Oliver Martinez" },
+        { studentId: "STD-007", studentName: "Ava White" },
+        { studentId: "STD-008", studentName: "Lucas Harris" },
+        { studentId: "STD-009", studentName: "Mia Martin" },
       ],
     },
     {
       groupId: "GRP-003",
-      groupName: "Grade 12 - Advanced Chemistry (Group C)",
-      defaultTeacherId: "TCH-001",
-      defaultTeacherName: "Mr. Robert Davis",
-      students: [
-        { studentId: "STD-011", studentName: "Ethan Jones" },
-        { studentId: "STD-012", studentName: "Mia Garcia" },
-        { studentId: "STD-013", studentName: "Lucas Miller" },
-      ],
-    },
-    {
-      groupId: "GRP-004",
-      groupName: "Grade 9 - Biology Fundamentals (Group D)",
+      groupName: "Chemistry Honors - Group C",
       defaultTeacherId: "TCH-003",
       defaultTeacherName: "Ms. Amanda Clark",
       students: [
-        { studentId: "STD-014", studentName: "Oliver Harris" },
-        { studentId: "STD-015", studentName: "Charlotte Martin" },
-        { studentId: "STD-016", studentName: "Benjamin Lee" },
+        { studentId: "STD-010", studentName: "Ethan Jackson" },
+        { studentId: "STD-011", studentName: "Isabella Thompson" },
+        { studentId: "STD-012", studentName: "Alexander Lee" },
       ],
     },
   ];
 
+  userRole = signal<"admin" | "teacher">("teacher");
+  activeTeacherId = signal<string>("TCH-001");
   selectedGroup = signal<ClassGroupMeta | null>(null);
-  submitted = signal(false);
-  errorMessage = signal<string | null>(null);
-  resultMessage = signal<string | null>(null);
 
-  form = this.fb.nonNullable.group({
-    classGroupId: ["GRP-001", Validators.required],
-    teacherId: ["TCH-001", Validators.required],
-    attendanceDate: [new Date().toISOString().substring(0, 10), Validators.required],
-    students: this.fb.array<ReturnType<typeof this.buildStudentRow>>([]),
+  submitted = signal<boolean>(false);
+  resultMessage = signal<string | null>(null);
+  errorMessage = signal<string | null>(null);
+
+  form = this.fb.group({
+    classGroupId: ["", Validators.required],
+    teacherId: ["", Validators.required],
+    attendanceDate: [new Date().toISOString().split("T")[0], Validators.required],
+    students: this.fb.array<FormGroup>([]),
   });
 
-  // Getter for groups filtered by assigned role/teacher
   get visibleClassGroups(): ClassGroupMeta[] {
     if (this.userRole() === "admin") {
       return this.classGroups;
@@ -124,15 +107,19 @@ export class MarkGroupAttendanceComponent implements OnInit {
     this.refreshGroupSelection();
   }
 
-  get students() {
-    return this.form.controls.students;
+  get students(): FormArray {
+    return this.form.controls.students as FormArray;
   }
 
-  buildStudentRow(studentId = "", studentName = "", status = AttendanceStatus.Present, notes = "") {
-    return this.fb.nonNullable.group({
+  asFormGroup(control: AbstractControl): FormGroup {
+    return control as FormGroup;
+  }
+
+  buildStudentRow(studentId = "", studentName = "", status: AttendanceStatus | null = null, notes = "") {
+    return this.fb.group({
       studentId: [studentId, Validators.required],
       studentName: [studentName],
-      status: [status, Validators.required],
+      status: [status], // Starts unselected (null) so no full color is shown by default
       notes: [notes],
     });
   }
@@ -173,7 +160,8 @@ export class MarkGroupAttendanceComponent implements OnInit {
   loadGroupRoster(group: ClassGroupMeta) {
     this.students.clear();
     for (const s of group.students) {
-      this.students.push(this.buildStudentRow(s.studentId, s.studentName, AttendanceStatus.Present));
+      // Pass null for status so no button is full color initially
+      this.students.push(this.buildStudentRow(s.studentId, s.studentName, null));
     }
   }
 
@@ -193,7 +181,7 @@ export class MarkGroupAttendanceComponent implements OnInit {
   addCustomStudent() {
     const nextNum = this.students.length + 1;
     this.students.push(
-      this.buildStudentRow(`STD-00${nextNum}`, `Guest Student #${nextNum}`, AttendanceStatus.Present)
+      this.buildStudentRow(`STD-00${nextNum}`, `Guest Student #${nextNum}`, null)
     );
   }
 
@@ -215,12 +203,13 @@ export class MarkGroupAttendanceComponent implements OnInit {
 
     const raw = this.form.getRawValue();
     const payload = {
-      classGroupId: raw.classGroupId,
-      teacherId: raw.teacherId,
-      attendanceDate: raw.attendanceDate,
-      students: raw.students.map((s) => ({
+      classGroupId: raw.classGroupId!,
+      teacherId: raw.teacherId!,
+      attendanceDate: raw.attendanceDate!,
+      // If student status was not explicitly chosen, default to Present (0) on submit
+      students: raw.students.map((s: any) => ({
         studentId: s.studentId,
-        status: s.status,
+        status: s.status !== null && s.status !== undefined ? s.status : AttendanceStatus.Present,
         notes: s.notes,
       })) as StudentAttendanceEntry[],
     };

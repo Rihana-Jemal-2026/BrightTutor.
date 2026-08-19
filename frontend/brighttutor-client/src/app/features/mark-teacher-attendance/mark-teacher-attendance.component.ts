@@ -39,10 +39,10 @@ export class MarkTeacherAttendanceComponent implements OnInit {
   resultMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
-  form = this.fb.nonNullable.group({
+  form = this.fb.group({
     teacherId: ["TCH-001", Validators.required],
     attendanceDate: [new Date().toISOString().split("T")[0], Validators.required],
-    status: [AttendanceStatus.Present, Validators.required],
+    status: [null as AttendanceStatus | null, Validators.required],
     checkInTime: ["08:30"],
     checkOutTime: ["16:30"],
     notes: [""],
@@ -81,11 +81,11 @@ export class MarkTeacherAttendanceComponent implements OnInit {
 
     const raw = this.form.getRawValue();
     const payload = {
-      teacherId: raw.teacherId,
-      attendanceDate: raw.attendanceDate,
-      status: raw.status,
-      checkInTime: this.parseIsoDateTime(raw.attendanceDate, raw.checkInTime),
-      checkOutTime: this.parseIsoDateTime(raw.attendanceDate, raw.checkOutTime),
+      teacherId: raw.teacherId!,
+      attendanceDate: raw.attendanceDate!,
+      status: raw.status !== null && raw.status !== undefined ? raw.status : AttendanceStatus.Present,
+      checkInTime: this.parseIsoDateTime(raw.attendanceDate!, raw.checkInTime || undefined),
+      checkOutTime: this.parseIsoDateTime(raw.attendanceDate!, raw.checkOutTime || undefined),
       notes: raw.notes || undefined,
     };
 

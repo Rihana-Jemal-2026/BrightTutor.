@@ -125,15 +125,10 @@ export class MarkOnlineAttendanceComponent implements OnInit {
     });
   }
 
-  studentStatusMap = signal<Record<string, AttendanceStatus>>({
-    "STD-ONLINE": AttendanceStatus.Present,
-    "STD-001": AttendanceStatus.Present,
-    "STD-007": AttendanceStatus.Present,
-    "STD-014": AttendanceStatus.Present,
-  });
+  studentStatusMap = signal<Record<string, AttendanceStatus | null>>({});
 
-  getStudentStatus(studentId: string): AttendanceStatus {
-    return this.studentStatusMap()[studentId] ?? AttendanceStatus.Present;
+  getStudentStatus(studentId: string): AttendanceStatus | null {
+    return this.studentStatusMap()[studentId] ?? null;
   }
 
   quickSubmitStatus(student: AssignedOnlineStudent, status: AttendanceStatus) {
