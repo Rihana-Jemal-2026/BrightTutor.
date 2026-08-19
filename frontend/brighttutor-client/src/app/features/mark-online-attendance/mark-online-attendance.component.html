@@ -106,6 +106,7 @@
             <button
               type="button"
               class="btn-tick tick-present"
+              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Present"
               (click)="quickSubmitStatus(student, AttendanceStatus.Present); $event.stopPropagation()"
             >
               ✓ Present
@@ -113,6 +114,7 @@
             <button
               type="button"
               class="btn-tick tick-absent"
+              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Absent"
               (click)="quickSubmitStatus(student, AttendanceStatus.Absent); $event.stopPropagation()"
             >
               ✕ Absent
@@ -120,6 +122,7 @@
             <button
               type="button"
               class="btn-tick tick-late"
+              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Late"
               (click)="quickSubmitStatus(student, AttendanceStatus.Late); $event.stopPropagation()"
             >
               ⏱ Late
@@ -127,6 +130,7 @@
             <button
               type="button"
               class="btn-tick tick-excused"
+              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Excused"
               (click)="quickSubmitStatus(student, AttendanceStatus.Excused); $event.stopPropagation()"
             >
               ✉ Excused

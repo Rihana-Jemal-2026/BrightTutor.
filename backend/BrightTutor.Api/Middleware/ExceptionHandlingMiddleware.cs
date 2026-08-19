@@ -26,6 +26,12 @@ public class ExceptionHandlingMiddleware
             var errors = ex.Errors.Select(e => e.ErrorMessage);
             await context.Response.WriteAsync(JsonSerializer.Serialize(new { errors }));
         }
+        catch (InvalidOperationException ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { errors = new[] { ex.Message } }));
+        }
         catch (Exception ex)
         {
             context.Response.ContentType = "application/json";

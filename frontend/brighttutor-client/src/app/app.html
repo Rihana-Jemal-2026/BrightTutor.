@@ -153,3 +153,18 @@
 <main class="main-content">
   <router-outlet />
 </main>
+
+<!-- Global Floating Toast Notification Container -->
+<div class="toast-container">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast-card" [class]="'toast-' + toast.type">
+      <div class="toast-icon">
+        @if (toast.type === 'success') { ✓ }
+        @else if (toast.type === 'error') { ✕ }
+        @else { ℹ }
+      </div>
+      <div class="toast-message">{{ toast.message }}</div>
+      <button type="button" class="toast-close" (click)="toastService.removeToast(toast.id)">&times;</button>
+    </div>
+  }
+</div>

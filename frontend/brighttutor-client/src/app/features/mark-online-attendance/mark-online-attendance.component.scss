@@ -310,7 +310,7 @@
           color: #0B3D2E;
           border-color: #3FBE7C;
 
-          &:hover {
+          &:hover, &.selected {
             background: #059669;
             color: #ffffff;
             border-color: #047857;
@@ -323,7 +323,7 @@
           color: #881337;
           border-color: #fca5a5;
 
-          &:hover {
+          &:hover, &.selected {
             background: #dc2626;
             color: #ffffff;
             border-color: #b91c1c;
@@ -336,7 +336,7 @@
           color: #92400e;
           border-color: #fde68a;
 
-          &:hover {
+          &:hover, &.selected {
             background: #d97706;
             color: #ffffff;
             border-color: #b45309;
@@ -349,7 +349,7 @@
           color: #075985;
           border-color: #bae6fd;
 
-          &:hover {
+          &:hover, &.selected {
             background: #0284c7;
             color: #ffffff;
             border-color: #0369a1;

@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus, StudentAttendanceEntry } from "../../models/attendance.model";
 
 export interface EnrolledStudent {
@@ -31,6 +32,7 @@ export interface TeacherOption {
 export class MarkGroupAttendanceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private toast = inject(ToastService);
 
   // Enum references for template bindings
   readonly AttendanceStatus = AttendanceStatus;
@@ -226,13 +228,15 @@ export class MarkGroupAttendanceComponent implements OnInit {
     this.api.markGroupAttendance(payload).subscribe({
       next: (response) => {
         this.submitted.set(true);
-        this.resultMessage.set(
-          `Success: ${response.recordsCreated} attendance record(s) submitted for group ${raw.classGroupId} on ${response.attendanceDate}.`
-        );
+        const msg = `Success: ${response.recordsCreated} attendance record(s) submitted for group ${raw.classGroupId} on ${response.attendanceDate}.`;
+        this.resultMessage.set(msg);
+        this.toast.showSuccess(msg);
       },
       error: (err) => {
         const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
-        this.errorMessage.set(Array.isArray(messages) ? messages.join(", ") : String(messages));
+        const errorText = Array.isArray(messages) ? messages.join(", ") : String(messages);
+        this.errorMessage.set(errorText);
+        this.toast.showError(errorText);
       },
     });
   }

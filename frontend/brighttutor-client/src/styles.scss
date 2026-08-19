@@ -10,10 +10,19 @@
   --color-text: #13291F;
   --color-muted: #5C7768;
   --color-border: #DCE8E1;
-  --color-error: #C2453A;
+  --color-error: #dc2626;
   --color-error-bg: #FCEEEC;
-  --color-success: #1F7A4D;
+  --color-success: #059669;
   --color-success-bg: #E9F7EF;
+
+  --status-present: #059669;
+  --status-present-bg: #E9F7EF;
+  --status-absent: #dc2626;
+  --status-absent-bg: #FCEEEC;
+  --status-late: #d97706;
+  --status-late-bg: #FFFBEB;
+  --status-excused: #0284c7;
+  --status-excused-bg: #F0F9FF;
 
   --font-display: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

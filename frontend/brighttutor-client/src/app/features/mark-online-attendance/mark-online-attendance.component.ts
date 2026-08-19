@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus } from "../../models/attendance.model";
 
 export interface AssignedOnlineStudent {
@@ -27,6 +28,7 @@ export interface TeacherOption {
 export class MarkOnlineAttendanceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private toast = inject(ToastService);
 
   readonly AttendanceStatus = AttendanceStatus;
 
@@ -123,9 +125,21 @@ export class MarkOnlineAttendanceComponent implements OnInit {
     });
   }
 
+  studentStatusMap = signal<Record<string, AttendanceStatus>>({
+    "STD-ONLINE": AttendanceStatus.Present,
+    "STD-001": AttendanceStatus.Present,
+    "STD-007": AttendanceStatus.Present,
+    "STD-014": AttendanceStatus.Present,
+  });
+
+  getStudentStatus(studentId: string): AttendanceStatus {
+    return this.studentStatusMap()[studentId] ?? AttendanceStatus.Present;
+  }
+
   quickSubmitStatus(student: AssignedOnlineStudent, status: AttendanceStatus) {
     this.selectStudent(student);
     this.form.patchValue({ status });
+    this.studentStatusMap.update((map) => ({ ...map, [student.studentId]: status }));
     this.submit();
   }
 
@@ -140,10 +154,16 @@ export class MarkOnlineAttendanceComponent implements OnInit {
 
     const raw = this.form.getRawValue();
     this.api.markOnlineAttendance({ ...raw, notes: raw.notes || undefined }).subscribe({
-      next: () => this.resultMessage.set(`Success: Online attendance recorded for ${raw.studentId}.`),
+      next: () => {
+        const msg = `Success: Online attendance recorded for ${raw.studentId}.`;
+        this.resultMessage.set(msg);
+        this.toast.showSuccess(msg);
+      },
       error: (err) => {
         const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
-        this.errorMessage.set(Array.isArray(messages) ? messages.join(", ") : String(messages));
+        const errorText = Array.isArray(messages) ? messages.join(", ") : String(messages);
+        this.errorMessage.set(errorText);
+        this.toast.showError(errorText);
       },
     });
   }

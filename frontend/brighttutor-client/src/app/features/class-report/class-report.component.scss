@@ -47,11 +47,11 @@
   .value { display: block; font-size: 1.6rem; font-weight: 800; font-family: var(--font-display); }
   .label { display: block; font-size: 0.7rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.03em; margin-top: 4px; }
 
-  &.present .value { color: var(--color-success); }
-  &.absent .value { color: var(--color-error); }
-  &.late .value { color: #B8860B; }
-  &.excused .value { color: var(--color-muted); }
-  &.percentage .value { color: var(--color-primary); }
+  &.present .value { color: #059669; }
+  &.absent .value { color: #dc2626; }
+  &.late .value { color: #d97706; }
+  &.excused .value { color: #0284c7; }
+  &.percentage .value { color: #0B3D2E; }
 }
 
 .breakdown-table { background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); overflow: hidden; }
@@ -76,10 +76,10 @@
   border-top: 1px solid var(--color-border);
   .student-id { font-family: monospace; font-size: 0.8rem; }
   .count { font-weight: 700; text-align: center; }
-  .count.present { color: var(--color-success); }
-  .count.absent { color: var(--color-error); }
-  .count.late { color: #B8860B; }
-  .count.excused { color: var(--color-muted); }
+  .count.present { color: #059669; }
+  .count.absent { color: #dc2626; }
+  .count.late { color: #d97706; }
+  .count.excused { color: #0284c7; }
 }
 
 .rate-bar-wrapper {

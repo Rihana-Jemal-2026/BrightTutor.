@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { ToastService } from "../../services/toast.service";
 
 export interface AssignedHomeStudent {
   studentId: string;
@@ -29,6 +30,7 @@ export interface TeacherOption {
 export class HomeAttendanceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private toast = inject(ToastService);
 
   teachers: TeacherOption[] = [
     { id: "TCH-001", name: "Mr. Robert Davis" },
@@ -167,14 +169,18 @@ export class HomeAttendanceComponent implements OnInit {
       })
       .subscribe({
         next: (attendanceId) => {
-          this.checkInResult.set(`Checked in successfully at ${raw.address || "Student Home"}. Attendance ID: ${attendanceId}`);
+          const msg = `Checked in successfully at ${raw.address || "Student Home"}. Attendance ID: ${attendanceId}`;
+          this.checkInResult.set(msg);
+          this.toast.showSuccess(msg);
           this.lastAttendanceId.set(attendanceId);
           this.activeCheckInStudentId.set(raw.studentId);
           this.checkOutForm.patchValue({ attendanceId });
         },
         error: (err) => {
           const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
-          this.checkInError.set(Array.isArray(messages) ? messages.join(", ") : String(messages));
+          const errorText = Array.isArray(messages) ? messages.join(", ") : String(messages);
+          this.checkInError.set(errorText);
+          this.toast.showError(errorText);
         },
       });
   }
@@ -191,11 +197,14 @@ export class HomeAttendanceComponent implements OnInit {
     this.api.checkOutHomeAttendance(this.checkOutForm.getRawValue()).subscribe({
       next: (res) => {
         this.checkOutResult.set(res.message);
+        this.toast.showSuccess(res.message);
         this.activeCheckInStudentId.set(null);
       },
       error: (err) => {
         const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
-        this.checkOutError.set(Array.isArray(messages) ? messages.join(", ") : String(messages));
+        const errorText = Array.isArray(messages) ? messages.join(", ") : String(messages);
+        this.checkOutError.set(errorText);
+        this.toast.showError(errorText);
       },
     });
   }

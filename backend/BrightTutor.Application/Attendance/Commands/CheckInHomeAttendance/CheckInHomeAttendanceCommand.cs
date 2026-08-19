@@ -2,6 +2,7 @@ using BrightTutor.Application.Abstractions.Persistence;
 using BrightTutor.Domain.Entities;
 using BrightTutor.Domain.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrightTutor.Application.Attendance.Commands.CheckInHomeAttendance;
 
@@ -28,6 +29,13 @@ public class CheckInHomeAttendanceHandler : IRequestHandler<CheckInHomeAttendanc
 
     public async Task<Guid> Handle(CheckInHomeAttendanceCommand request, CancellationToken cancellationToken)
     {
+        var alreadySubmitted = await _context.Attendances
+            .AnyAsync(a => a.StudentId == request.StudentId && a.ClassGroupId == request.ClassGroupId && a.AttendanceDate == request.AttendanceDate, cancellationToken);
+
+        if (alreadySubmitted)
+        {
+            throw new InvalidOperationException($"Home visit attendance for this student on {request.AttendanceDate} has already been checked in today.");
+        }
         var attendance = new Domain.Entities.Attendance
         {
             StudentId = request.StudentId,
