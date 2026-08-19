@@ -529,59 +529,63 @@
         line-height: 1;
       }
 
-      /* Specific tick button colors for default, hover, and selected states */
+      /* All 4 scenario tick buttons share identical clean default state with colored text, border, and soft shadow */
       &.tick-present {
-        background: #E9F7EF;
-        color: #0B3D2E;
-        border-color: #3FBE7C;
+        background: #ffffff;
+        color: #059669;
+        border: 1.5px solid #3FBE7C;
+        box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
 
         &:hover, &.selected {
           background: #059669 !important;
           color: #ffffff !important;
           border-color: #047857 !important;
-          box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4) !important;
+          box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35) !important;
           transform: translateY(-1px);
         }
       }
 
       &.tick-absent {
-        background: #FCEEEC;
-        color: #881337;
-        border-color: #fca5a5;
+        background: #ffffff;
+        color: #dc2626;
+        border: 1.5px solid #fca5a5;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
 
         &:hover, &.selected {
           background: #dc2626 !important;
           color: #ffffff !important;
           border-color: #b91c1c !important;
-          box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4) !important;
+          box-shadow: 0 6px 18px rgba(220, 38, 38, 0.35) !important;
           transform: translateY(-1px);
         }
       }
 
       &.tick-late {
-        background: #FFFBEB;
-        color: #92400e;
-        border-color: #fde68a;
+        background: #ffffff;
+        color: #d97706;
+        border: 1.5px solid #fde68a;
+        box-shadow: 0 2px 8px rgba(217, 119, 6, 0.1);
 
         &:hover, &.selected {
           background: #d97706 !important;
           color: #ffffff !important;
           border-color: #b45309 !important;
-          box-shadow: 0 6px 16px rgba(217, 119, 6, 0.4) !important;
+          box-shadow: 0 6px 18px rgba(217, 119, 6, 0.35) !important;
           transform: translateY(-1px);
         }
       }
 
       &.tick-excused {
-        background: #F0F9FF;
-        color: #075985;
-        border-color: #bae6fd;
+        background: #ffffff;
+        color: #0284c7;
+        border: 1.5px solid #bae6fd;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.1);
 
         &:hover, &.selected {
           background: #0284c7 !important;
           color: #ffffff !important;
           border-color: #0369a1 !important;
-          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4) !important;
+          box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35) !important;
           transform: translateY(-1px);
         }
       }
