@@ -184,7 +184,7 @@
             <button
               type="button"
               class="tick-btn tick-present"
-              [class.selected]="student.controls.status.value === AttendanceStatus.Present"
+              [class.selected]="+student.controls.status.value === AttendanceStatus.Present"
               (click)="setStatus($index, AttendanceStatus.Present)"
               title="Tick Present"
             >
@@ -195,7 +195,7 @@
             <button
               type="button"
               class="tick-btn tick-absent"
-              [class.selected]="student.controls.status.value === AttendanceStatus.Absent"
+              [class.selected]="+student.controls.status.value === AttendanceStatus.Absent"
               (click)="setStatus($index, AttendanceStatus.Absent)"
               title="Tick Absent"
             >
@@ -206,7 +206,7 @@
             <button
               type="button"
               class="tick-btn tick-late"
-              [class.selected]="student.controls.status.value === AttendanceStatus.Late"
+              [class.selected]="+student.controls.status.value === AttendanceStatus.Late"
               (click)="setStatus($index, AttendanceStatus.Late)"
               title="Tick Late"
             >
@@ -217,7 +217,7 @@
             <button
               type="button"
               class="tick-btn tick-excused"
-              [class.selected]="student.controls.status.value === AttendanceStatus.Excused"
+              [class.selected]="+student.controls.status.value === AttendanceStatus.Excused"
               (click)="setStatus($index, AttendanceStatus.Excused)"
               title="Tick Excused"
             >

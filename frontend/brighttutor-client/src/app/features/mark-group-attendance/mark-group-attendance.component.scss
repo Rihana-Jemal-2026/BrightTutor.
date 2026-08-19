@@ -531,57 +531,57 @@
 
       /* Specific tick button colors for default, hover, and selected states */
       &.tick-present {
-        background: #E9F7EF;
-        color: #0B3D2E;
+        background: #ffffff;
+        color: #059669;
         border-color: #3FBE7C;
 
         &:hover, &.selected {
-          background: #059669;
-          color: #ffffff;
-          border-color: #047857;
-          box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+          background: #059669 !important;
+          color: #ffffff !important;
+          border-color: #047857 !important;
+          box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4) !important;
           transform: translateY(-1px);
         }
       }
 
       &.tick-absent {
-        background: #FCEEEC;
-        color: #881337;
+        background: #ffffff;
+        color: #dc2626;
         border-color: #fca5a5;
 
         &:hover, &.selected {
-          background: #dc2626;
-          color: #ffffff;
-          border-color: #b91c1c;
-          box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+          background: #dc2626 !important;
+          color: #ffffff !important;
+          border-color: #b91c1c !important;
+          box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4) !important;
           transform: translateY(-1px);
         }
       }
 
       &.tick-late {
-        background: #FFFBEB;
-        color: #92400e;
+        background: #ffffff;
+        color: #d97706;
         border-color: #fde68a;
 
         &:hover, &.selected {
-          background: #d97706;
-          color: #ffffff;
-          border-color: #b45309;
-          box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35);
+          background: #d97706 !important;
+          color: #ffffff !important;
+          border-color: #b45309 !important;
+          box-shadow: 0 6px 16px rgba(217, 119, 6, 0.4) !important;
           transform: translateY(-1px);
         }
       }
 
       &.tick-excused {
-        background: #F0F9FF;
-        color: #075985;
+        background: #ffffff;
+        color: #0284c7;
         border-color: #bae6fd;
 
         &:hover, &.selected {
-          background: #0284c7;
-          color: #ffffff;
-          border-color: #0369a1;
-          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+          background: #0284c7 !important;
+          color: #ffffff !important;
+          border-color: #0369a1 !important;
+          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4) !important;
           transform: translateY(-1px);
         }
       }
