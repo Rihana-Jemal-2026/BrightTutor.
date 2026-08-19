@@ -1,6 +1,7 @@
 using BrightTutor.Application.Abstractions.Persistence;
 using BrightTutor.Domain.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BrightTutor.Application.Attendance.Commands.MarkTeacherAttendance;
 
@@ -25,6 +26,14 @@ public class MarkTeacherAttendanceHandler : IRequestHandler<MarkTeacherAttendanc
 
     public async Task<Guid> Handle(MarkTeacherAttendanceCommand request, CancellationToken cancellationToken)
     {
+        var existing = await _context.TeacherAttendances
+            .AnyAsync(t => t.TeacherId == request.TeacherId && t.AttendanceDate == request.AttendanceDate, cancellationToken);
+
+        if (existing)
+        {
+            throw new InvalidOperationException($"Attendance for teacher on {request.AttendanceDate} has already been submitted today. Multiple submissions on the same date are not allowed.");
+        }
+
         var record = new Domain.Entities.TeacherAttendance
         {
             TeacherId = request.TeacherId,

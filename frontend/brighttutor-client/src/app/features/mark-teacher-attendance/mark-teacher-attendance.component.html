@@ -1,35 +1,89 @@
 <div class="page">
-  <h1>Mark Teacher Attendance</h1>
+  <div class="page-header">
+    <div class="header-content">
+      <h1>👨‍🏫 Mark Teacher Attendance</h1>
+      <p class="subtitle">Record daily staff check-in, check-out, and attendance status</p>
+    </div>
+  </div>
 
-  @if (resultMessage()) { <div class="success">{{ resultMessage() }}</div> }
-  @if (errorMessage()) { <div class="error">{{ errorMessage() }}</div> }
+  @if (resultMessage()) {
+    <div class="alert alert-success">
+      <span class="icon">✓</span> {{ resultMessage() }}
+    </div>
+  }
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <span class="icon">✕</span> {{ errorMessage() }}
+    </div>
+  }
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <label for="teacherId">Teacher ID</label>
-    <input id="teacherId" formControlName="teacherId" placeholder="e.g. TCH-001" />
-    @if (form.controls.teacherId.touched && form.controls.teacherId.invalid) {
-      <span class="field-error">Teacher ID is required.</span>
-    }
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <!-- Teacher Selection -->
+        <div class="field-group">
+          <label for="teacherId">Select Teacher</label>
+          <select id="teacherId" formControlName="teacherId" class="form-control">
+            @for (t of teachers; track t.id) {
+              <option [value]="t.id">{{ t.name }} ({{ t.id }})</option>
+            }
+          </select>
+          @if (form.controls.teacherId.touched && form.controls.teacherId.invalid) {
+            <span class="field-error">Teacher selection is required.</span>
+          }
+        </div>
 
-    <label for="attendanceDate">Date</label>
-    <input id="attendanceDate" type="date" formControlName="attendanceDate" />
+        <!-- Date Selection -->
+        <div class="field-group">
+          <label for="attendanceDate">Attendance Date</label>
+          <input id="attendanceDate" type="date" formControlName="attendanceDate" class="form-control" />
+        </div>
+      </div>
 
-    <label for="status">Status</label>
-    <select id="status" formControlName="status">
-      @for (option of statusOptions; track option.value) {
-        <option [ngValue]="option.value">{{ option.label }}</option>
-      }
-    </select>
+      <!-- Attendance Status Scenario Buttons -->
+      <div class="field-group status-scenario-group">
+        <label>Attendance Status Scenario</label>
+        <div class="status-buttons">
+          @for (option of statusOptions; track option.value) {
+            <button
+              type="button"
+              class="btn-status"
+              [class]="option.class"
+              [class.active]="form.controls.status.value === option.value"
+              (click)="setStatus(option.value)"
+            >
+              <span class="status-icon">{{ option.icon }}</span>
+              <span class="status-label">{{ option.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
 
-    <label for="checkInTime">Check-In Time (optional)</label>
-    <input id="checkInTime" type="time" formControlName="checkInTime" />
+      <div class="form-grid">
+        <!-- Check-In Time -->
+        <div class="field-group">
+          <label for="checkInTime">Check-In Time</label>
+          <input id="checkInTime" type="time" formControlName="checkInTime" class="form-control" />
+        </div>
 
-    <label for="checkOutTime">Check-Out Time (optional)</label>
-    <input id="checkOutTime" type="time" formControlName="checkOutTime" />
+        <!-- Check-Out Time -->
+        <div class="field-group">
+          <label for="checkOutTime">Check-Out Time</label>
+          <input id="checkOutTime" type="time" formControlName="checkOutTime" class="form-control" />
+        </div>
+      </div>
 
-    <label for="notes">Notes (optional)</label>
-    <input id="notes" formControlName="notes" />
+      <!-- Notes -->
+      <div class="field-group">
+        <label for="notes">Notes / Observations (Optional)</label>
+        <input id="notes" formControlName="notes" placeholder="e.g. Approved leave, faculty meeting, or schedule adjustment" class="form-control" />
+      </div>
 
-    <button type="submit" [disabled]="form.invalid">Submit</button>
-  </form>
+      <div class="form-actions">
+        <button type="submit" class="btn-submit" [disabled]="form.invalid">
+          ✓ Save Teacher Attendance
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
