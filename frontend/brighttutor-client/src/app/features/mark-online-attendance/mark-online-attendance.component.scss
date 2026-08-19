@@ -306,8 +306,8 @@
         transition: all 0.2s ease-in-out;
 
         &.tick-present {
-          background: #ffffff;
-          color: #059669;
+          background: #E9F7EF;
+          color: #0B3D2E;
           border-color: #3FBE7C;
 
           &:hover, &.selected {
@@ -319,8 +319,8 @@
         }
 
         &.tick-absent {
-          background: #ffffff;
-          color: #dc2626;
+          background: #FCEEEC;
+          color: #881337;
           border-color: #fca5a5;
 
           &:hover, &.selected {
@@ -332,8 +332,8 @@
         }
 
         &.tick-late {
-          background: #ffffff;
-          color: #d97706;
+          background: #FFFBEB;
+          color: #92400e;
           border-color: #fde68a;
 
           &:hover, &.selected {
@@ -345,8 +345,8 @@
         }
 
         &.tick-excused {
-          background: #ffffff;
-          color: #0284c7;
+          background: #F0F9FF;
+          color: #075985;
           border-color: #bae6fd;
 
           &:hover, &.selected {
