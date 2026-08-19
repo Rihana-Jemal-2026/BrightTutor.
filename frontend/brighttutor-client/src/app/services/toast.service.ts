@@ -11,15 +11,15 @@ export class ToastService {
   private counter = 0;
   toasts = signal<ToastMessage[]>([]);
 
-  showSuccess(message: string, durationMs = 4000) {
+  showSuccess(message: string, durationMs = 2500) {
     this.addToast("success", message, durationMs);
   }
 
-  showError(message: string, durationMs = 5000) {
+  showError(message: string, durationMs = 3000) {
     this.addToast("error", message, durationMs);
   }
 
-  showInfo(message: string, durationMs = 4000) {
+  showInfo(message: string, durationMs = 2500) {
     this.addToast("info", message, durationMs);
   }
 
@@ -27,6 +27,7 @@ export class ToastService {
     const id = ++this.counter;
     const newToast: ToastMessage = { id, type, message };
 
+    // Update toasts signal instantly
     this.toasts.update((current) => [...current, newToast]);
 
     setTimeout(() => {
