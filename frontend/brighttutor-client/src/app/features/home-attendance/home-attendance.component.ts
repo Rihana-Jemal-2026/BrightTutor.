@@ -210,7 +210,7 @@ export class HomeAttendanceComponent implements OnInit {
         this.activeCheckInStudentId.set(null);
       },
       error: (err) => {
-        const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
+        const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong during check-out."];
         const errorText = Array.isArray(messages) ? messages.join(", ") : String(messages);
         this.checkOutError.set(errorText);
         this.toast.showError(errorText);

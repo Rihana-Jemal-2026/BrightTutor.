@@ -32,7 +32,7 @@ public class CheckInHomeAttendanceHandler : IRequestHandler<CheckInHomeAttendanc
     public async Task<Guid> Handle(CheckInHomeAttendanceCommand request, CancellationToken cancellationToken)
     {
         var alreadySubmitted = await _context.Attendances
-            .AnyAsync(a => a.StudentId == request.StudentId && a.ClassGroupId == request.ClassGroupId && a.AttendanceDate == request.AttendanceDate, cancellationToken);
+            .AnyAsync(a => a.StudentId == request.StudentId && a.AttendanceDate == request.AttendanceDate && a.AttendanceType == AttendanceType.Home, cancellationToken);
 
         if (alreadySubmitted)
         {

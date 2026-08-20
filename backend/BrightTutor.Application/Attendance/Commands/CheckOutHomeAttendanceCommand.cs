@@ -28,6 +28,11 @@ public class CheckOutHomeAttendanceHandler : IRequestHandler<CheckOutHomeAttenda
         if (attendance is null)
             return false;
 
+        if (attendance.CheckOutTime.HasValue)
+        {
+            throw new InvalidOperationException("Check-out for this home visit session has already been completed today.");
+        }
+
         attendance.CheckOutTime = DateTime.UtcNow;
 
         var homeDetail = await _context.HomeAttendances
