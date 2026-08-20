@@ -131,7 +131,13 @@ export class HomeAttendanceComponent implements OnInit {
     }
   }
 
+  selectedStudentTargetCoordinates = signal<{ lat: number; lng: number } | null>(null);
+
   selectStudent(student: AssignedHomeStudent) {
+    this.selectedStudentTargetCoordinates.set({
+      lat: student.homeLatitude,
+      lng: student.homeLongitude,
+    });
     this.checkInForm.patchValue({
       studentId: student.studentId,
       teacherId: student.teacherId,
@@ -161,9 +167,12 @@ export class HomeAttendanceComponent implements OnInit {
     }
 
     const raw = this.checkInForm.getRawValue();
+    const target = this.selectedStudentTargetCoordinates();
     this.api
       .checkInHomeAttendance({
         ...raw,
+        targetLatitude: target?.lat,
+        targetLongitude: target?.lng,
         address: raw.address || undefined,
         lessonCovered: raw.lessonCovered || undefined,
       })

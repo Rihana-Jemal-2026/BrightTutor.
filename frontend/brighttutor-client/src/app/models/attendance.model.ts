@@ -107,6 +107,8 @@ export interface CheckInHomeAttendanceRequest {
   attendanceDate: string;
   checkInLatitude: number;
   checkInLongitude: number;
+  targetLatitude?: number;
+  targetLongitude?: number;
   address?: string;
   lessonCovered?: string;
 }
