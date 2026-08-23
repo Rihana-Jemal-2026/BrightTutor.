@@ -18,4 +18,6 @@ public class TeacherAttendance : BaseEntity
 
     public bool IsVerified { get; set; }
     public string? Notes { get; set; }
+
+    public Teacher Teacher { get; set; } = null!;
 }

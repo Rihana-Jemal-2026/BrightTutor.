@@ -22,7 +22,6 @@ export function normalizeId(id: string | null | undefined): string {
   const trimmed = id.trim().toLowerCase();
   
   const mapping: Record<string, string> = {
-    // Standard Student Formats (Emails, Usernames, IDs)
     "student1@brighttutor.com": "33333333-3333-3333-3333-333333333333",
     "student001": "33333333-3333-3333-3333-333333333333",
     "usr-std-001": "33333333-3333-3333-3333-333333333333",
@@ -49,7 +48,6 @@ export function normalizeId(id: string | null | undefined): string {
     "student_home": "55555555-5555-5555-5555-555555555555",
     "stdh1": "55555555-5555-5555-5555-555555555555",
 
-    // Standard Teacher Formats
     "teacher1@brighttutor.com": "22222222-2222-2222-2222-222222222222",
     "teacher001": "22222222-2222-2222-2222-222222222222",
     "usr-tch-001": "22222222-2222-2222-2222-222222222222",
@@ -63,7 +61,6 @@ export function normalizeId(id: string | null | undefined): string {
     "tch-002": "22222222-2222-2222-2222-222222222223",
     "th2": "22222222-2222-2222-2222-222222222223",
 
-    // Standard Class Group Formats
     "class.group1@brighttutor.com": "11111111-1111-1111-1111-111111111111",
     "group001": "11111111-1111-1111-1111-111111111111",
     "grp-001": "11111111-1111-1111-1111-111111111111",
@@ -83,7 +80,6 @@ export function normalizeId(id: string | null | undefined): string {
     return trimmed;
   }
 
-  // Convert custom short text into a valid GUID format automatically
   let hex = "";
   for (let i = 0; i < trimmed.length; i++) {
     hex += trimmed.charCodeAt(i).toString(16);
@@ -111,7 +107,6 @@ export function formatDisplayId(id: string | null | undefined): string {
     return reverseMap[lower];
   }
 
-  // Decode hex-encoded string IDs back into clean text (e.g., 7374642d303033 -> STD-003)
   try {
     const cleanHex = lower.replace(/-/g, "").replace(/0+$/, "");
     if (cleanHex.length % 2 === 0 && cleanHex.length > 0) {
@@ -187,6 +182,14 @@ export class AttendanceService {
       attendanceId: normalizeId(request.attendanceId),
     };
     return this.http.post<{ message: string }>(`${this.baseUrl}/home/checkout`, payload);
+  }
+
+  getHomeAttendance(studentId?: string, attendanceDate?: string) {
+    const params: any = {};
+    if (studentId) params.studentId = normalizeId(studentId);
+    if (attendanceDate) params.attendanceDate = attendanceDate;
+
+    return this.http.get<any[]>(`${this.baseUrl}/home`, { params });
   }
 
   getTeacherReport(teacherId: string, startDate: string, endDate: string) {

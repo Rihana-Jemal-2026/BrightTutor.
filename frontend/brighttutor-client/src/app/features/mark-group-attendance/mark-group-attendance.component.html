@@ -4,131 +4,52 @@
     <div class="header-content">
       <div class="header-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
         </svg>
       </div>
       <div>
         <h1>Mark Group Attendance</h1>
-        <p class="subtitle">Select a class group to load the enrolled student roster and tick session attendance.</p>
+        <p class="subtitle">Select a class group from the dropdown below to load the student roster.</p>
       </div>
     </div>
   </div>
 
-  @if (resultMessage()) {
-    <div class="alert alert-success">
-      <span class="icon">✓</span>
-      <span>{{ resultMessage() }}</span>
-    </div>
-  }
-
-  @if (errorMessage()) {
-    <div class="alert alert-danger">
-      <span class="icon">⚠</span>
-      <span>{{ errorMessage() }}</span>
-    </div>
-  }
-
-  <!-- View Mode / Portal Switcher -->
-  <div class="role-control-bar">
-    <div class="role-toggle-group">
-      <span class="role-label">Portal View:</span>
-      <button
-        type="button"
-        class="role-btn"
-        [class.active]="userRole() === 'teacher'"
-        (click)="setRole('teacher')"
-      >
-        👨‍🏫 Teacher View
-      </button>
-      <button
-        type="button"
-        class="role-btn"
-        [class.active]="userRole() === 'admin'"
-        (click)="setRole('admin')"
-      >
-        👑 Admin View (All Classes)
-      </button>
-    </div>
-
-    @if (userRole() === 'teacher') {
-      <div class="teacher-select-box">
-        <label for="activeTeacherSelect">Logged-in Teacher:</label>
-        <select
-          id="activeTeacherSelect"
-          [value]="activeTeacherId()"
-          (change)="onTeacherChange($any($event.target).value)"
-        >
-          @for (t of teachers; track t.id) {
-            <option [value]="t.id">{{ t.name }} ({{ t.id }})</option>
-          }
-        </select>
+  <!-- Searchable Dropdowns Selection Bar -->
+  <div class="selection-grid-card">
+    @if (!authService.isTeacher()) {
+      <div class="search-select-col">
+        <app-searchable-select
+          label="👨‍🏫 Select Assigned Teacher"
+          placeholder="Choose Teacher..."
+          searchPlaceholder="Type teacher name to search..."
+          [options]="teacherOptions()"
+          [value]="selectedTeacherId()"
+          (valueChange)="onTeacherSelected($event)"
+        ></app-searchable-select>
+      </div>
+    } @else {
+      <div class="search-select-col">
+        <label style="font-weight: 600; color: #1e293b; display: block; margin-bottom: 0.35rem;">👨‍🏫 Assigned Teacher</label>
+        <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: #f8fafc; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px;" readonly disabled />
       </div>
     }
-  </div>
 
-  <!-- Class Group Chooser -->
-  <div class="quick-group-section">
-    <div class="section-header-flex">
-      <label class="section-label">
-        @if (userRole() === 'teacher') {
-          My Assigned Classes ({{ visibleClassGroups.length }})
-        } @else {
-          All School Classes ({{ visibleClassGroups.length }})
-        }
-      </label>
-
-      <span class="filter-badge">
-        @if (userRole() === 'teacher') {
-          Assigned to Teacher {{ activeTeacherId() }}
-        } @else {
-          Admin Mode — Showing All Classes
-        }
-      </span>
-    </div>
-
-    <div class="group-cards-grid">
-      @for (group of visibleClassGroups; track group.groupId) {
-        <button
-          type="button"
-          class="group-card"
-          [class.active]="form.controls.classGroupId.value === group.groupId"
-          (click)="onGroupSelectChange(group.groupId)"
-        >
-          <div class="group-card-header">
-            <span class="badge">{{ group.groupId }}</span>
-            <span class="student-count">{{ group.students.length }} Enrolled</span>
-          </div>
-          <div class="group-card-title">{{ group.groupName }}</div>
-          <div class="group-card-teacher">Assigned Teacher: {{ group.defaultTeacherName }}</div>
-        </button>
-      } @empty {
-        <div class="no-groups-notice">
-          <p>No class groups currently assigned to Teacher ID <strong>{{ activeTeacherId() }}</strong>.</p>
-          <p class="hint">Switch to Admin View or select another teacher above.</p>
-        </div>
-      }
+    <div class="search-select-col">
+      <app-searchable-select
+        label="👥 Select Class Group"
+        placeholder="Choose Class Group..."
+        searchPlaceholder="Type class group name to search..."
+        [options]="groupOptions()"
+        [value]="selectedGroupId()"
+        (valueChange)="onGroupSelected($event)"
+      ></app-searchable-select>
     </div>
   </div>
 
   <!-- Form controls -->
   <form [formGroup]="form" (ngSubmit)="submit()">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="classGroupId">Class Group ID</label>
-        <input id="classGroupId" formControlName="classGroupId" placeholder="e.g. GRP-001" readonly />
-        @if (form.controls.classGroupId.touched && form.controls.classGroupId.invalid) {
-          <span class="field-error">Class Group ID is required.</span>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="teacherId">Teacher ID</label>
-        <input id="teacherId" formControlName="teacherId" placeholder="e.g. TCH-001" />
-        @if (form.controls.teacherId.touched && form.controls.teacherId.invalid) {
-          <span class="field-error">Teacher ID is required.</span>
-        }
-      </div>
-
+    <!-- Session Date -->
+    <div class="date-row-card">
       <div class="form-group">
         <label for="attendanceDate">Session Date</label>
         <input id="attendanceDate" type="date" formControlName="attendanceDate" />
@@ -174,8 +95,7 @@
               {{ (asFormGroup(student).controls['studentName'].value || 'S').charAt(0) }}
             </div>
             <div class="name-box">
-              <span class="student-name">{{ asFormGroup(student).controls['studentName'].value || 'Registered Student' }}</span>
-              <span class="student-id">{{ asFormGroup(student).controls['studentId'].value }}</span>
+              <span class="student-name">{{ asFormGroup(student).controls['studentName'].value || 'Student' }}</span>
             </div>
           </div>
 
@@ -230,33 +150,31 @@
           <div class="student-notes">
             <input formControlName="notes" placeholder="Add optional note..." />
           </div>
-
-          <!-- Remove student action -->
-          <button
-            type="button"
-            class="btn-remove"
-            (click)="removeStudent($index)"
-            title="Remove from session"
-          >
-            &times;
-          </button>
         </div>
       } @empty {
         <div class="empty-state">
-          <p>No students currently in this roster.</p>
-          <button type="button" class="btn-secondary" (click)="addCustomStudent()">
-            + Add Extra Student
-          </button>
+          <p>No students found for the selected group.</p>
         </div>
       }
     </div>
 
+    <!-- Feedback Alerts at Bottom -->
+    @if (resultMessage()) {
+      <div class="alert alert-success mt-3">
+        <span class="icon">✓</span>
+        <span>{{ resultMessage() }}</span>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-danger mt-3">
+        <span class="icon">⚠</span>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
     <!-- Actions toolbar -->
     <div class="form-footer">
-      <button type="button" class="btn-secondary" (click)="addCustomStudent()">
-        + Add Extra Student
-      </button>
-
       <button type="submit" class="btn-submit" [disabled]="form.invalid || students.length === 0">
         Submit Group Attendance ({{ students.length }})
       </button>

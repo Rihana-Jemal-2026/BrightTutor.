@@ -2,30 +2,46 @@
   <h1>Student Attendance Calendar</h1>
 
   <div class="search-bar">
-    <div class="field"><label>Student ID</label><input [(ngModel)]="studentId" name="studentId" placeholder="e.g. STD-001" /></div>
-    <div class="field"><label>Year</label><input type="number" [(ngModel)]="year" name="year" /></div>
-    <div class="field"><label>Month</label><input type="number" min="1" max="12" [(ngModel)]="month" name="month" /></div>
-    <button type="button" (click)="search()">Search</button>
+    @if (!authService.isStudent()) {
+      <div class="field select-field">
+        <app-searchable-select
+          label="🎓 Select Student"
+          placeholder="Choose Student..."
+          searchPlaceholder="Type student name to search..."
+          [options]="studentOptions()"
+          [value]="studentId()"
+          (valueChange)="onStudentSelected($event)"
+        ></app-searchable-select>
+      </div>
+    } @else {
+      <div class="field">
+        <label>Logged-In Student</label>
+        <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" readonly disabled />
+      </div>
+    }
+    <div class="field"><label>Year</label><input type="number" [(ngModel)]="year" name="year" class="form-control" /></div>
+    <div class="field"><label>Month</label><input type="number" min="1" max="12" [(ngModel)]="month" name="month" class="form-control" /></div>
+    <button type="button" class="btn-search" (click)="search()">Search</button>
   </div>
 
   @if (calendarResource.isLoading()) {
-    <div class="spinner">Loading...</div>
+    <div class="spinner">Loading calendar records...</div>
   } @else if (calendarResource.error()) {
-    <div class="error">Could not load. Make sure the backend is running.</div>
+    <div class="error">Could not load attendance calendar. Make sure backend is running.</div>
   } @else {
     <div class="day-list">
       @for (day of calendarResource.value()!; track $index) {
         <div class="day-row">
-          <span class="date">{{ day.date }}</span>
-          <span class="type-badge">{{ typeLabels[day.attendanceType] }}</span>
-          <span class="status-badge" [attr.data-status]="day.status">{{ statusLabels[day.status] }}</span>
+          <span class="date">📅 {{ day.date }}</span>
+          <span class="type-badge">{{ getTypeLabel(day.attendanceType) }}</span>
+          <span class="status-badge" [class]="getStatusClass(day.status)">{{ getStatusLabel(day.status) }}</span>
           <span class="times">
-            @if (day.checkInTime) { In: {{ day.checkInTime | slice:11:16 }} }
-            @if (day.checkOutTime) { &nbsp;Out: {{ day.checkOutTime | slice:11:16 }} }
+            @if (day.checkInTime) { In: {{ day.checkInTime | date:'shortTime' }} }
+            @if (day.checkOutTime) { &nbsp;| Out: {{ day.checkOutTime | date:'shortTime' }} }
           </span>
         </div>
       } @empty {
-        <p class="empty-hint">No attendance records for this student in this month.</p>
+        <p class="empty-hint">No attendance records found for this student in this month.</p>
       }
     </div>
   }

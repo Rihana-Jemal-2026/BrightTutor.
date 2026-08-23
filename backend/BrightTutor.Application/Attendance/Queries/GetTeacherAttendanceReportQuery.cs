@@ -26,8 +26,18 @@ public class GetTeacherAttendanceReportHandler
     public async Task<GetTeacherAttendanceReportResponse> Handle(
         GetTeacherAttendanceReportQuery request, CancellationToken cancellationToken)
     {
+        // Resolve TeacherId (support either Teacher.Id or User.Id)
+        var teacherEntity = await _context.Teachers
+            .Include(t => t.User)
+            .FirstOrDefaultAsync(t => t.Id == request.TeacherId || t.UserId == request.TeacherId, cancellationToken);
+
+        var actualTeacherId = teacherEntity?.Id ?? request.TeacherId;
+        var teacherName = teacherEntity?.User != null 
+            ? $"{teacherEntity.User.FirstName} {teacherEntity.User.LastName}" 
+            : "Teacher";
+
         var records = await _context.TeacherAttendances
-            .Where(t => t.TeacherId == request.TeacherId
+            .Where(t => t.TeacherId == actualTeacherId
                      && t.AttendanceDate >= request.StartDate
                      && t.AttendanceDate <= request.EndDate)
             .ToListAsync(cancellationToken);
@@ -42,7 +52,8 @@ public class GetTeacherAttendanceReportHandler
 
         return new GetTeacherAttendanceReportResponse
         {
-            TeacherId = request.TeacherId,
+            TeacherId = actualTeacherId,
+            TeacherName = teacherName,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             TotalRecords = total,

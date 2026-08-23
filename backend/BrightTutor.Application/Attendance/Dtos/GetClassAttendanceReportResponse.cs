@@ -1,14 +1,13 @@
-using BrightTutor.Domain.Enums;
-
 namespace BrightTutor.Application.Attendance.Dtos;
 
 public class GetClassAttendanceReportResponse
 {
     public Guid ClassGroupId { get; set; }
+    public string ClassGroupName { get; set; } = string.Empty;
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public int TotalSessions { get; set; }
-    public int TotalStudentRecords { get; set; }
+    public int TotalRecords { get; set; }
     public int PresentCount { get; set; }
     public int AbsentCount { get; set; }
     public int LateCount { get; set; }
@@ -20,9 +19,10 @@ public class GetClassAttendanceReportResponse
 public class StudentReportItemDto
 {
     public Guid StudentId { get; set; }
-    public int Present { get; set; }
-    public int Absent { get; set; }
-    public int Late { get; set; }
-    public int Excused { get; set; }
-    public double Percentage { get; set; }
+    public string StudentName { get; set; } = string.Empty;
+    public int PresentCount { get; set; }
+    public int AbsentCount { get; set; }
+    public int LateCount { get; set; }
+    public int ExcusedCount { get; set; }
+    public double AttendancePercentage { get; set; }
 }

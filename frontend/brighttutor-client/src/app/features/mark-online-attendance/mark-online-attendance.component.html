@@ -9,7 +9,7 @@
       </div>
       <div>
         <h1>Mark Online Attendance</h1>
-        <p class="subtitle">Select an online student to tick session attendance.</p>
+        <p class="subtitle">Select an online student and group using searchable dropdowns.</p>
       </div>
     </div>
   </div>
@@ -28,157 +28,101 @@
     </div>
   }
 
-  <!-- View Mode / Portal Switcher -->
-  <div class="role-control-bar">
-    <div class="role-toggle-group">
-      <span class="role-label">Portal View:</span>
-      <button
-        type="button"
-        class="role-btn"
-        [class.active]="userRole() === 'teacher'"
-        (click)="setRole('teacher')"
-      >
-        👨‍🏫 Teacher View
-      </button>
-      <button
-        type="button"
-        class="role-btn"
-        [class.active]="userRole() === 'admin'"
-        (click)="setRole('admin')"
-      >
-        👑 Admin View (All Students)
-      </button>
-    </div>
-
-    @if (userRole() === 'teacher') {
-      <div class="teacher-select-box">
-        <label for="activeTeacherSelect">Logged-in Teacher:</label>
-        <select
-          id="activeTeacherSelect"
-          [value]="activeTeacherId()"
-          (change)="onTeacherChange($any($event.target).value)"
-        >
-          @for (t of teachers; track t.id) {
-            <option [value]="t.id">{{ t.name }} ({{ t.id }})</option>
-          }
-        </select>
+  <!-- Session Details Form -->
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-card">
+    <div class="form-grid">
+      <div class="field-group">
+        <app-searchable-select
+          label="🎓 Select Online Student"
+          placeholder="Choose Student..."
+          searchPlaceholder="Type student name to search..."
+          [options]="studentOptions()"
+          [value]="selectedStudentId()"
+          (valueChange)="onStudentSelected($event)"
+        ></app-searchable-select>
       </div>
-    }
-  </div>
 
-  <!-- Assigned Online Students Roster -->
-  <div class="roster-section">
-    <div class="section-header-flex">
-      <label class="section-label">
-        @if (userRole() === 'teacher') {
-          My Assigned Online Students ({{ visibleStudents.length }})
-        } @else {
-          All Online Students ({{ visibleStudents.length }})
-        }
-      </label>
-
-      <span class="filter-badge">
-        @if (userRole() === 'teacher') {
-          Assigned to Teacher {{ activeTeacherId() }}
-        } @else {
-          Admin Mode — Showing All Online Students
-        }
-      </span>
-    </div>
-
-    <div class="students-list">
-      @for (student of visibleStudents; track student.studentId) {
-        <div
-          class="student-card"
-          [class.selected]="form.controls.studentId.value === student.studentId"
-          (click)="selectStudent(student)"
-        >
-          <div class="student-info">
-            <div class="avatar">{{ student.studentName.charAt(0) }}</div>
-            <div class="details">
-              <span class="student-name">{{ student.studentName }}</span>
-              <span class="subject-tag">{{ student.subject }}</span>
-              <span class="student-meta">ID: {{ student.studentId }} | Group: {{ student.classGroupId }} | Teacher: {{ student.teacherName }}</span>
-            </div>
-          </div>
-
-          <div class="tick-actions">
-            <button
-              type="button"
-              class="btn-tick tick-present"
-              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Present"
-              (click)="quickSubmitStatus(student, AttendanceStatus.Present); $event.stopPropagation()"
-            >
-              ✓ Present
-            </button>
-            <button
-              type="button"
-              class="btn-tick tick-absent"
-              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Absent"
-              (click)="quickSubmitStatus(student, AttendanceStatus.Absent); $event.stopPropagation()"
-            >
-              ✕ Absent
-            </button>
-            <button
-              type="button"
-              class="btn-tick tick-late"
-              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Late"
-              (click)="quickSubmitStatus(student, AttendanceStatus.Late); $event.stopPropagation()"
-            >
-              ⏱ Late
-            </button>
-            <button
-              type="button"
-              class="btn-tick tick-excused"
-              [class.selected]="getStudentStatus(student.studentId) === AttendanceStatus.Excused"
-              (click)="quickSubmitStatus(student, AttendanceStatus.Excused); $event.stopPropagation()"
-            >
-              ✉ Excused
-            </button>
-          </div>
+      @if (!authService.isTeacher()) {
+        <div class="field-group">
+          <app-searchable-select
+            label="👨‍🏫 Select Teacher"
+            placeholder="Choose Teacher..."
+            searchPlaceholder="Type teacher name to search..."
+            [options]="teacherOptions()"
+            [value]="selectedTeacherId()"
+            (valueChange)="onTeacherSelected($event)"
+          ></app-searchable-select>
         </div>
-      } @empty {
-        <div class="empty-notice">
-          <p>No 1-on-1 online students currently assigned to Teacher ID <strong>{{ activeTeacherId() }}</strong>.</p>
+      } @else {
+        <div class="field-group">
+          <label style="font-weight: 600; color: #1e293b; display: block; margin-bottom: 0.35rem;">👨‍🏫 Assigned Teacher</label>
+          <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: #f8fafc; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px;" readonly disabled />
         </div>
       }
-    </div>
-  </div>
 
-  <!-- Manual Details Form -->
-  <form [formGroup]="form" (ngSubmit)="submit()" class="form-card">
-    <h3>Session & Notes Details</h3>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="studentId">Student ID</label>
-        <input id="studentId" formControlName="studentId" placeholder="e.g. STD-ONLINE" />
+      <div class="field-group">
+        <app-searchable-select
+          label="👥 Select Class Group (Optional)"
+          placeholder="Choose Class Group..."
+          searchPlaceholder="Type group name to search..."
+          [options]="groupOptions()"
+          [value]="selectedGroupId()"
+          (valueChange)="onGroupSelected($event)"
+        ></app-searchable-select>
       </div>
 
-      <div class="form-group">
-        <label for="teacherId">Teacher ID</label>
-        <input id="teacherId" formControlName="teacherId" placeholder="e.g. TCH-001" />
-      </div>
-
-      <div class="form-group">
-        <label for="classGroupId">Class Group ID</label>
-        <input id="classGroupId" formControlName="classGroupId" placeholder="e.g. GRP-001" />
-      </div>
-
-      <div class="form-group">
+      <div class="field-group">
         <label for="attendanceDate">Attendance Date</label>
-        <input id="attendanceDate" type="date" formControlName="attendanceDate" />
+        <input id="attendanceDate" type="date" formControlName="attendanceDate" class="form-control" />
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="field-group status-buttons-group">
+      <label>Session Attendance Status</label>
+      <div class="status-buttons">
+        <button
+          type="button"
+          class="btn-status status-present"
+          [class.active]="form.controls.status.value === AttendanceStatus.Present"
+          (click)="setStatus(AttendanceStatus.Present)"
+        >
+          ✓ Present
+        </button>
+        <button
+          type="button"
+          class="btn-status status-absent"
+          [class.active]="form.controls.status.value === AttendanceStatus.Absent"
+          (click)="setStatus(AttendanceStatus.Absent)"
+        >
+          ✕ Absent
+        </button>
+        <button
+          type="button"
+          class="btn-status status-late"
+          [class.active]="form.controls.status.value === AttendanceStatus.Late"
+          (click)="setStatus(AttendanceStatus.Late)"
+        >
+          ⏱ Late
+        </button>
+        <button
+          type="button"
+          class="btn-status status-excused"
+          [class.active]="form.controls.status.value === AttendanceStatus.Excused"
+          (click)="setStatus(AttendanceStatus.Excused)"
+        >
+          ✉ Excused
+        </button>
+      </div>
+    </div>
+
+    <div class="field-group">
       <label for="notes">Session Notes (Optional)</label>
-      <input id="notes" formControlName="notes" placeholder="e.g. Covered Chapter 4 Algebra, camera and mic connected cleanly." />
+      <input id="notes" formControlName="notes" placeholder="e.g. Covered Chapter 4 Algebra, camera and mic connected cleanly." class="form-control" />
     </div>
 
     <div class="form-actions">
       <button type="submit" class="btn-submit" [disabled]="form.invalid">
-        Submit Selected Session
+        Submit Online Session Attendance
       </button>
     </div>
   </form>

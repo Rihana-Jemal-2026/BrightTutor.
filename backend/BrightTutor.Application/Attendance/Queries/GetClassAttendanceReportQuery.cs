@@ -27,10 +27,15 @@ public class GetClassAttendanceReportHandler
         GetClassAttendanceReportQuery request, CancellationToken cancellationToken)
     {
         var records = await _context.Attendances
+            .Include(a => a.Student).ThenInclude(st => st.User)
+            .Include(a => a.ClassGroup)
             .Where(a => a.ClassGroupId == request.ClassGroupId
                      && a.AttendanceDate >= request.StartDate
                      && a.AttendanceDate <= request.EndDate)
             .ToListAsync(cancellationToken);
+
+        var classGroup = await _context.ClassGroups.FirstOrDefaultAsync(g => g.Id == request.ClassGroupId, cancellationToken);
+        var classGroupName = classGroup?.Name ?? "Class Group";
 
         var totalSessions = records.Select(a => a.AttendanceDate).Distinct().Count();
         var totalStudentRecords = records.Count;
@@ -49,24 +54,31 @@ public class GetClassAttendanceReportHandler
             {
                 var sTotal = g.Count();
                 var sPresent = g.Count(r => r.Status == AttendanceStatus.Present);
+                var firstRecord = g.First();
+                var sName = firstRecord.Student?.User != null 
+                    ? $"{firstRecord.Student.User.FirstName} {firstRecord.Student.User.LastName}" 
+                    : "Student";
+
                 return new StudentReportItemDto
                 {
                     StudentId = g.Key,
-                    Present = sPresent,
-                    Absent = g.Count(r => r.Status == AttendanceStatus.Absent),
-                    Late = g.Count(r => r.Status == AttendanceStatus.Late),
-                    Excused = g.Count(r => r.Status == AttendanceStatus.Excused),
-                    Percentage = sTotal == 0 ? 0 : Math.Round((double)sPresent / sTotal * 100, 1)
+                    StudentName = sName,
+                    PresentCount = sPresent,
+                    AbsentCount = g.Count(r => r.Status == AttendanceStatus.Absent),
+                    LateCount = g.Count(r => r.Status == AttendanceStatus.Late),
+                    ExcusedCount = g.Count(r => r.Status == AttendanceStatus.Excused),
+                    AttendancePercentage = sTotal == 0 ? 0 : Math.Round((double)sPresent / sTotal * 100, 1)
                 };
             }).ToList();
 
         return new GetClassAttendanceReportResponse
         {
             ClassGroupId = request.ClassGroupId,
+            ClassGroupName = classGroupName,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             TotalSessions = totalSessions,
-            TotalStudentRecords = totalStudentRecords,
+            TotalRecords = totalStudentRecords,
             PresentCount = present,
             AbsentCount = absent,
             LateCount = late,

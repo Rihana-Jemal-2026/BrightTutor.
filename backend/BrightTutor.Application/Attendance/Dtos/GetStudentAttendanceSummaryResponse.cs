@@ -3,6 +3,7 @@ namespace BrightTutor.Application.Attendance.Dtos;
 public class GetStudentAttendanceSummaryResponse
 {
     public Guid StudentId { get; set; }
+    public string StudentName { get; set; } = string.Empty;
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
 

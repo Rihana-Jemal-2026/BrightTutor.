@@ -23,24 +23,54 @@ public class ExceptionHandlingMiddleware
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            var errors = ex.Errors.Select(e => e.ErrorMessage);
-            await context.Response.WriteAsync(JsonSerializer.Serialize(new { errors }));
+            var errors = ex.Errors.Select(e => e.ErrorMessage).ToList();
+            var response = new
+            {
+                statusCode = (int)HttpStatusCode.BadRequest,
+                message = "Validation Failed",
+                errors = errors,
+                timestamp = DateTime.UtcNow
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
         catch (InvalidOperationException ex)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await context.Response.WriteAsync(JsonSerializer.Serialize(new { errors = new[] { ex.Message } }));
+            var response = new
+            {
+                statusCode = (int)HttpStatusCode.BadRequest,
+                message = ex.Message,
+                errors = new[] { ex.Message },
+                timestamp = DateTime.UtcNow
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            var response = new
+            {
+                statusCode = (int)HttpStatusCode.Unauthorized,
+                message = "Unauthorized Access",
+                errors = new[] { ex.Message },
+                timestamp = DateTime.UtcNow
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
         catch (Exception ex)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await context.Response.WriteAsync(JsonSerializer.Serialize(new
+            var response = new
             {
-                error = "An unexpected error occurred.",
-                detail = ex.Message
-            }));
+                statusCode = (int)HttpStatusCode.InternalServerError,
+                message = "An unexpected error occurred.",
+                errors = new[] { ex.Message },
+                timestamp = DateTime.UtcNow
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
     }
 }

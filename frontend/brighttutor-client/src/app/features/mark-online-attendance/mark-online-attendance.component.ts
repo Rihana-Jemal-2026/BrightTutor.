@@ -1,141 +1,123 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { UserService } from "../../services/user.service";
+import { CourseService } from "../../services/course.service";
+import { AuthService } from "../../services/auth.service";
 import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus } from "../../models/attendance.model";
-
-export interface AssignedOnlineStudent {
-  studentId: string;
-  studentName: string;
-  subject: string;
-  classGroupId: string;
-  teacherId: string;
-  teacherName: string;
-}
-
-export interface TeacherOption {
-  id: string;
-  name: string;
-}
+import { SearchableSelectComponent, SelectOption } from "../../components/searchable-select/searchable-select.component";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-mark-online-attendance",
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchableSelectComponent],
   templateUrl: "./mark-online-attendance.component.html",
   styleUrl: "./mark-online-attendance.component.scss",
 })
 export class MarkOnlineAttendanceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private userService = inject(UserService);
+  private courseService = inject(CourseService);
+  public authService = inject(AuthService);
   private toast = inject(ToastService);
 
   readonly AttendanceStatus = AttendanceStatus;
 
-  teachers: TeacherOption[] = [
-    { id: "TCH-001", name: "Mr. Robert Davis" },
-    { id: "TCH-002", name: "Dr. Sarah Jenkins" },
-    { id: "TCH-003", name: "Ms. Amanda Clark" },
-  ];
+  studentOptions = signal<SelectOption[]>([]);
+  teacherOptions = signal<SelectOption[]>([]);
+  groupOptions = signal<SelectOption[]>([]);
 
-  userRole = signal<"admin" | "teacher">("teacher");
-  activeTeacherId = signal<string>("TCH-001");
-
-  // Admin-assigned online students
-  assignedStudents: AssignedOnlineStudent[] = [
-    {
-      studentId: "STD-ONLINE",
-      studentName: "Emily Watson",
-      subject: "Mathematics 1-on-1 Online",
-      classGroupId: "GRP-001",
-      teacherId: "TCH-001",
-      teacherName: "Mr. Robert Davis",
-    },
-    {
-      studentId: "STD-001",
-      studentName: "Alex Morgan",
-      subject: "Physics 1-on-1 Online",
-      classGroupId: "GRP-001",
-      teacherId: "TCH-001",
-      teacherName: "Mr. Robert Davis",
-    },
-    {
-      studentId: "STD-007",
-      studentName: "Liam Smith",
-      subject: "Chemistry 1-on-1 Online",
-      classGroupId: "GRP-002",
-      teacherId: "TCH-002",
-      teacherName: "Dr. Sarah Jenkins",
-    },
-    {
-      studentId: "STD-014",
-      studentName: "Oliver Harris",
-      subject: "Biology 1-on-1 Online",
-      classGroupId: "GRP-004",
-      teacherId: "TCH-003",
-      teacherName: "Ms. Amanda Clark",
-    },
-  ];
-
-  get visibleStudents(): AssignedOnlineStudent[] {
-    if (this.userRole() === "admin") {
-      return this.assignedStudents;
-    }
-    return this.assignedStudents.filter((s) => s.teacherId === this.activeTeacherId());
-  }
+  selectedStudentId = signal<string>('');
+  selectedTeacherId = signal<string>('');
+  selectedGroupId = signal<string>('');
 
   resultMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
-  form = this.fb.nonNullable.group({
-    studentId: ["STD-ONLINE", Validators.required],
-    teacherId: ["TCH-001", Validators.required],
-    classGroupId: ["GRP-001", Validators.required],
-    attendanceDate: [new Date().toISOString().substring(0, 10), Validators.required],
+  form = this.fb.group({
+    studentId: ["", Validators.required],
+    teacherId: ["", Validators.required],
+    classGroupId: [""],
+    attendanceDate: [new Date().toISOString().split("T")[0], Validators.required],
     status: [AttendanceStatus.Present, Validators.required],
     notes: [""],
   });
 
   ngOnInit() {
-    this.refreshSelection();
+    this.loadData();
   }
 
-  setRole(role: "admin" | "teacher") {
-    this.userRole.set(role);
-    this.refreshSelection();
-  }
+  loadData() {
+    // Fetch Students (Role 3 = Student)
+    this.userService.getUsers(3).subscribe({
+      next: (students) => {
+        const opts = students.map(s => ({
+          id: s.id,
+          name: `${s.firstName} ${s.lastName}`,
+          subtext: s.email
+        }));
+        this.studentOptions.set(opts);
+        if (opts.length > 0) this.onStudentSelected(opts[0].id);
+      }
+    });
 
-  onTeacherChange(teacherId: string) {
-    this.activeTeacherId.set(teacherId);
-    this.refreshSelection();
-  }
-
-  refreshSelection() {
-    const list = this.visibleStudents;
-    if (list.length > 0) {
-      this.selectStudent(list[0]);
+    const user = this.authService.currentUser();
+    if (this.authService.isTeacher() && user) {
+      this.selectedTeacherId.set(user.userId);
+      this.form.patchValue({ teacherId: user.userId });
+      this.teacherOptions.set([{
+        id: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        subtext: user.email
+      }]);
+    } else {
+      this.userService.getUsers(2).subscribe({
+        next: (teachers) => {
+          const opts = teachers.map(t => ({
+            id: t.id,
+            name: `${t.firstName} ${t.lastName}`,
+            subtext: t.email
+          }));
+          this.teacherOptions.set(opts);
+          if (opts.length > 0) this.onTeacherSelected(opts[0].id);
+        }
+      });
     }
-  }
 
-  selectStudent(student: AssignedOnlineStudent) {
-    this.form.patchValue({
-      studentId: student.studentId,
-      teacherId: student.teacherId,
-      classGroupId: student.classGroupId,
+    // Fetch Class Groups
+    this.courseService.getClassGroups().subscribe({
+      next: (groups) => {
+        const opts = groups.map(g => ({
+          id: g.id,
+          name: g.name,
+          subtext: g.courseName
+        }));
+        this.groupOptions.set(opts);
+        if (opts.length > 0) this.onGroupSelected(opts[0].id);
+      }
     });
   }
 
-  studentStatusMap = signal<Record<string, AttendanceStatus | null>>({});
-
-  getStudentStatus(studentId: string): AttendanceStatus | null {
-    return this.studentStatusMap()[studentId] ?? null;
+  onStudentSelected(studentId: string) {
+    this.selectedStudentId.set(studentId);
+    this.form.patchValue({ studentId });
   }
 
-  quickSubmitStatus(student: AssignedOnlineStudent, status: AttendanceStatus) {
-    this.selectStudent(student);
+  onTeacherSelected(teacherId: string) {
+    this.selectedTeacherId.set(teacherId);
+    this.form.patchValue({ teacherId });
+  }
+
+  onGroupSelected(groupId: string) {
+    this.selectedGroupId.set(groupId);
+    this.form.patchValue({ classGroupId: groupId });
+  }
+
+  setStatus(status: AttendanceStatus) {
     this.form.patchValue({ status });
-    this.studentStatusMap.update((map) => ({ ...map, [student.studentId]: status }));
-    this.submit();
   }
 
   submit() {
@@ -148,9 +130,18 @@ export class MarkOnlineAttendanceComponent implements OnInit {
     }
 
     const raw = this.form.getRawValue();
-    this.api.markOnlineAttendance({ ...raw, notes: raw.notes || undefined }).subscribe({
-      next: () => {
-        const msg = `Success: Online attendance recorded for ${raw.studentId}.`;
+    const payload = {
+      studentId: raw.studentId!,
+      teacherId: raw.teacherId!,
+      classGroupId: raw.classGroupId || "",
+      attendanceDate: raw.attendanceDate!,
+      status: raw.status!,
+      notes: raw.notes || undefined,
+    };
+
+    this.api.markOnlineAttendance(payload).subscribe({
+      next: (res) => {
+        const msg = `Success: Online session attendance recorded for date ${raw.attendanceDate}.`;
         this.resultMessage.set(msg);
         this.toast.showSuccess(msg);
       },

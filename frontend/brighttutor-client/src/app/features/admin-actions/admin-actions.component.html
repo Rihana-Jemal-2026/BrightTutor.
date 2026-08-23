@@ -1,5 +1,5 @@
 <div class="page">
-  <h1>Admin Actions</h1>
+  <h1>Admin Actions & Attendance Correction</h1>
 
   <div class="card">
     <h2>Correct Attendance Record</h2>
@@ -7,20 +7,32 @@
     @if (updateError()) { <div class="error">{{ updateError() }}</div> }
 
     <form [formGroup]="updateForm" (ngSubmit)="submitUpdate()">
-      <label>Attendance ID</label>
-      <input formControlName="attendanceId" placeholder="GUID of the record to correct" />
+      <div class="field-group">
+        <app-searchable-select
+          label="📋 Select Attendance Record to Correct"
+          placeholder="Choose Attendance Record..."
+          searchPlaceholder="Search record by student name or date..."
+          [options]="attendanceRecordOptions()"
+          [value]="selectedUpdateId()"
+          (valueChange)="onUpdateRecordSelected($event)"
+        ></app-searchable-select>
+      </div>
 
-      <label>New Status</label>
-      <select formControlName="newStatus">
-        @for (option of statusOptions; track option.value) {
-          <option [ngValue]="option.value">{{ option.label }}</option>
-        }
-      </select>
+      <div class="field-group">
+        <label for="newStatus">New Attendance Status</label>
+        <select id="newStatus" formControlName="newStatus" class="form-control">
+          @for (option of statusOptions; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
 
-      <label>Notes</label>
-      <input formControlName="notes" />
+      <div class="field-group">
+        <label for="updateNotes">Correction Notes</label>
+        <input id="updateNotes" formControlName="notes" placeholder="Reason for correction..." class="form-control" />
+      </div>
 
-      <button type="submit" [disabled]="updateForm.invalid">Update Record</button>
+      <button type="submit" class="btn-submit" [disabled]="updateForm.invalid">Update Record</button>
     </form>
   </div>
 
@@ -30,19 +42,31 @@
     @if (verifyError()) { <div class="error">{{ verifyError() }}</div> }
 
     <form [formGroup]="verifyForm" (ngSubmit)="submitVerify()">
-      <label>Attendance ID</label>
-      <input formControlName="attendanceId" placeholder="GUID of the home visit" />
+      <div class="field-group">
+        <app-searchable-select
+          label="🏠 Select Home Visit Record to Verify"
+          placeholder="Choose Home Visit Record..."
+          searchPlaceholder="Search record by student or date..."
+          [options]="attendanceRecordOptions()"
+          [value]="selectedVerifyId()"
+          (valueChange)="onVerifyRecordSelected($event)"
+        ></app-searchable-select>
+      </div>
 
-      <label>Verified?</label>
-      <select formControlName="isVerified">
-        <option [ngValue]="true">Yes - Verified</option>
-        <option [ngValue]="false">No - Rejected</option>
-      </select>
+      <div class="field-group">
+        <label for="isVerified">Verification Status</label>
+        <select id="isVerified" formControlName="isVerified" class="form-control">
+          <option [ngValue]="true">Yes - Verified</option>
+          <option [ngValue]="false">No - Rejected</option>
+        </select>
+      </div>
 
-      <label>Distance from Student Home (meters)</label>
-      <input type="number" formControlName="distanceFromStudentHomeInMeters" />
+      <div class="field-group">
+        <label for="distanceFromStudentHomeInMeters">Distance from Student Home (meters)</label>
+        <input id="distanceFromStudentHomeInMeters" type="number" formControlName="distanceFromStudentHomeInMeters" class="form-control" />
+      </div>
 
-      <button type="submit" [disabled]="verifyForm.invalid">Verify</button>
+      <button type="submit" class="btn-submit" [disabled]="verifyForm.invalid">Verify Home Visit</button>
     </form>
   </div>
 </div>

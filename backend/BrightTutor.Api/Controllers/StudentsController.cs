@@ -1,0 +1,41 @@
+using BrightTutor.Application.Students.Commands.CreateStudent;
+using BrightTutor.Application.Students.Queries.GetStudentById;
+using BrightTutor.Application.Students.Queries.GetStudentsList;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BrightTutor.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class StudentsController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public StudentsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<CreateStudentResponse>> CreateStudent([FromBody] CreateStudentCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetStudentById), new { id = result.StudentId }, result);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<StudentDto>>> GetStudents([FromQuery] string? gradeLevel)
+    {
+        var result = await _mediator.Send(new GetStudentsListQuery { GradeLevel = gradeLevel });
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<StudentDto>> GetStudentById(Guid id)
+    {
+        var result = await _mediator.Send(new GetStudentByIdQuery { StudentId = id });
+        if (result == null) return NotFound();
+        return Ok(result);
+    }
+}

@@ -1,4 +1,5 @@
 using BrightTutor.Application.Abstractions.Persistence;
+using BrightTutor.Domain.Entities;
 using BrightTutor.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,25 +27,82 @@ public class MarkOnlineAttendanceHandler : IRequestHandler<MarkOnlineAttendanceC
 
     public async Task<Guid> Handle(MarkOnlineAttendanceCommand request, CancellationToken cancellationToken)
     {
-        var alreadySubmitted = await _context.Attendances
-            .AnyAsync(a => a.StudentId == request.StudentId && a.ClassGroupId == request.ClassGroupId && a.AttendanceDate == request.AttendanceDate, cancellationToken);
+        // Resolve TeacherId (support either Teacher.Id or User.Id)
+        var teacher = await _context.Teachers
+            .FirstOrDefaultAsync(t => t.Id == request.TeacherId || t.UserId == request.TeacherId, cancellationToken);
+        var actualTeacherId = teacher?.Id ?? request.TeacherId;
 
-        if (alreadySubmitted)
+        // Resolve StudentId (support either Student.Id or User.Id)
+        var studentEntity = await _context.Students
+            .FirstOrDefaultAsync(st => st.Id == request.StudentId || st.UserId == request.StudentId, cancellationToken);
+        var actualStudentId = studentEntity?.Id ?? request.StudentId;
+
+        // Check if attendance already exists for this student on this date (UPSERT Strategy)
+        var existingRecord = await _context.Attendances
+            .FirstOrDefaultAsync(a => a.StudentId == actualStudentId && a.ClassGroupId == request.ClassGroupId && a.AttendanceDate == request.AttendanceDate, cancellationToken);
+
+        Domain.Entities.Attendance attendance;
+
+        if (existingRecord != null)
         {
-            throw new InvalidOperationException($"Online attendance for this student on {request.AttendanceDate} has already been submitted today.");
+            // Update existing attendance
+            existingRecord.Status = request.Status;
+            existingRecord.TeacherId = actualTeacherId;
+            existingRecord.Notes = request.Notes;
+            existingRecord.UpdatedAt = DateTime.UtcNow;
+            attendance = existingRecord;
         }
-        var attendance = new Domain.Entities.Attendance
+        else
         {
-            StudentId = request.StudentId,
-            TeacherId = request.TeacherId,
-            ClassGroupId = request.ClassGroupId,
-            AttendanceType = AttendanceType.Online,
-            Status = request.Status,
-            AttendanceDate = request.AttendanceDate,
-            Notes = request.Notes
-        };
+            // Insert new attendance
+            attendance = new Domain.Entities.Attendance
+            {
+                StudentId = actualStudentId,
+                TeacherId = actualTeacherId,
+                ClassGroupId = request.ClassGroupId,
+                AttendanceType = AttendanceType.Online,
+                Status = request.Status,
+                AttendanceDate = request.AttendanceDate,
+                Notes = request.Notes
+            };
+            _context.Attendances.Add(attendance);
+        }
 
-        _context.Attendances.Add(attendance);
+        // Automated Notification Trigger for Absent or Late Online Sessions (Module 5 Integration)
+        if (request.Status == AttendanceStatus.Absent || request.Status == AttendanceStatus.Late)
+        {
+            if (studentEntity != null)
+            {
+                var studentWithParent = await _context.Students
+                    .Include(st => st.Parent)
+                    .FirstOrDefaultAsync(st => st.Id == studentEntity.Id, cancellationToken);
+
+                if (studentWithParent != null)
+                {
+                    _context.Notifications.Add(new Notification
+                    {
+                        UserId = studentWithParent.UserId,
+                        Title = "Online Class Attendance Alert",
+                        Message = $"Your attendance status was recorded as {request.Status} for online class on {request.AttendanceDate}.",
+                        Type = NotificationType.AttendanceAlert,
+                        Status = NotificationStatus.Unread
+                    });
+
+                    if (studentWithParent.Parent != null)
+                    {
+                        _context.Notifications.Add(new Notification
+                        {
+                            UserId = studentWithParent.Parent.UserId,
+                            Title = "Student Online Attendance Alert",
+                            Message = $"Student ({studentWithParent.StudentCode}) attendance status was recorded as {request.Status} for online class on {request.AttendanceDate}.",
+                            Type = NotificationType.AttendanceAlert,
+                            Status = NotificationStatus.Unread
+                        });
+                    }
+                }
+            }
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return attendance.Id;

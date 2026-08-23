@@ -2,19 +2,25 @@
   <h1>Class Attendance Report</h1>
 
   <div class="search-bar">
-    <div class="field">
-      <label for="classGroupId">Class Group ID</label>
-      <input id="classGroupId" [(ngModel)]="classGroupId" name="classGroupId" placeholder="e.g. GRP-001" />
+    <div class="field select-field">
+      <app-searchable-select
+        label="👥 Select Class Group"
+        placeholder="Choose Class Group..."
+        searchPlaceholder="Type group name to search..."
+        [options]="groupOptions()"
+        [value]="classGroupId()"
+        (valueChange)="onGroupSelected($event)"
+      ></app-searchable-select>
     </div>
     <div class="field">
       <label for="startDate">Start Date</label>
-      <input id="startDate" type="date" [(ngModel)]="startDate" name="startDate" />
+      <input id="startDate" type="date" [(ngModel)]="startDate" name="startDate" class="form-control" />
     </div>
     <div class="field">
       <label for="endDate">End Date</label>
-      <input id="endDate" type="date" [(ngModel)]="endDate" name="endDate" />
+      <input id="endDate" type="date" [(ngModel)]="endDate" name="endDate" class="form-control" />
     </div>
-    <button type="button" (click)="search()">Search</button>
+    <button type="button" class="btn-search" (click)="search()">Search</button>
   </div>
 
   @if (reportResource.isLoading()) {
@@ -54,7 +60,7 @@
 
     <div class="breakdown-table">
       <div class="breakdown-header">
-        <span>Student ID</span>
+        <span>Student Name</span>
         <span>Present</span>
         <span>Absent</span>
         <span>Late</span>
@@ -64,7 +70,7 @@
 
       @for (student of report.studentBreakdown; track student.studentId) {
         <div class="breakdown-row">
-          <span class="student-id">{{ student.studentId }}</span>
+          <span class="student-id">{{ student.studentName || student.studentId }}</span>
           <span class="count present">{{ student.presentCount }}</span>
           <span class="count absent">{{ student.absentCount }}</span>
           <span class="count late">{{ student.lateCount }}</span>

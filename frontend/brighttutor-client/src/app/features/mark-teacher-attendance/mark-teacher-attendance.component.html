@@ -20,17 +20,16 @@
   <div class="form-card">
     <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-grid">
-        <!-- Teacher Selection -->
+        <!-- Searchable Teacher Selection -->
         <div class="field-group">
-          <label for="teacherId">Select Teacher</label>
-          <select id="teacherId" formControlName="teacherId" class="form-control">
-            @for (t of teachers; track t.id) {
-              <option [value]="t.id">{{ t.name }} ({{ t.id }})</option>
-            }
-          </select>
-          @if (form.controls.teacherId.touched && form.controls.teacherId.invalid) {
-            <span class="field-error">Teacher selection is required.</span>
-          }
+          <app-searchable-select
+            label="👨‍🏫 Select Teacher"
+            placeholder="Choose Teacher..."
+            searchPlaceholder="Type teacher name to search..."
+            [options]="teacherOptions()"
+            [value]="selectedTeacherId()"
+            (valueChange)="onTeacherSelected($event)"
+          ></app-searchable-select>
         </div>
 
         <!-- Date Selection -->

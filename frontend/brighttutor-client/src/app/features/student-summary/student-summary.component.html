@@ -2,19 +2,32 @@
   <h1>Student Attendance Summary</h1>
 
   <div class="search-bar">
-    <div class="field">
-      <label>Student ID</label>
-      <input [(ngModel)]="studentId" name="studentId" placeholder="e.g. STD-001" />
-    </div>
+    @if (!authService.isStudent()) {
+      <div class="field select-field">
+        <app-searchable-select
+          label="🎓 Select Student"
+          placeholder="Choose Student..."
+          searchPlaceholder="Type student name to search..."
+          [options]="studentOptions()"
+          [value]="studentId()"
+          (valueChange)="onStudentSelected($event)"
+        ></app-searchable-select>
+      </div>
+    } @else {
+      <div class="field">
+        <label>Logged-In Student</label>
+        <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" readonly disabled />
+      </div>
+    }
     <div class="field">
       <label>Start Date</label>
-      <input type="date" [(ngModel)]="startDate" name="startDate" />
+      <input type="date" [(ngModel)]="startDate" name="startDate" class="form-control" />
     </div>
     <div class="field">
       <label>End Date</label>
-      <input type="date" [(ngModel)]="endDate" name="endDate" />
+      <input type="date" [(ngModel)]="endDate" name="endDate" class="form-control" />
     </div>
-    <button type="button" (click)="search()">Search</button>
+    <button type="button" class="btn-search" (click)="search()">Search</button>
   </div>
 
   @if (summaryResource.isLoading()) {

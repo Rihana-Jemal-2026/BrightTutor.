@@ -1,33 +1,29 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { UserService } from "../../services/user.service";
 import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus } from "../../models/attendance.model";
-
-export interface TeacherOption {
-  id: string;
-  name: string;
-}
+import { SearchableSelectComponent, SelectOption } from "../../components/searchable-select/searchable-select.component";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-mark-teacher-attendance",
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchableSelectComponent],
   templateUrl: "./mark-teacher-attendance.component.html",
   styleUrl: "./mark-teacher-attendance.component.scss",
 })
 export class MarkTeacherAttendanceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private userService = inject(UserService);
   private toast = inject(ToastService);
 
   readonly AttendanceStatus = AttendanceStatus;
 
-  teachers: TeacherOption[] = [
-    { id: "TCH-001", name: "Mr. Robert Davis" },
-    { id: "TCH-002", name: "Dr. Sarah Jenkins" },
-    { id: "TCH-003", name: "Ms. Amanda Clark" },
-  ];
+  teacherOptions = signal<SelectOption[]>([]);
+  selectedTeacherId = signal<string>('');
 
   statusOptions = [
     { label: "Present", value: AttendanceStatus.Present, icon: "✓", class: "status-present" },
@@ -40,7 +36,7 @@ export class MarkTeacherAttendanceComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   form = this.fb.group({
-    teacherId: ["TCH-001", Validators.required],
+    teacherId: ["", Validators.required],
     attendanceDate: [new Date().toISOString().split("T")[0], Validators.required],
     status: [null as AttendanceStatus | null, Validators.required],
     checkInTime: ["08:30"],
@@ -49,9 +45,30 @@ export class MarkTeacherAttendanceComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.form.patchValue({
-      attendanceDate: new Date().toISOString().split("T")[0],
+    this.loadTeachers();
+  }
+
+  loadTeachers() {
+    // Fetch real teachers from backend (Role 2 = Teacher)
+    this.userService.getUsers(2).subscribe({
+      next: (teachers) => {
+        const opts = teachers.map(t => ({
+          id: t.id,
+          name: `${t.firstName} ${t.lastName}`,
+          subtext: t.email
+        }));
+        this.teacherOptions.set(opts);
+        if (opts.length > 0) {
+          this.onTeacherSelected(opts[0].id);
+        }
+      },
+      error: () => {}
     });
+  }
+
+  onTeacherSelected(teacherId: string) {
+    this.selectedTeacherId.set(teacherId);
+    this.form.patchValue({ teacherId });
   }
 
   setStatus(status: AttendanceStatus) {
@@ -91,8 +108,7 @@ export class MarkTeacherAttendanceComponent implements OnInit {
 
     this.api.markTeacherAttendance(payload).subscribe({
       next: (attendanceId) => {
-        const selectedTeacher = this.teachers.find((t) => t.id === raw.teacherId)?.name ?? raw.teacherId;
-        const msg = `Success: Attendance recorded for ${selectedTeacher} on ${raw.attendanceDate}. (ID: ${attendanceId})`;
+        const msg = `Success: Teacher attendance recorded for date ${raw.attendanceDate}.`;
         this.resultMessage.set(msg);
         this.toast.showSuccess(msg);
       },

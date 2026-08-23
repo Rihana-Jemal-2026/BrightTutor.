@@ -9,7 +9,7 @@
       </div>
       <div>
         <h1>Home Tutoring Attendance</h1>
-        <p class="subtitle">Select a home tutoring student to check in and check out.</p>
+        <p class="subtitle">Perform check-in and check-out for home tutoring visits.</p>
       </div>
     </div>
   </div>
@@ -42,157 +42,76 @@
     </div>
   }
 
-  <!-- View Mode / Portal Switcher -->
-  <div class="role-control-bar">
-    <div class="role-toggle-group">
-      <span class="role-label">Portal View:</span>
-      <button
-        type="button"
-        class="role-btn"
-        [class.active]="userRole() === 'teacher'"
-        (click)="setRole('teacher')"
-      >
-        👨‍🏫 Teacher View
-      </button>
-      <button
-        type="button"
-        class="role-btn"
-        [class.active]="userRole() === 'admin'"
-        (click)="setRole('admin')"
-      >
-        👑 Admin View (All Students)
-      </button>
-    </div>
-
-    @if (userRole() === 'teacher') {
-      <div class="teacher-select-box">
-        <label for="activeTeacherSelect">Logged-in Teacher:</label>
-        <select
-          id="activeTeacherSelect"
-          [value]="activeTeacherId()"
-          (change)="onTeacherChange($any($event.target).value)"
-        >
-          @for (t of teachers; track t.id) {
-            <option [value]="t.id">{{ t.name }} ({{ t.id }})</option>
-          }
-        </select>
-      </div>
-    }
-  </div>
-
-  <!-- Assigned Home Tutoring Students Roster -->
-  <div class="roster-section">
-    <div class="section-header-flex">
-      <label class="section-label">
-        @if (userRole() === 'teacher') {
-          My Assigned Home Tutoring Students ({{ visibleStudents.length }})
-        } @else {
-          All Home Tutoring Students ({{ visibleStudents.length }})
-        }
-      </label>
-
-      <span class="filter-badge">
-        @if (userRole() === 'teacher') {
-          Assigned to Teacher {{ activeTeacherId() }}
-        } @else {
-          Admin Mode — Showing All Home Students
-        }
-      </span>
-    </div>
-
-    <div class="students-list">
-      @for (student of visibleStudents; track student.studentId) {
-        <div
-          class="student-card"
-          [class.selected]="checkInForm.controls.studentId.value === student.studentId"
-          (click)="selectStudent(student)"
-        >
-          <div class="student-info">
-            <div class="avatar">🏠</div>
-            <div class="details">
-              <span class="student-name">{{ student.studentName }}</span>
-              <span class="subject-tag">{{ student.subject }}</span>
-              <span class="address-text">📍 {{ student.address }}</span>
-              <span class="student-meta">ID: {{ student.studentId }} | Group: {{ student.classGroupId }} | GPS Home: [{{ student.homeLatitude }}, {{ student.homeLongitude }}]</span>
-            </div>
-          </div>
-
-          <div class="action-buttons">
-            @if (activeCheckInStudentId() === student.studentId && lastAttendanceId()) {
-              <div class="checked-in-badge">
-                <span>✓ Currently Checked-In</span>
-                <button
-                  type="button"
-                  class="btn-action btn-checkout"
-                  (click)="submitCheckOut(); $event.stopPropagation()"
-                >
-                  🏁 Quick Check-Out
-                </button>
-              </div>
-            } @else {
-              <button
-                type="button"
-                class="btn-action btn-checkin"
-                (click)="quickCheckIn(student); $event.stopPropagation()"
-              >
-                📍 Quick Check-In
-              </button>
-            }
-          </div>
-        </div>
-      } @empty {
-        <div class="empty-notice">
-          <p>No 1-on-1 home tutoring students currently assigned to Teacher ID <strong>{{ activeTeacherId() }}</strong>.</p>
-        </div>
-      }
-    </div>
-  </div>
-
-  <!-- Manual Visit Forms -->
+  <!-- Home Visit Forms -->
   <div class="forms-grid">
     <!-- Check In Form -->
     <form [formGroup]="checkInForm" (ngSubmit)="submitCheckIn()" class="form-card">
       <h3>1. Check-In Home Visit</h3>
 
       <div class="form-group">
-        <label for="studentId">Student ID</label>
-        <input id="studentId" formControlName="studentId" placeholder="e.g. STD-HOME" />
+        <app-searchable-select
+          label="🏠 Select Home Student"
+          placeholder="Choose Student..."
+          searchPlaceholder="Type student name to search..."
+          [options]="studentOptions()"
+          [value]="selectedStudentId()"
+          (valueChange)="onStudentSelected($event)"
+        ></app-searchable-select>
       </div>
 
-      <div class="form-group">
-        <label for="teacherId">Teacher ID</label>
-        <input id="teacherId" formControlName="teacherId" placeholder="e.g. TCH-001" />
-      </div>
+      @if (!authService.isTeacher()) {
+        <div class="form-group">
+          <app-searchable-select
+            label="👨‍🏫 Select Teacher"
+            placeholder="Choose Teacher..."
+            searchPlaceholder="Type teacher name to search..."
+            [options]="teacherOptions()"
+            [value]="selectedTeacherId()"
+            (valueChange)="onTeacherSelected($event)"
+          ></app-searchable-select>
+        </div>
+      } @else {
+        <div class="form-group">
+          <label style="font-weight: 600; color: #1e293b; display: block; margin-bottom: 0.35rem;">👨‍🏫 Assigned Teacher</label>
+          <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: #f8fafc; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px;" readonly disabled />
+        </div>
+      }
 
       <div class="form-group">
-        <label for="classGroupId">Class Group ID</label>
-        <input id="classGroupId" formControlName="classGroupId" placeholder="e.g. GRP-001" />
+        <app-searchable-select
+          label="👥 Select Class Group"
+          placeholder="Choose Class Group..."
+          searchPlaceholder="Type group name to search..."
+          [options]="groupOptions()"
+          [value]="selectedGroupId()"
+          (valueChange)="onGroupSelected($event)"
+        ></app-searchable-select>
       </div>
 
       <div class="form-group">
         <label for="attendanceDate">Visit Date</label>
-        <input id="attendanceDate" type="date" formControlName="attendanceDate" />
+        <input id="attendanceDate" type="date" formControlName="attendanceDate" class="form-control" />
       </div>
 
       <div class="form-row-2">
         <div class="form-group">
           <label for="checkInLatitude">Latitude</label>
-          <input id="checkInLatitude" type="number" step="any" formControlName="checkInLatitude" />
+          <input id="checkInLatitude" type="number" step="any" formControlName="checkInLatitude" class="form-control" />
         </div>
         <div class="form-group">
           <label for="checkInLongitude">Longitude</label>
-          <input id="checkInLongitude" type="number" step="any" formControlName="checkInLongitude" />
+          <input id="checkInLongitude" type="number" step="any" formControlName="checkInLongitude" class="form-control" />
         </div>
       </div>
 
       <div class="form-group">
         <label for="address">Address</label>
-        <input id="address" formControlName="address" placeholder="e.g. 124 Maple Street" />
+        <input id="address" formControlName="address" placeholder="e.g. 124 Maple Street" class="form-control" />
       </div>
 
       <div class="form-group">
         <label for="lessonCovered">Lesson Covered</label>
-        <input id="lessonCovered" formControlName="lessonCovered" placeholder="e.g. Algebra Chapter 3" />
+        <input id="lessonCovered" formControlName="lessonCovered" placeholder="e.g. Algebra Chapter 3" class="form-control" />
       </div>
 
       <button type="submit" class="btn-submit" [disabled]="checkInForm.invalid">
@@ -205,18 +124,24 @@
       <h3>2. Check-Out Home Visit</h3>
 
       <div class="form-group">
-        <label for="attendanceId">Attendance Visit ID</label>
-        <input id="attendanceId" formControlName="attendanceId" placeholder="Generated upon Check-In" />
+        <app-searchable-select
+          label="📌 Select Active Visit Session for Check-Out"
+          placeholder="Choose Active Session..."
+          searchPlaceholder="Type to search active sessions..."
+          [options]="activeVisitOptions()"
+          [value]="selectedCheckOutAttendanceId()"
+          (valueChange)="onCheckOutSessionSelected($event)"
+        ></app-searchable-select>
       </div>
 
       <div class="form-row-2">
         <div class="form-group">
           <label for="checkOutLatitude">Check-Out Latitude</label>
-          <input id="checkOutLatitude" type="number" step="any" formControlName="checkOutLatitude" />
+          <input id="checkOutLatitude" type="number" step="any" formControlName="checkOutLatitude" class="form-control" />
         </div>
         <div class="form-group">
           <label for="checkOutLongitude">Check-Out Longitude</label>
-          <input id="checkOutLongitude" type="number" step="any" formControlName="checkOutLongitude" />
+          <input id="checkOutLongitude" type="number" step="any" formControlName="checkOutLongitude" class="form-control" />
         </div>
       </div>
 

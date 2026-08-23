@@ -1,102 +1,47 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { UserService } from "../../services/user.service";
+import { CourseService } from "../../services/course.service";
+import { AuthService } from "../../services/auth.service";
 import { ToastService } from "../../services/toast.service";
-
-export interface AssignedHomeStudent {
-  studentId: string;
-  studentName: string;
-  address: string;
-  subject: string;
-  classGroupId: string;
-  teacherId: string;
-  teacherName: string;
-  homeLatitude: number;
-  homeLongitude: number;
-}
-
-export interface TeacherOption {
-  id: string;
-  name: string;
-}
+import { SearchableSelectComponent, SelectOption } from "../../components/searchable-select/searchable-select.component";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-home-attendance",
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchableSelectComponent],
   templateUrl: "./home-attendance.component.html",
   styleUrl: "./home-attendance.component.scss",
 })
 export class HomeAttendanceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private userService = inject(UserService);
+  private courseService = inject(CourseService);
+  public authService = inject(AuthService);
   private toast = inject(ToastService);
 
-  teachers: TeacherOption[] = [
-    { id: "TCH-001", name: "Mr. Robert Davis" },
-    { id: "TCH-002", name: "Dr. Sarah Jenkins" },
-    { id: "TCH-003", name: "Ms. Amanda Clark" },
-  ];
+  studentOptions = signal<SelectOption[]>([]);
+  teacherOptions = signal<SelectOption[]>([]);
+  groupOptions = signal<SelectOption[]>([]);
+  activeVisitOptions = signal<SelectOption[]>([]);
 
-  userRole = signal<"admin" | "teacher">("teacher");
-  activeTeacherId = signal<string>("TCH-001");
-
-  // Admin-assigned home tutoring students
-  assignedStudents: AssignedHomeStudent[] = [
-    {
-      studentId: "STD-HOME",
-      studentName: "James Miller",
-      address: "124 Maple Street, Apt 4B",
-      subject: "Home Mathematics Tutoring",
-      classGroupId: "GRP-001",
-      teacherId: "TCH-001",
-      teacherName: "Mr. Robert Davis",
-      homeLatitude: 37.7749,
-      homeLongitude: -122.4194,
-    },
-    {
-      studentId: "STD-002",
-      studentName: "Sophia Chen",
-      address: "58 Oak Avenue, Suite 12",
-      subject: "Home Science Tutoring",
-      classGroupId: "GRP-001",
-      teacherId: "TCH-001",
-      teacherName: "Mr. Robert Davis",
-      homeLatitude: 37.7752,
-      homeLongitude: -122.4188,
-    },
-    {
-      studentId: "STD-008",
-      studentName: "Noah Williams",
-      address: "89 Pine View Road",
-      subject: "Home Physics Tutoring",
-      classGroupId: "GRP-002",
-      teacherId: "TCH-002",
-      teacherName: "Dr. Sarah Jenkins",
-      homeLatitude: 37.776,
-      homeLongitude: -122.4201,
-    },
-  ];
-
-  get visibleStudents(): AssignedHomeStudent[] {
-    if (this.userRole() === "admin") {
-      return this.assignedStudents;
-    }
-    return this.assignedStudents.filter((s) => s.teacherId === this.activeTeacherId());
-  }
+  selectedStudentId = signal<string>('');
+  selectedTeacherId = signal<string>('');
+  selectedGroupId = signal<string>('');
+  selectedCheckOutAttendanceId = signal<string>('');
 
   checkInResult = signal<string | null>(null);
   checkInError = signal<string | null>(null);
   checkOutResult = signal<string | null>(null);
   checkOutError = signal<string | null>(null);
 
-  lastAttendanceId = signal<string | null>(null);
-  activeCheckInStudentId = signal<string | null>(null);
-
   checkInForm = this.fb.nonNullable.group({
-    studentId: ["STD-HOME", Validators.required],
-    teacherId: ["TCH-001", Validators.required],
-    classGroupId: ["GRP-001", Validators.required],
+    studentId: ["", Validators.required],
+    teacherId: ["", Validators.required],
+    classGroupId: ["", Validators.required],
     attendanceDate: [new Date().toISOString().substring(0, 10), Validators.required],
     checkInLatitude: [37.7749, Validators.required],
     checkInLongitude: [-122.4194, Validators.required],
@@ -111,50 +56,95 @@ export class HomeAttendanceComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.refreshSelection();
+    this.loadData();
+    this.loadActiveVisits();
   }
 
-  setRole(role: "admin" | "teacher") {
-    this.userRole.set(role);
-    this.refreshSelection();
-  }
+  loadData() {
+    this.userService.getUsers(3).subscribe({
+      next: (students) => {
+        const opts = students.map(s => ({
+          id: s.id,
+          name: `${s.firstName} ${s.lastName}`,
+          subtext: s.email
+        }));
+        this.studentOptions.set(opts);
+        if (opts.length > 0) this.onStudentSelected(opts[0].id);
+      }
+    });
 
-  onTeacherChange(teacherId: string) {
-    this.activeTeacherId.set(teacherId);
-    this.refreshSelection();
-  }
-
-  refreshSelection() {
-    const list = this.visibleStudents;
-    if (list.length > 0) {
-      this.selectStudent(list[0]);
+    const user = this.authService.currentUser();
+    if (this.authService.isTeacher() && user) {
+      this.selectedTeacherId.set(user.userId);
+      this.checkInForm.patchValue({ teacherId: user.userId });
+      this.teacherOptions.set([{
+        id: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        subtext: user.email
+      }]);
+    } else {
+      this.userService.getUsers(2).subscribe({
+        next: (teachers) => {
+          const opts = teachers.map(t => ({
+            id: t.id,
+            name: `${t.firstName} ${t.lastName}`,
+            subtext: t.email
+          }));
+          this.teacherOptions.set(opts);
+          if (opts.length > 0) this.onTeacherSelected(opts[0].id);
+        }
+      });
     }
-  }
 
-  selectedStudentTargetCoordinates = signal<{ lat: number; lng: number } | null>(null);
-
-  selectStudent(student: AssignedHomeStudent) {
-    this.selectedStudentTargetCoordinates.set({
-      lat: student.homeLatitude,
-      lng: student.homeLongitude,
-    });
-    this.checkInForm.patchValue({
-      studentId: student.studentId,
-      teacherId: student.teacherId,
-      classGroupId: student.classGroupId,
-      address: student.address,
-      checkInLatitude: student.homeLatitude,
-      checkInLongitude: student.homeLongitude,
-    });
-    this.checkOutForm.patchValue({
-      checkOutLatitude: student.homeLatitude,
-      checkOutLongitude: student.homeLongitude,
+    this.courseService.getClassGroups().subscribe({
+      next: (groups) => {
+        const opts = groups.map(g => ({
+          id: g.id,
+          name: g.name,
+          subtext: g.courseName
+        }));
+        this.groupOptions.set(opts);
+        if (opts.length > 0) this.onGroupSelected(opts[0].id);
+      }
     });
   }
 
-  quickCheckIn(student: AssignedHomeStudent) {
-    this.selectStudent(student);
-    this.submitCheckIn();
+  loadActiveVisits() {
+    const today = new Date().toISOString().substring(0, 10);
+    this.api.getHomeAttendance(undefined, today).subscribe({
+      next: (visits: any[]) => {
+        const active = (visits || []).filter(v => !v.checkOutTime).map(v => ({
+          id: v.id,
+          name: `${v.studentName || 'Student Home Visit'}`,
+          subtext: `Address: ${v.address || 'Home'} | Check-in: ${v.checkInTime ? new Date(v.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Today'}`
+        }));
+        this.activeVisitOptions.set(active);
+        if (active.length > 0) {
+          this.onCheckOutSessionSelected(active[0].id);
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  onStudentSelected(studentId: string) {
+    this.selectedStudentId.set(studentId);
+    this.checkInForm.patchValue({ studentId });
+  }
+
+  onTeacherSelected(teacherId: string) {
+    this.selectedTeacherId.set(teacherId);
+    this.checkInForm.patchValue({ teacherId });
+  }
+
+  onGroupSelected(groupId: string) {
+    this.selectedGroupId.set(groupId);
+    this.checkInForm.patchValue({ classGroupId: groupId });
+  }
+
+  onCheckOutSessionSelected(attendanceId: string) {
+    this.selectedCheckOutAttendanceId.set(attendanceId);
+    this.checkOutForm.patchValue({ attendanceId });
   }
 
   submitCheckIn() {
@@ -167,23 +157,28 @@ export class HomeAttendanceComponent implements OnInit {
     }
 
     const raw = this.checkInForm.getRawValue();
-    const target = this.selectedStudentTargetCoordinates();
     this.api
       .checkInHomeAttendance({
         ...raw,
-        targetLatitude: target?.lat,
-        targetLongitude: target?.lng,
+        targetLatitude: raw.checkInLatitude,
+        targetLongitude: raw.checkInLongitude,
         address: raw.address || undefined,
         lessonCovered: raw.lessonCovered || undefined,
       })
       .subscribe({
         next: (attendanceId) => {
-          const msg = `Checked in successfully at ${raw.address || "Student Home"}. Attendance ID: ${attendanceId}`;
+          const studentName = this.studentOptions().find(s => s.id === raw.studentId)?.name || "Student";
+          const msg = `Checked in successfully at ${raw.address || "Home Tutoring Location"}.`;
           this.checkInResult.set(msg);
           this.toast.showSuccess(msg);
-          this.lastAttendanceId.set(attendanceId);
-          this.activeCheckInStudentId.set(raw.studentId);
-          this.checkOutForm.patchValue({ attendanceId });
+
+          const newOpt: SelectOption = {
+            id: attendanceId,
+            name: `${studentName} Home Visit`,
+            subtext: `Address: ${raw.address || 'Home Location'} | Checked In Now`
+          };
+          this.activeVisitOptions.update(opts => [newOpt, ...opts]);
+          this.onCheckOutSessionSelected(attendanceId);
         },
         error: (err) => {
           const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
@@ -203,11 +198,15 @@ export class HomeAttendanceComponent implements OnInit {
       return;
     }
 
+    const attendanceId = this.checkOutForm.getRawValue().attendanceId;
+
     this.api.checkOutHomeAttendance(this.checkOutForm.getRawValue()).subscribe({
       next: (res) => {
         this.checkOutResult.set(res.message);
         this.toast.showSuccess(res.message);
-        this.activeCheckInStudentId.set(null);
+        this.activeVisitOptions.update(opts => opts.filter(o => o.id !== attendanceId));
+        this.selectedCheckOutAttendanceId.set('');
+        this.checkOutForm.patchValue({ attendanceId: '' });
       },
       error: (err) => {
         const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong during check-out."];

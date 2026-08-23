@@ -27,11 +27,34 @@ public class GetGroupAttendanceHandler
     public async Task<List<GetGroupAttendanceResponse>> Handle(
         GetGroupAttendanceQuery request, CancellationToken cancellationToken)
     {
-        var attendances = await _context.Attendances
-            .Where(a => a.ClassGroupId == request.ClassGroupId
-                     && a.AttendanceDate == request.AttendanceDate)
-            .ToListAsync(cancellationToken);
+        var query = _context.Attendances
+            .Include(a => a.Student).ThenInclude(st => st.User)
+            .Include(a => a.Teacher).ThenInclude(t => t.User)
+            .Include(a => a.ClassGroup)
+            .AsQueryable();
 
-        return _mapper.Map<List<GetGroupAttendanceResponse>>(attendances);
+        if (request.ClassGroupId != Guid.Empty)
+        {
+            query = query.Where(a => a.ClassGroupId == request.ClassGroupId);
+        }
+
+        if (request.AttendanceDate != default)
+        {
+            query = query.Where(a => a.AttendanceDate == request.AttendanceDate);
+        }
+
+        var attendances = await query.ToListAsync(cancellationToken);
+
+        return attendances.Select(a => new GetGroupAttendanceResponse
+        {
+            Id = a.Id,
+            StudentId = a.StudentId,
+            StudentName = a.Student?.User != null ? $"{a.Student.User.FirstName} {a.Student.User.LastName}" : "Student",
+            TeacherName = a.Teacher?.User != null ? $"{a.Teacher.User.FirstName} {a.Teacher.User.LastName}" : "Teacher",
+            ClassGroupName = a.ClassGroup?.Name ?? "Class Group",
+            Status = a.Status,
+            AttendanceDate = a.AttendanceDate,
+            Notes = a.Notes
+        }).ToList();
     }
 }

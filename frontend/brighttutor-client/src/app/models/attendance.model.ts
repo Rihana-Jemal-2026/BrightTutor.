@@ -39,6 +39,10 @@ export interface MarkGroupAttendanceResponse {
 export interface GroupAttendanceRecord {
   id: string;
   studentId: string;
+  studentName?: string;
+  teacherName?: string;
+  classGroupName?: string;
+  attendanceDate?: string;
   status: AttendanceStatus;
   notes?: string;
 }
@@ -59,6 +63,7 @@ export interface ClassAttendanceReport {
 
 export interface StudentBreakdown {
   studentId: string;
+  studentName?: string;
   presentCount: number;
   absentCount: number;
   lateCount: number;

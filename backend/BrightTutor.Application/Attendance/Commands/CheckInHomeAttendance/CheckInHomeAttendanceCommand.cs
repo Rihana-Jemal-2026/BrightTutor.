@@ -31,13 +31,15 @@ public class CheckInHomeAttendanceHandler : IRequestHandler<CheckInHomeAttendanc
 
     public async Task<Guid> Handle(CheckInHomeAttendanceCommand request, CancellationToken cancellationToken)
     {
-        var alreadySubmitted = await _context.Attendances
-            .AnyAsync(a => a.StudentId == request.StudentId && a.AttendanceDate == request.AttendanceDate && a.AttendanceType == AttendanceType.Home, cancellationToken);
+        // Resolve TeacherId (support either Teacher.Id or User.Id)
+        var teacher = await _context.Teachers
+            .FirstOrDefaultAsync(t => t.Id == request.TeacherId || t.UserId == request.TeacherId, cancellationToken);
+        var actualTeacherId = teacher?.Id ?? request.TeacherId;
 
-        if (alreadySubmitted)
-        {
-            throw new InvalidOperationException($"Home visit attendance for this student on {request.AttendanceDate} has already been checked in today.");
-        }
+        // Resolve StudentId (support either Student.Id or User.Id)
+        var studentEntity = await _context.Students
+            .FirstOrDefaultAsync(st => st.Id == request.StudentId || st.UserId == request.StudentId, cancellationToken);
+        var actualStudentId = studentEntity?.Id ?? request.StudentId;
 
         // GPS Location Distance Verification (Allowed Radius: 300 meters)
         bool isVerified = true;
@@ -56,31 +58,96 @@ public class CheckInHomeAttendanceHandler : IRequestHandler<CheckInHomeAttendanc
             }
         }
 
-        var attendance = new Domain.Entities.Attendance
-        {
-            StudentId = request.StudentId,
-            TeacherId = request.TeacherId,
-            ClassGroupId = request.ClassGroupId,
-            AttendanceType = AttendanceType.Home,
-            Status = AttendanceStatus.Present,
-            AttendanceDate = request.AttendanceDate,
-            CheckInTime = DateTime.UtcNow,
-            LessonCovered = request.LessonCovered
-        };
+        // Check if home attendance record already exists for this student & date (UPSERT Strategy)
+        var existingRecord = await _context.Attendances
+            .FirstOrDefaultAsync(a => a.StudentId == actualStudentId && a.AttendanceDate == request.AttendanceDate && a.AttendanceType == AttendanceType.Home, cancellationToken);
 
-        _context.Attendances.Add(attendance);
+        Domain.Entities.Attendance attendance;
+
+        if (existingRecord != null)
+        {
+            existingRecord.TeacherId = actualTeacherId;
+            existingRecord.ClassGroupId = request.ClassGroupId;
+            existingRecord.CheckInTime = DateTime.UtcNow;
+            existingRecord.LessonCovered = request.LessonCovered;
+            existingRecord.UpdatedAt = DateTime.UtcNow;
+            attendance = existingRecord;
+        }
+        else
+        {
+            attendance = new Domain.Entities.Attendance
+            {
+                StudentId = actualStudentId,
+                TeacherId = actualTeacherId,
+                ClassGroupId = request.ClassGroupId,
+                AttendanceType = AttendanceType.Home,
+                Status = AttendanceStatus.Present,
+                AttendanceDate = request.AttendanceDate,
+                CheckInTime = DateTime.UtcNow,
+                LessonCovered = request.LessonCovered
+            };
+            _context.Attendances.Add(attendance);
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
 
-        var homeDetail = new HomeAttendance
-        {
-            AttendanceId = attendance.Id,
-            CheckInLatitude = request.CheckInLatitude,
-            CheckInLongitude = request.CheckInLongitude,
-            Address = request.Address,
-            IsLocationVerified = isVerified
-        };
+        // Check or add HomeAttendance detail
+        var existingHomeDetail = await _context.HomeAttendances
+            .FirstOrDefaultAsync(h => h.AttendanceId == attendance.Id, cancellationToken);
 
-        _context.HomeAttendances.Add(homeDetail);
+        if (existingHomeDetail != null)
+        {
+            existingHomeDetail.CheckInLatitude = request.CheckInLatitude;
+            existingHomeDetail.CheckInLongitude = request.CheckInLongitude;
+            existingHomeDetail.Address = request.Address;
+            existingHomeDetail.IsLocationVerified = isVerified;
+            existingHomeDetail.UpdatedAt = DateTime.UtcNow;
+        }
+        else
+        {
+            var homeDetail = new HomeAttendance
+            {
+                AttendanceId = attendance.Id,
+                CheckInLatitude = request.CheckInLatitude,
+                CheckInLongitude = request.CheckInLongitude,
+                Address = request.Address,
+                IsLocationVerified = isVerified
+            };
+            _context.HomeAttendances.Add(homeDetail);
+        }
+
+        // Automated Home Check-In Notification to Student & Parent (Module 5 Integration)
+        if (studentEntity != null)
+        {
+            var studentWithParent = await _context.Students
+                .Include(st => st.Parent)
+                .FirstOrDefaultAsync(st => st.Id == studentEntity.Id, cancellationToken);
+
+            if (studentWithParent != null)
+            {
+                _context.Notifications.Add(new Notification
+                {
+                    UserId = studentWithParent.UserId,
+                    Title = "Home Tutoring Check-In Alert",
+                    Message = $"Your teacher has checked in for your home tutoring session today on {request.AttendanceDate}.",
+                    Type = NotificationType.AttendanceAlert,
+                    Status = NotificationStatus.Unread
+                });
+
+                if (studentWithParent.Parent != null)
+                {
+                    _context.Notifications.Add(new Notification
+                    {
+                        UserId = studentWithParent.Parent.UserId,
+                        Title = "Home Tutoring Check-In Alert",
+                        Message = $"Teacher has checked in for student ({studentWithParent.StudentCode})'s home tutoring session today on {request.AttendanceDate}.",
+                        Type = NotificationType.AttendanceAlert,
+                        Status = NotificationStatus.Unread
+                    });
+                }
+            }
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return attendance.Id;

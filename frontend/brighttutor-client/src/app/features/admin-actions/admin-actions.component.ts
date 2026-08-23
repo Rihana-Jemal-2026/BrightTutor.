@@ -1,18 +1,28 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus } from "../../models/attendance.model";
+import { SearchableSelectComponent, SelectOption } from "../../components/searchable-select/searchable-select.component";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-admin-actions",
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchableSelectComponent],
   templateUrl: "./admin-actions.component.html",
   styleUrl: "./admin-actions.component.scss",
 })
-export class AdminActionsComponent {
+export class AdminActionsComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private toast = inject(ToastService);
+
+  readonly AttendanceStatus = AttendanceStatus;
+
+  attendanceRecordOptions = signal<SelectOption[]>([]);
+  selectedUpdateId = signal<string>('');
+  selectedVerifyId = signal<string>('');
 
   statusOptions = [
     { label: "Present", value: AttendanceStatus.Present },
@@ -38,6 +48,41 @@ export class AdminActionsComponent {
     distanceFromStudentHomeInMeters: [0],
   });
 
+  ngOnInit() {
+    this.loadAttendanceRecords();
+  }
+
+  loadAttendanceRecords() {
+    const today = new Date().toISOString().slice(0, 10);
+    this.api.getDailyOverview(today).subscribe({
+      next: (res) => {
+        const records = res.records || [];
+        const opts: SelectOption[] = records.map((r: any) => ({
+          id: r.id || r.attendanceId,
+          name: `Record: ${r.studentName || r.studentId || 'Attendance'}`,
+          subtext: `Date: ${r.date || today} | Status: ${r.statusName || r.status}`
+        }));
+        
+        this.attendanceRecordOptions.set(opts);
+        if (opts.length > 0) {
+          this.onUpdateRecordSelected(opts[0].id);
+          this.onVerifyRecordSelected(opts[0].id);
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  onUpdateRecordSelected(id: string) {
+    this.selectedUpdateId.set(id);
+    this.updateForm.patchValue({ attendanceId: id });
+  }
+
+  onVerifyRecordSelected(id: string) {
+    this.selectedVerifyId.set(id);
+    this.verifyForm.patchValue({ attendanceId: id });
+  }
+
   submitUpdate() {
     this.updateError.set(null);
     this.updateResult.set(null);
@@ -45,10 +90,15 @@ export class AdminActionsComponent {
 
     const raw = this.updateForm.getRawValue();
     this.api.updateAttendance(raw.attendanceId, raw.newStatus, raw.notes || undefined).subscribe({
-      next: (res) => this.updateResult.set(res.message),
+      next: (res) => {
+        this.updateResult.set(res.message);
+        this.toast.showSuccess(res.message);
+      },
       error: (err) => {
         const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
-        this.updateError.set(Array.isArray(messages) ? messages.join(", ") : String(messages));
+        const errorText = Array.isArray(messages) ? messages.join(", ") : String(messages);
+        this.updateError.set(errorText);
+        this.toast.showError(errorText);
       },
     });
   }
@@ -60,10 +110,15 @@ export class AdminActionsComponent {
 
     const raw = this.verifyForm.getRawValue();
     this.api.verifyHomeAttendance(raw.attendanceId, raw.isVerified, raw.distanceFromStudentHomeInMeters).subscribe({
-      next: (res) => this.verifyResult.set(res.message),
+      next: (res) => {
+        this.verifyResult.set(res.message);
+        this.toast.showSuccess(res.message);
+      },
       error: (err) => {
         const messages = err?.error?.errors ?? err?.error ?? ["Something went wrong."];
-        this.verifyError.set(Array.isArray(messages) ? messages.join(", ") : String(messages));
+        const errorText = Array.isArray(messages) ? messages.join(", ") : String(messages);
+        this.verifyError.set(errorText);
+        this.toast.showError(errorText);
       },
     });
   }

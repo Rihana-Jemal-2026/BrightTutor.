@@ -24,8 +24,12 @@ public class GetTeacherAttendanceHandler
     public async Task<List<GetTeacherAttendanceResponse>> Handle(
         GetTeacherAttendanceQuery request, CancellationToken cancellationToken)
     {
+        var teacherEntity = await _context.Teachers
+            .FirstOrDefaultAsync(t => t.Id == request.TeacherId || t.UserId == request.TeacherId, cancellationToken);
+        var actualTeacherId = teacherEntity?.Id ?? request.TeacherId;
+
         return await _context.TeacherAttendances
-            .Where(t => t.TeacherId == request.TeacherId
+            .Where(t => t.TeacherId == actualTeacherId
                      && t.AttendanceDate == request.AttendanceDate)
             .Select(t => new GetTeacherAttendanceResponse
             {

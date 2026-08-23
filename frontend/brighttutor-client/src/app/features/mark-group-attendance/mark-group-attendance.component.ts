@@ -1,89 +1,41 @@
 import { Component, inject, signal, OnInit } from "@angular/core";
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormArray, AbstractControl } from "@angular/forms";
 import { AttendanceService } from "../../services/attendance.service";
+import { UserService } from "../../services/user.service";
+import { CourseService } from "../../services/course.service";
+import { AuthService } from "../../services/auth.service";
 import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus, StudentAttendanceEntry } from "../../models/attendance.model";
+import { SearchableSelectComponent, SelectOption } from "../../components/searchable-select/searchable-select.component";
+import { CommonModule } from "@angular/common";
 
-export interface EnrolledStudent {
+export interface GroupRosterItem {
   studentId: string;
   studentName: string;
-}
-
-export interface ClassGroupMeta {
-  groupId: string;
-  groupName: string;
-  defaultTeacherId: string;
-  defaultTeacherName: string;
-  students: EnrolledStudent[];
-}
-
-export interface TeacherOption {
-  id: string;
-  name: string;
 }
 
 @Component({
   selector: "app-mark-group-attendance",
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SearchableSelectComponent],
   templateUrl: "./mark-group-attendance.component.html",
   styleUrl: "./mark-group-attendance.component.scss",
 })
 export class MarkGroupAttendanceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(AttendanceService);
+  private userService = inject(UserService);
+  private courseService = inject(CourseService);
+  public authService = inject(AuthService);
   private toast = inject(ToastService);
 
   readonly AttendanceStatus = AttendanceStatus;
 
-  teachers: TeacherOption[] = [
-    { id: "TCH-001", name: "Mr. Robert Davis" },
-    { id: "TCH-002", name: "Dr. Sarah Jenkins" },
-    { id: "TCH-003", name: "Ms. Amanda Clark" },
-  ];
+  teacherOptions = signal<SelectOption[]>([]);
+  groupOptions = signal<SelectOption[]>([]);
 
-  classGroups: ClassGroupMeta[] = [
-    {
-      groupId: "GRP-001",
-      groupName: "Grade 10 Mathematics - Group A",
-      defaultTeacherId: "TCH-001",
-      defaultTeacherName: "Mr. Robert Davis",
-      students: [
-        { studentId: "STD-001", studentName: "Michael Brown" },
-        { studentId: "STD-002", studentName: "Emily Davis" },
-        { studentId: "STD-003", studentName: "James Wilson" },
-        { studentId: "STD-004", studentName: "Sophia Taylor" },
-        { studentId: "STD-005", studentName: "Daniel Anderson" },
-      ],
-    },
-    {
-      groupId: "GRP-002",
-      groupName: "Physics Advanced - Group B",
-      defaultTeacherId: "TCH-002",
-      defaultTeacherName: "Dr. Sarah Jenkins",
-      students: [
-        { studentId: "STD-006", studentName: "Oliver Martinez" },
-        { studentId: "STD-007", studentName: "Ava White" },
-        { studentId: "STD-008", studentName: "Lucas Harris" },
-        { studentId: "STD-009", studentName: "Mia Martin" },
-      ],
-    },
-    {
-      groupId: "GRP-003",
-      groupName: "Chemistry Honors - Group C",
-      defaultTeacherId: "TCH-003",
-      defaultTeacherName: "Ms. Amanda Clark",
-      students: [
-        { studentId: "STD-010", studentName: "Ethan Jackson" },
-        { studentId: "STD-011", studentName: "Isabella Thompson" },
-        { studentId: "STD-012", studentName: "Alexander Lee" },
-      ],
-    },
-  ];
-
-  userRole = signal<"admin" | "teacher">("teacher");
-  activeTeacherId = signal<string>("TCH-001");
-  selectedGroup = signal<ClassGroupMeta | null>(null);
+  selectedGroupId = signal<string>('');
+  selectedTeacherId = signal<string>('');
 
   submitted = signal<boolean>(false);
   resultMessage = signal<string | null>(null);
@@ -96,15 +48,9 @@ export class MarkGroupAttendanceComponent implements OnInit {
     students: this.fb.array<FormGroup>([]),
   });
 
-  get visibleClassGroups(): ClassGroupMeta[] {
-    if (this.userRole() === "admin") {
-      return this.classGroups;
-    }
-    return this.classGroups.filter((g) => g.defaultTeacherId === this.activeTeacherId());
-  }
-
   ngOnInit() {
-    this.refreshGroupSelection();
+    this.loadTeachers();
+    this.loadClassGroups();
   }
 
   get students(): FormArray {
@@ -115,54 +61,74 @@ export class MarkGroupAttendanceComponent implements OnInit {
     return control as FormGroup;
   }
 
-  buildStudentRow(studentId = "", studentName = "", status: AttendanceStatus | null = null, notes = "") {
-    return this.fb.group({
-      studentId: [studentId, Validators.required],
-      studentName: [studentName],
-      status: [status], // Starts unselected (null) so no full color is shown by default
-      notes: [notes],
+  loadTeachers() {
+    const user = this.authService.currentUser();
+
+    if (this.authService.isTeacher() && user) {
+      this.selectedTeacherId.set(user.userId);
+      this.form.patchValue({ teacherId: user.userId });
+      this.teacherOptions.set([{
+        id: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        subtext: user.email
+      }]);
+    } else {
+      this.userService.getUsers(2).subscribe({
+        next: (teachers) => {
+          const opts = teachers.map(t => ({
+            id: t.id,
+            name: `${t.firstName} ${t.lastName}`,
+            subtext: t.email
+          }));
+          this.teacherOptions.set(opts);
+          if (opts.length > 0) {
+            this.onTeacherSelected(opts[0].id);
+          }
+        },
+        error: () => {}
+      });
+    }
+  }
+
+  loadClassGroups() {
+    this.courseService.getClassGroups().subscribe({
+      next: (groups) => {
+        const opts = groups.map(g => ({
+          id: g.id,
+          name: g.name,
+          subtext: `Course: ${g.courseName} | Capacity: ${g.maximumStudents}`
+        }));
+        this.groupOptions.set(opts);
+        if (opts.length > 0) {
+          this.onGroupSelected(opts[0].id);
+        }
+      },
+      error: () => {}
     });
   }
 
-  setRole(role: "admin" | "teacher") {
-    this.userRole.set(role);
-    this.refreshGroupSelection();
+  onTeacherSelected(teacherId: string) {
+    this.selectedTeacherId.set(teacherId);
+    this.form.patchValue({ teacherId });
   }
 
-  onTeacherChange(teacherId: string) {
-    this.activeTeacherId.set(teacherId);
-    this.refreshGroupSelection();
-  }
+  onGroupSelected(groupId: string) {
+    this.selectedGroupId.set(groupId);
+    this.form.patchValue({ classGroupId: groupId });
 
-  refreshGroupSelection() {
-    const visible = this.visibleClassGroups;
-    if (visible.length > 0) {
-      this.onGroupSelectChange(visible[0].groupId);
-    } else {
-      this.selectedGroup.set(null);
-      this.students.clear();
-      this.form.patchValue({ classGroupId: "", teacherId: this.activeTeacherId() });
-    }
-  }
-
-  onGroupSelectChange(groupId: string) {
-    const found = this.classGroups.find((g) => g.groupId === groupId);
-    if (found) {
-      this.selectedGroup.set(found);
-      this.form.patchValue({
-        classGroupId: found.groupId,
-        teacherId: found.defaultTeacherId,
-      });
-      this.loadGroupRoster(found);
-    }
-  }
-
-  loadGroupRoster(group: ClassGroupMeta) {
-    this.students.clear();
-    for (const s of group.students) {
-      // Pass null for status so no button is full color initially
-      this.students.push(this.buildStudentRow(s.studentId, s.studentName, null));
-    }
+    this.userService.getUsers(3).subscribe({
+      next: (studentsList) => {
+        this.students.clear();
+        studentsList.forEach(s => {
+          this.students.push(this.fb.group({
+            studentId: [s.id, Validators.required],
+            studentName: [`${s.firstName} ${s.lastName}`],
+            status: [null],
+            notes: ['']
+          }));
+        });
+      }
+    });
   }
 
   setStatus(index: number, status: AttendanceStatus) {
@@ -178,17 +144,6 @@ export class MarkGroupAttendanceComponent implements OnInit {
     }
   }
 
-  addCustomStudent() {
-    const nextNum = this.students.length + 1;
-    this.students.push(
-      this.buildStudentRow(`STD-00${nextNum}`, `Guest Student #${nextNum}`, null)
-    );
-  }
-
-  removeStudent(index: number) {
-    this.students.removeAt(index);
-  }
-
   submit() {
     this.errorMessage.set(null);
     this.resultMessage.set(null);
@@ -196,7 +151,7 @@ export class MarkGroupAttendanceComponent implements OnInit {
     if (this.form.invalid || this.students.length === 0) {
       this.form.markAllAsTouched();
       if (this.students.length === 0) {
-        this.errorMessage.set("Add at least one student before submitting.");
+        this.errorMessage.set("No students found in this group to submit.");
       }
       return;
     }
@@ -206,7 +161,6 @@ export class MarkGroupAttendanceComponent implements OnInit {
       classGroupId: raw.classGroupId!,
       teacherId: raw.teacherId!,
       attendanceDate: raw.attendanceDate!,
-      // If student status was not explicitly chosen, default to Present (0) on submit
       students: raw.students.map((s: any) => ({
         studentId: s.studentId,
         status: s.status !== null && s.status !== undefined ? s.status : AttendanceStatus.Present,
@@ -217,7 +171,7 @@ export class MarkGroupAttendanceComponent implements OnInit {
     this.api.markGroupAttendance(payload).subscribe({
       next: (response) => {
         this.submitted.set(true);
-        const msg = `Success: ${response.recordsCreated} attendance record(s) submitted for group ${raw.classGroupId} on ${response.attendanceDate}.`;
+        const msg = `Success: ${response.recordsCreated} attendance record(s) submitted on ${response.attendanceDate}.`;
         this.resultMessage.set(msg);
         this.toast.showSuccess(msg);
       },

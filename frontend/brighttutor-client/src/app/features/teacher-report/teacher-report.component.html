@@ -2,10 +2,26 @@
   <h1>Teacher Attendance Report</h1>
 
   <div class="search-bar">
-    <div class="field"><label>Teacher ID</label><input [(ngModel)]="teacherId" name="teacherId" placeholder="e.g. TCH-001" /></div>
-    <div class="field"><label>Start Date</label><input type="date" [(ngModel)]="startDate" name="startDate" /></div>
-    <div class="field"><label>End Date</label><input type="date" [(ngModel)]="endDate" name="endDate" /></div>
-    <button type="button" (click)="search()">Search</button>
+    @if (!authService.isTeacher()) {
+      <div class="field select-field">
+        <app-searchable-select
+          label="👨‍🏫 Select Teacher"
+          placeholder="Choose Teacher..."
+          searchPlaceholder="Type teacher name to search..."
+          [options]="teacherOptions()"
+          [value]="teacherId()"
+          (valueChange)="onTeacherSelected($event)"
+        ></app-searchable-select>
+      </div>
+    } @else {
+      <div class="field">
+        <label>Logged-In Teacher</label>
+        <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" readonly disabled />
+      </div>
+    }
+    <div class="field"><label>Start Date</label><input type="date" [(ngModel)]="startDate" name="startDate" class="form-control" /></div>
+    <div class="field"><label>End Date</label><input type="date" [(ngModel)]="endDate" name="endDate" class="form-control" /></div>
+    <button type="button" class="btn-search" (click)="search()">Search</button>
   </div>
 
   @if (reportResource.isLoading()) {

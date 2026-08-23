@@ -25,11 +25,15 @@ public class GetStudentAttendanceCalendarHandler
     public async Task<List<CalendarDayDto>> Handle(
         GetStudentAttendanceCalendarQuery request, CancellationToken cancellationToken)
     {
+        var studentEntity = await _context.Students
+            .FirstOrDefaultAsync(st => st.Id == request.StudentId || st.UserId == request.StudentId, cancellationToken);
+        var actualStudentId = studentEntity?.Id ?? request.StudentId;
+
         var startOfMonth = new DateOnly(request.Year, request.Month, 1);
         var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
 
         var records = await _context.Attendances
-            .Where(a => a.StudentId == request.StudentId
+            .Where(a => a.StudentId == actualStudentId
                      && a.AttendanceDate >= startOfMonth
                      && a.AttendanceDate <= endOfMonth)
             .OrderBy(a => a.AttendanceDate)

@@ -1,37 +1,69 @@
-<div class="page">
-  <h1>View Group Attendance</h1>
+<div class="view-attendance-page">
+  <div class="page-header">
+    <div>
+      <h1>📋 View Group Attendance Records</h1>
+      <p>Filter attendance history by class group and session date.</p>
+    </div>
+  </div>
 
-  <div class="search-bar">
-    <div class="field">
-      <label for="classGroupId">Class Group ID</label>
-      <input id="classGroupId" [(ngModel)]="classGroupId" name="classGroupId" placeholder="e.g. GRP-001" />
+  <div class="filter-card">
+    <div class="filter-col">
+      <app-searchable-select
+        label="👥 Select Class Group"
+        placeholder="Choose Class Group..."
+        searchPlaceholder="Type group name to search..."
+        [options]="groupOptions()"
+        [value]="classGroupId()"
+        (valueChange)="onGroupSelected($event)"
+      ></app-searchable-select>
     </div>
 
-    <div class="field">
-      <label for="attendanceDate">Date</label>
-      <input id="attendanceDate" type="date" [(ngModel)]="attendanceDate" name="attendanceDate" />
+    <div class="filter-col date-col">
+      <label for="attendanceDate">Session Date</label>
+      <input id="attendanceDate" type="date" [(ngModel)]="attendanceDate" name="attendanceDate" class="form-control" />
     </div>
 
-    <button type="button" (click)="search()">Search</button>
+    <div class="filter-col action-col">
+      <button type="button" class="btn-search" (click)="search()">Search Records</button>
+    </div>
   </div>
 
   @if (recordsResource.isLoading()) {
-    <div class="spinner">Loading attendance records...</div>
+    <div class="loading-box">Loading attendance records...</div>
   } @else if (recordsResource.error()) {
-    <div class="error">Could not load attendance. Make sure the backend is running.</div>
+    <div class="alert alert-danger">Could not load attendance records. Ensure backend service is active.</div>
   } @else {
-    <div class="records">
-      @for (record of recordsResource.value()!; track record.id) {
-        <div class="record-row">
-          <span class="student-id">{{ record.studentId }}</span>
-          <span class="status-badge" [attr.data-status]="record.status">
-            {{ statusLabels[record.status] }}
-          </span>
-          <span class="notes">{{ record.notes || "—" }}</span>
-        </div>
-      } @empty {
-        <p class="empty-hint">No attendance records found for this class and date.</p>
-      }
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Class Group</th>
+            <th>Teacher</th>
+            <th>Attendance Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (record of recordsResource.value()!; track record.id) {
+            <tr>
+              <td class="student-name">{{ record.studentName || record.studentId }}</td>
+              <td>{{ record.classGroupName || '—' }}</td>
+              <td>{{ record.teacherName || '—' }}</td>
+              <td>
+                <span class="status-badge" [class]="getStatusClass(record.status)">
+                  {{ getStatusLabel(record.status) }}
+                </span>
+              </td>
+              <td class="notes">{{ record.notes || '—' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">No attendance records found for this class group and date.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   }
 </div>

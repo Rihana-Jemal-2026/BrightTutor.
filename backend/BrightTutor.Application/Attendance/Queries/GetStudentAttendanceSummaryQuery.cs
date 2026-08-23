@@ -26,8 +26,17 @@ public class GetStudentAttendanceSummaryHandler
     public async Task<GetStudentAttendanceSummaryResponse> Handle(
         GetStudentAttendanceSummaryQuery request, CancellationToken cancellationToken)
     {
+        var studentEntity = await _context.Students
+            .Include(st => st.User)
+            .FirstOrDefaultAsync(st => st.Id == request.StudentId || st.UserId == request.StudentId, cancellationToken);
+
+        var actualStudentId = studentEntity?.Id ?? request.StudentId;
+        var studentName = studentEntity?.User != null 
+            ? $"{studentEntity.User.FirstName} {studentEntity.User.LastName}" 
+            : "Student";
+
         var records = await _context.Attendances
-            .Where(a => a.StudentId == request.StudentId
+            .Where(a => a.StudentId == actualStudentId
                      && a.AttendanceDate >= request.StartDate
                      && a.AttendanceDate <= request.EndDate)
             .ToListAsync(cancellationToken);
@@ -44,7 +53,8 @@ public class GetStudentAttendanceSummaryHandler
 
         return new GetStudentAttendanceSummaryResponse
         {
-            StudentId = request.StudentId,
+            StudentId = actualStudentId,
+            StudentName = studentName,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
             TotalRecords = total,

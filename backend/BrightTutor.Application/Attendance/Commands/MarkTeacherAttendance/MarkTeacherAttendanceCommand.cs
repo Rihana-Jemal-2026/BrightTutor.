@@ -26,8 +26,13 @@ public class MarkTeacherAttendanceHandler : IRequestHandler<MarkTeacherAttendanc
 
     public async Task<Guid> Handle(MarkTeacherAttendanceCommand request, CancellationToken cancellationToken)
     {
+        // Resolve TeacherId (support either Teacher.Id or User.Id)
+        var teacher = await _context.Teachers
+            .FirstOrDefaultAsync(t => t.Id == request.TeacherId || t.UserId == request.TeacherId, cancellationToken);
+        var actualTeacherId = teacher?.Id ?? request.TeacherId;
+
         var existing = await _context.TeacherAttendances
-            .AnyAsync(t => t.TeacherId == request.TeacherId && t.AttendanceDate == request.AttendanceDate, cancellationToken);
+            .AnyAsync(t => t.TeacherId == actualTeacherId && t.AttendanceDate == request.AttendanceDate, cancellationToken);
 
         if (existing)
         {
@@ -36,7 +41,7 @@ public class MarkTeacherAttendanceHandler : IRequestHandler<MarkTeacherAttendanc
 
         var record = new Domain.Entities.TeacherAttendance
         {
-            TeacherId = request.TeacherId,
+            TeacherId = actualTeacherId,
             AttendanceDate = request.AttendanceDate,
             Status = request.Status,
             CheckInTime = request.CheckInTime,
