@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrightTutor Academic Portal - End-to-End Developer & Handover Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --primary-dark: #172554;
+      --accent: #0284c7;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--gray-800);
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 13px;
+      padding: 2.25rem;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        font-size: 11.5px;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .card, .table-container, pre, .step-box {
+        page-break-inside: avoid;
+      }
+    }
+
+    .header-banner {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary), var(--accent));
+      color: white;
+      padding: 2.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.25);
+    }
+
+    .header-banner h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.4rem;
+    }
+
+    .header-banner p {
+      font-size: 1rem;
+      opacity: 0.92;
+      max-width: 850px;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      flex-wrap: wrap;
+    }
+
+    .header-meta span {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin: 1.75rem 0 0.85rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 2px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin: 1.15rem 0 0.45rem;
+    }
+
+    p, li {
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+    }
+
+    ul, ol {
+      margin-left: 1.4rem;
+      margin-bottom: 0.85rem;
+    }
+
+    li {
+      margin-bottom: 0.3rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.15rem;
+      margin: 0.85rem 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+      margin: 0.85rem 0;
+    }
+
+    .card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 1.1rem;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .table-container {
+      margin: 1rem 0;
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.84rem;
+    }
+
+    thead {
+      background: var(--gray-100);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--gray-900);
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.18rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+
+    .badge-success { background: #dcfce7; color: #15803d; }
+    .badge-primary { background: #dbeafe; color: #1d4ed8; }
+    .badge-warning { background: #fef3c7; color: #b45309; }
+    .badge-danger { background: #fee2e2; color: #b91c1c; }
+    .badge-neutral { background: #f1f5f9; color: #475569; }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+
+    code {
+      background: var(--gray-100);
+      padding: 0.12rem 0.35rem;
+      border-radius: 4px;
+      color: #b91c1c;
+    }
+
+    .callout {
+      border-left: 4px solid var(--primary-light);
+      background: #eff6ff;
+      padding: 0.85rem 1.15rem;
+      border-radius: 0 8px 8px 0;
+      margin: 0.85rem 0;
+    }
+
+    .callout-title {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .step-box {
+      border-left: 3px solid var(--primary-light);
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid var(--primary-light);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .step-box.step-admin { border-left-color: #3b82f6; }
+    .step-box.step-teacher { border-left-color: #10b981; }
+    .step-box.step-student { border-left-color: #f59e0b; }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: var(--gray-900);
+    }
+
+    .step-role-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+    }
+
+    .step-desc {
+      font-size: 0.82rem;
+      color: var(--gray-600);
+      margin: 0;
+    }
+
+    .step-desc strong {
+      color: var(--gray-800);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Banner -->
+  <div class="header-banner">
+    <h1>BrightTutor Academic Portal</h1>
+    <p>Complete End-to-End System Architecture, Business Workflows, 16-Step Verification Test Plan & Developer Handover Guide</p>
+    <div class="header-meta">
+      <span><strong>Stack:</strong> .NET 8 Web API + Angular 19 + PostgreSQL</span>
+      <span><strong>Architecture:</strong> Clean Architecture (CQRS + MediatR)</span>
+      <span><strong>Environment:</strong> Backend :5198 | Frontend :4200</span>
+      <span><strong>Status:</strong> All 16 Modules Verified & Operational</span>
+    </div>
+  </div>
+
+  <!-- SECTION 1: ARCHITECTURE & TECH STACK -->
+  <h2>🏛️ 1. System Architecture & Tech Stack</h2>
+  
+  <p>
+    BrightTutor is designed following <strong>Clean Architecture principles</strong> with strict separation of concerns, 
+    ensuring testability, maintainability, and loose coupling.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🖥️ Backend Architecture (.NET 8)</div>
+      <ul>
+        <li><strong>BrightTutor.Domain:</strong> Core domain entities (<code>User</code>, <code>Student</code>, <code>Teacher</code>, <code>Course</code>, <code>ClassGroup</code>, <code>Attendance</code>, <code>Permission</code>), value objects, and domain enums.</li>
+        <li><strong>BrightTutor.Application:</strong> MediatR CQRS Commands & Queries, FluentValidation pipeline behaviors, Application DTOs, and Interfaces.</li>
+        <li><strong>BrightTutor.Infrastructure:</strong> EF Core PostgreSQL DbContext, entity configurations, BCrypt password hashing, JWT Token generation, and automated seeding (<code>DbInitializer</code>).</li>
+        <li><strong>BrightTutor.Api:</strong> RESTful controllers, global exception handling, Swagger documentation, and JWT bearer authentication.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌐 Frontend Architecture (Angular 19)</div>
+      <ul>
+        <li><strong>Standalone Components:</strong> Modern Angular architecture with zero NgModules for faster lazy-loading and tree-shaking.</li>
+        <li><strong>Reactivity & Signals:</strong> State management powered by Angular Signals (<code>signal</code>, <code>computed</code>) and reactive data fetching (<code>rxResource</code>).</li>
+        <li><strong>Dynamic Searchable Selects:</strong> Reusable <code>SearchableSelectComponent</code> with instant typeahead search across thousands of entities (no raw GUID inputs).</li>
+        <li><strong>Vanilla CSS Design System:</strong> Clean styling, glassmorphism, responsive data cards, status badges, and subtle micro-animations.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 2: ROLES & PERMISSION SYSTEM -->
+  <h2>🔐 2. Role-Based Access Control & Permission Matrix</h2>
+
+  <p>
+    The system implements a hybrid <strong>Role-Based (RBAC) + Dynamic Permission System</strong>. 
+    Permissions are stored in the PostgreSQL database and can be dynamically customized per role by the Super Admin at runtime without code deployment.
+  </p>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Permission Code</th>
+          <th>Module</th>
+          <th>Description</th>
+          <th>Admin</th>
+          <th>Teacher</th>
+          <th>Student</th>
+          <th>Parent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>users.view</code> / <code>manage</code></td>
+          <td>Users</td>
+          <td>Create, edit, deactivate, and assign user roles</td>
+          <td><span class="badge badge-success">✓ Full</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+        </tr>
+        <tr>
+          <td><code>courses.view</code> / <code>manage</code></td>
+          <td>Courses</td>
+          <td>Manage courses, subjects, class groups & capacities</td>
+          <td><span class="badge badge-success">✓ Full</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+        </tr>
+        <tr>
+          <td><code>attendance.mark</code></td>
+          <td>Attendance</td>
+          <td>Submit Group, Online, and Home Visit attendance</td>
+          <td><span class="badge badge-success">✓ All</span></td>
+          <td><span class="badge badge-primary">✓ Own</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+        </tr>
+        <tr>
+          <td><code>attendance.view</code></td>
+          <td>Reports</td>
+          <td>View attendance logs, calendars, and performance summaries</td>
+          <td><span class="badge badge-success">✓ All</span></td>
+          <td><span class="badge badge-primary">✓ Class/Own</span></td>
+          <td><span class="badge badge-warning">✓ Personal Only</span></td>
+          <td><span class="badge badge-warning">✓ Child Only</span></td>
+        </tr>
+        <tr>
+          <td><code>settings.manage</code></td>
+          <td>Settings</td>
+          <td>Dynamic Permission Matrix & Admin System Actions</td>
+          <td><span class="badge badge-success">✓ Full</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+          <td><span class="badge badge-neutral">✕</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">🛡️ Critical Security & Privacy Invariants</div>
+    <ul>
+      <li><strong>Super Admin Immunity:</strong> The account <code>admin@brighttutor.com</code> can NEVER be deactivated and can only be edited by themselves.</li>
+      <li><strong>Teacher ID Locking:</strong> In attendance marking forms and teacher reports, the Teacher ID is permanently locked to the logged-in teacher's ID. Teachers cannot submit attendance on behalf of other instructors.</li>
+      <li><strong>Student Privacy Scoping:</strong> Students only see their own attendance records on the calendar, summary, and group attendance views. Other students' records in the class are filtered out.</li>
+    </ul>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 3: DEVELOPER CREDENTIALS -->
+  <h2>👥 3. Pre-Seeded Developer Accounts & Credentials</h2>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">👑 Super Admin Account</div>
+      <p><strong>Email:</strong> <code>admin@brighttutor.com</code></p>
+      <p><strong>Password:</strong> <code>AdminPass123!</code></p>
+      <p><strong>Scope:</strong> Full system access, users management, dynamic matrix, all settings & reports.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">👨‍🏫 Teacher Account</div>
+      <p><strong>Email:</strong> <code>sarah.jenkins@brighttutor.com</code></p>
+      <p><strong>Password:</strong> <code>TeacherPass123!</code></p>
+      <p><strong>Scope:</strong> Group, Online & Home attendance marking, class reports, personal stats.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🎓 Student Account</div>
+      <p><strong>Email:</strong> <code>michael.brown@brighttutor.com</code></p>
+      <p><strong>Password:</strong> <code>StudentPass123!</code></p>
+      <p><strong>Scope:</strong> Personal calendar, attendance summary, own records only.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 4: 16-STEP END-TO-END VERIFICATION TEST FLOW -->
+  <h2>🧪 4. Complete 16-Step End-to-End Test Journey (User Creation to Deployment)</h2>
+
+  <p>Follow these 16 sequential steps to test the entire BrightTutor lifecycle from scratch.</p>
+
+  <!-- STEP 1 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 1: Super Admin Authentication & Sign-In</span>
+      <span class="step-role-badge badge-primary">Admin (Super Admin)</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Navigate to <code>/login</code> and sign in with <code>admin@brighttutor.com</code> / <code>AdminPass123!</code>.<br>
+      <strong>Verification:</strong> Issues JWT token, saves session to <code>localStorage</code>, displays topbar badge <code>Super Admin 👤 Super Admin</code>, and redirects to Dashboard.
+    </p>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 2: Executive Dashboard Metrics & Monitoring</span>
+      <span class="step-role-badge badge-primary">Admin (Super Admin)</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Navigate to <code>/dashboard</code>.<br>
+      <strong>Verification:</strong> Displays 4 real-time summary cards (<em>Total System Users</em>, <em>Active Students</em>, <em>Registered Teachers</em>, <em>Active Courses</em>) and Today's Attendance Real-Time Summary.
+    </p>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 3: Users Management, Account Creation, Edit & Deactivation</span>
+      <span class="step-role-badge badge-primary">Admin (Super Admin)</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/users</code>. Create Teacher <code>sarah.jenkins@brighttutor.com</code> and Student <code>michael.brown@brighttutor.com</code>. Test Edit (<code>✏️</code>) and Deactivate (<code>⏸️</code>) actions.<br>
+      <strong>Verification:</strong> Modal saves without page reload. Super Admin is protected from deactivation. Bottom error/success alerts display properly.
+    </p>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 4: Courses & Class Groups Management</span>
+      <span class="step-role-badge badge-primary">Admin (Super Admin)</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/courses</code>. Create Course (e.g. <em>Mathematics 101</em>) and create Class Group (<em>Section A - Morning</em>, Capacity: 30). Assign Teacher.<br>
+      <strong>Verification:</strong> Group is created and immediately populated into all attendance searchable dropdowns.
+    </p>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 5: Group Attendance Marking & UPSERT Submission</span>
+      <span class="step-role-badge badge-primary">Admin / Teacher</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/mark-group-attendance</code>. Select <em>Section A - Morning</em>. Use <strong>1-Click Bulk Mark (✓ Mark All Present)</strong>, adjust individual status buttons, and Submit.<br>
+      <strong>Verification:</strong> Database executes UPSERT query (no duplicate key errors if submitted repeatedly for the same date).
+    </p>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 6: View Group Attendance Records</span>
+      <span class="step-role-badge badge-primary">Admin / Teacher</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/view-group-attendance</code>. Select <em>Section A - Morning</em> and session date.<br>
+      <strong>Verification:</strong> Auto-loads attendance table showing Student Name, Class Group, Teacher, and green <code>Present</code> status badges.
+    </p>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- STEP 7 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 7: Staff Teacher Attendance Marking</span>
+      <span class="step-role-badge badge-primary">Admin / Supervisor</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/mark-teacher-attendance</code>. Select Teacher <code>sara jenkins</code> and mark present.<br>
+      <strong>Verification:</strong> Submits supervisor-verified staff attendance record to <code>TeacherAttendances</code> table.
+    </p>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step-box step-teacher">
+    <div class="step-header">
+      <span class="step-title">STEP 8: Online Session Attendance Marking</span>
+      <span class="step-role-badge badge-success">Teacher</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/mark-online-attendance</code>. Select Student <code>Michael brown</code>, group, and add session notes (e.g. <em>Completed 60-min Zoom session on Algebra</em>).<br>
+      <strong>Verification:</strong> Records online tutoring session with timestamp and notes.
+    </p>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="step-box step-teacher">
+    <div class="step-header">
+      <span class="step-title">STEP 9: Home Visit Tutoring GPS Check-In & Check-Out</span>
+      <span class="step-role-badge badge-success">Teacher</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/home-attendance</code>. Perform <strong>Check-In</strong> with GPS coordinates and address. Next, select the active visit session from the dropdown and submit <strong>Check-Out</strong>.<br>
+      <strong>Verification:</strong> Records GPS location verification, active session links automatically, and records duration on checkout.
+    </p>
+  </div>
+
+  <!-- STEP 10 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 10: Class Attendance Reports & Student Breakdown</span>
+      <span class="step-role-badge badge-primary">Admin / Teacher</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/class-report</code>. Select <em>Section A - Morning</em>.<br>
+      <strong>Verification:</strong> Displays class summary totals (Total Records, Present, Absent, Late, Excused, Rate %) and per-student breakdown table showing <code>Michael brown | 100%</code>.
+    </p>
+  </div>
+
+  <!-- STEP 11 -->
+  <div class="step-box step-teacher">
+    <div class="step-header">
+      <span class="step-title">STEP 11: Teacher Reports & Student Calendar</span>
+      <span class="step-role-badge badge-success">Teacher / Student</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/teacher-report</code> (shows Sara's conducted classes) and <code>/student-calendar</code> (shows Michael's monthly attendance dates).<br>
+      <strong>Verification:</strong> Auto-resolves foreign key IDs and displays monthly dates with color-coded status badges.
+    </p>
+  </div>
+
+  <!-- STEP 12 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 12: Dynamic Role-Permission Matrix & Admin Settings</span>
+      <span class="step-role-badge badge-primary">Admin (Super Admin)</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open <code>/permissions</code>. Toggle permissions for Teacher or Student roles and click <em>Save Role Permissions</em>.<br>
+      <strong>Verification:</strong> Persisted directly to PostgreSQL <code>RolePermissions</code> table; dynamically updates live user navigation.
+    </p>
+  </div>
+
+  <!-- STEP 13 -->
+  <div class="step-box step-student">
+    <div class="step-header">
+      <span class="step-title">STEP 13: Student Portal Verification</span>
+      <span class="step-role-badge badge-warning">Student (Michael brown)</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Sign in as <code>michael.brown@brighttutor.com</code> / <code>StudentPass123!</code>.<br>
+      <strong>Verification:</strong> Topbar displays <code>Michael brown 👤 Student</code>. Sidebar shows only student menus. Calendar and Summary <strong>automatically lock to Michael</strong> and display his 100% attendance records.
+    </p>
+  </div>
+
+  <!-- STEP 14 -->
+  <div class="step-box step-teacher">
+    <div class="step-header">
+      <span class="step-title">STEP 14: Teacher Portal Verification</span>
+      <span class="step-role-badge badge-success">Teacher (sara jenkins)</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Sign in as <code>sarah.jenkins@brighttutor.com</code> / <code>TeacherPass123!</code>.<br>
+      <strong>Verification:</strong> Topbar displays <code>sara jenkins 👤 Teacher</code>. Admin menus (<em>Users</em>, <em>Matrix</em>, <em>Settings</em>, <em>Courses</em>, <em>Teacher Attendance</em>) are hidden. Teacher selector is locked to Sara.
+    </p>
+  </div>
+
+  <!-- STEP 15 -->
+  <div class="step-box step-teacher">
+    <div class="step-header">
+      <span class="step-title">STEP 15: Teacher Student Lookup Authorization Fix</span>
+      <span class="step-role-badge badge-success">Teacher</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Open Group Attendance and Online Attendance as Teacher.<br>
+      <strong>Verification:</strong> <code>[Authorize(Roles = "Admin,Teacher")]</code> on <code>GET /api/users</code> allows Teacher to load enrolled students (<code>Michael brown</code>) without 403 Forbidden errors.
+    </p>
+  </div>
+
+  <!-- STEP 16 -->
+  <div class="step-box step-admin">
+    <div class="step-header">
+      <span class="step-title">STEP 16: Account Profile Badge & Change Password Modal</span>
+      <span class="step-role-badge badge-primary">All Roles</span>
+    </div>
+    <p class="step-desc">
+      <strong>Action:</strong> Click topbar user badge (<code>👤 Profile & Password</code>). Enter current password and new password. Click <em>Update Password</em>.<br>
+      <strong>Verification:</strong> Backend updates BCrypt hash via <code>/api/auth/change-password</code>; displays floating green toast <code>✓ Password updated successfully!</code>.
+    </p>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 5: API ENDPOINTS & DATABASE REFERENCE -->
+  <h2>🔌 5. REST API Endpoints & Entity Reference</h2>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>HTTP Method</th>
+          <th>Endpoint URI</th>
+          <th>Authorization</th>
+          <th>Functionality</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/auth/login</code></td>
+          <td>Anonymous</td>
+          <td>Authenticates user and returns JWT Token & User Info</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/auth/change-password</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Changes current authenticated user's password</td>
+        </tr>
+        <tr>
+          <td><code>GET</code> / <code>POST</code></td>
+          <td><code>/api/users</code></td>
+          <td><code>[Authorize(Roles="Admin,Teacher")]</code></td>
+          <td>Lists active users / Registers new users (Admin only)</td>
+        </tr>
+        <tr>
+          <td><code>GET</code> / <code>POST</code></td>
+          <td><code>/api/courses</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Retrieves course catalog / Creates courses</td>
+        </tr>
+        <tr>
+          <td><code>GET</code> / <code>POST</code></td>
+          <td><code>/api/classgroups</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Retrieves class groups / Creates groups with capacity</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/attendance/group</code></td>
+          <td><code>[Authorize(Roles="Admin,Teacher")]</code></td>
+          <td>Submits roster attendance using UPSERT strategy</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/attendance/group</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Retrieves group attendance records for date</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/attendance/online</code></td>
+          <td><code>[Authorize(Roles="Admin,Teacher")]</code></td>
+          <td>Records online session attendance</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/attendance/home/check-in</code></td>
+          <td><code>[Authorize(Roles="Admin,Teacher")]</code></td>
+          <td>GPS Check-In for student home visit</td>
+        </tr>
+        <tr>
+          <td><code>POST</code></td>
+          <td><code>/api/attendance/home/check-out</code></td>
+          <td><code>[Authorize(Roles="Admin,Teacher")]</code></td>
+          <td>GPS Check-Out for student home visit</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/attendance/class-report</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Aggregate attendance metrics for class group</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/attendance/teacher-report</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Conducted session statistics for teacher</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/attendance/student-calendar</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Monthly calendar attendance days for student</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/attendance/student-summary</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Aggregate performance rate for student</td>
+        </tr>
+        <tr>
+          <td><code>GET</code> / <code>POST</code></td>
+          <td><code>/api/permissions/roles/{roleId}</code></td>
+          <td><code>[Authorize]</code></td>
+          <td>Fetches / Updates dynamic role permissions</td>
+        </tr>
+        <tr>
+          <td><code>GET</code></td>
+          <td><code>/api/dashboard/summary</code></td>
+          <td><code>[Authorize(Roles="Admin")]</code></td>
+          <td>Executive dashboard system metrics</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">💡 How to Run the Solution Locally</div>
+    <ol>
+      <li><strong>Backend:</strong> Navigate to <code>backend/</code> and run <code>dotnet run --project BrightTutor.Api</code> (Starts on <code>http://localhost:5198</code>).</li>
+      <li><strong>Frontend:</strong> Navigate to <code>frontend/brighttutor-client/</code> and run <code>npm start</code> or <code>ng serve</code> (Starts on <code>http://localhost:4200</code>).</li>
+      <li><strong>Database:</strong> PostgreSQL running at <code>localhost:5432</code>, database <code>brighttutor</code>. All migrations and seed data auto-apply on startup via <code>DbInitializer.SeedAsync()</code>.</li>
+    </ol>
+  </div>
+
+</body>
+</html>
