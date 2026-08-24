@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -11,6 +11,11 @@ namespace BrightTutor.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("DELETE FROM \"Attendances\" WHERE \"ClassGroupId\" NOT IN (SELECT \"Id\" FROM \"ClassGroups\");");
+            migrationBuilder.Sql("DELETE FROM \"Attendances\" WHERE \"StudentId\" NOT IN (SELECT \"Id\" FROM \"Students\");");
+            migrationBuilder.Sql("DELETE FROM \"Attendances\" WHERE \"TeacherId\" NOT IN (SELECT \"Id\" FROM \"Teachers\");");
+            migrationBuilder.Sql("DELETE FROM \"TeacherAttendances\" WHERE \"TeacherId\" NOT IN (SELECT \"Id\" FROM \"Teachers\");");
+
             migrationBuilder.AddColumn<Guid>(
                 name: "ScheduleId",
                 table: "Attendances",

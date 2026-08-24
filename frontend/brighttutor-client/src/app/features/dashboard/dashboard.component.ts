@@ -233,34 +233,36 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
   `,
   styles: [`
     .dashboard-page { padding: 1.5rem; }
-    .page-header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; color: #1e293b; }
-    .page-header p { color: #64748b; margin-bottom: 1.5rem; }
+    .page-header h1 { font-size: 1.75rem; margin-bottom: 0.25rem; color: var(--color-primary); font-family: var(--font-display); }
+    .page-header p { color: var(--color-muted); margin-bottom: 1.5rem; }
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
-    .metric-card { background: white; border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 4px solid #3b82f6; }
-    .metric-card.success { border-left-color: #10b981; }
-    .metric-card.info { border-left-color: #06b6d4; }
-    .metric-card.warning { border-left-color: #f59e0b; }
+    .metric-card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: var(--shadow-card); border-left: 4px solid var(--color-accent); border: 1px solid var(--color-border); border-left-width: 4px; transition: all 0.2s ease-in-out; }
+    .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card-hover); }
+    .metric-card.primary { border-left-color: var(--color-primary); }
+    .metric-card.success { border-left-color: var(--color-accent-bright); }
+    .metric-card.info { border-left-color: #0284c7; }
+    .metric-card.warning { border-left-color: #d97706; }
     .metric-icon { font-size: 2rem; }
-    .metric-info .value { display: block; font-size: 1.75rem; font-weight: 700; color: #0f172a; }
-    .metric-info .label { font-size: 0.875rem; color: #64748b; }
-    .section-title { font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; margin-top: 1rem; }
+    .metric-info .value { display: block; font-size: 1.75rem; font-weight: 700; color: var(--color-text); font-family: var(--font-display); }
+    .metric-info .label { font-size: 0.875rem; color: var(--color-muted); font-weight: 500; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: var(--color-primary); margin-bottom: 1rem; margin-top: 1rem; font-family: var(--font-display); }
     .attendance-summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
-    .stat-box { background: white; padding: 1.25rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .stat-box .number { display: block; font-size: 1.5rem; font-weight: 700; min-height: 2rem; }
-    .stat-box .text { font-size: 0.8rem; color: #64748b; }
-    .scheduled .number { color: #3b82f6; }
-    .present .number { color: #10b981; }
-    .absent .number { color: #ef4444; }
-    .late .number { color: #f59e0b; }
-    .verified .number { color: #8b5cf6; }
+    .stat-box { background: var(--color-surface); padding: 1.25rem; border-radius: var(--radius-md); text-align: center; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); }
+    .stat-box .number { display: block; font-size: 1.5rem; font-weight: 700; min-height: 2rem; font-family: var(--font-display); }
+    .stat-box .text { font-size: 0.8rem; color: var(--color-muted); font-weight: 600; }
+    .scheduled .number { color: #0284c7; }
+    .present .number { color: var(--color-accent-bright); }
+    .absent .number { color: var(--color-error); }
+    .late .number { color: #d97706; }
+    .verified .number { color: var(--color-primary); }
 
     .quick-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-top: 0.5rem; }
-    .action-card { background: white; border-radius: 12px; padding: 1.5rem; display: flex; align-items: flex-start; gap: 1rem; text-decoration: none; color: inherit; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; }
-    .action-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .action-card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 1.5rem; display: flex; align-items: flex-start; gap: 1rem; text-decoration: none; color: inherit; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+    .action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); border-color: var(--color-accent-bright); }
     .action-icon { font-size: 2.25rem; }
-    .action-details h3 { margin: 0 0 0.35rem 0; font-size: 1.1rem; color: #0f172a; }
-    .action-details p { margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.4; }
-    .loading-spinner { padding: 2rem; text-align: center; color: #64748b; }
+    .action-details h3 { margin: 0 0 0.35rem 0; font-size: 1.1rem; color: var(--color-primary); }
+    .action-details p { margin: 0; font-size: 0.85rem; color: var(--color-muted); line-height: 1.4; }
+    .loading-spinner { padding: 2rem; text-align: center; color: var(--color-muted); }
   `]
 })
 export class DashboardComponent implements OnInit {

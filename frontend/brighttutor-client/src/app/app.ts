@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
@@ -13,17 +13,56 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
   title = 'BrightTutor Academic Portal';
   toastService = inject(ToastService);
   notificationService = inject(NotificationService);
   authService = inject(AuthService);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   isSidebarCollapsed = signal<boolean>(false);
   isNotificationDropdownOpen = signal<boolean>(false);
   isProfileModalOpen = signal<boolean>(false);
   changingPassword = signal<boolean>(false);
+  isDarkMode = signal<boolean>(false);
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const notifElem = this.elementRef.nativeElement.querySelector('.notification-wrapper');
+    if (notifElem && !notifElem.contains(event.target)) {
+      this.isNotificationDropdownOpen.set(false);
+    }
+  }
+
+  ngOnInit(): void {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      this.enableDarkMode();
+    } else {
+      this.enableLightMode();
+    }
+  }
+
+  toggleTheme(): void {
+    if (this.isDarkMode()) {
+      this.enableLightMode();
+    } else {
+      this.enableDarkMode();
+    }
+  }
+
+  private enableDarkMode(): void {
+    this.isDarkMode.set(true);
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+  }
+
+  private enableLightMode(): void {
+    this.isDarkMode.set(false);
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }
 
   passwordForm = {
     oldPassword: '',
@@ -35,7 +74,8 @@ export class App {
     this.isSidebarCollapsed.update(val => !val);
   }
 
-  toggleNotificationDropdown(): void {
+  toggleNotificationDropdown(event?: MouseEvent): void {
+    if (event) event.stopPropagation();
     this.isNotificationDropdownOpen.update(val => !val);
   }
 

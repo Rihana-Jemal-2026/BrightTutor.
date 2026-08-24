@@ -109,6 +109,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BrightTutor.Infrastructure.Persistence.ApplicationDbContext>();
     var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+    await context.Database.MigrateAsync();
     await BrightTutor.Infrastructure.Persistence.DbInitializer.SeedAsync(context, passwordHasher);
 }
 

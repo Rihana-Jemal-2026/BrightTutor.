@@ -5,8 +5,9 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: #f8fafc;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
 
 // -------------------------------------------------------------
@@ -14,14 +15,14 @@
 // -------------------------------------------------------------
 .app-topbar {
   height: 60px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.25rem;
   z-index: 1000;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 
   .topbar-left {
     display: flex;
@@ -31,7 +32,7 @@
     .sidebar-toggle-btn {
       background: none;
       border: none;
-      color: #64748b;
+      color: var(--color-muted);
       cursor: pointer;
       padding: 6px;
       border-radius: 6px;
@@ -41,8 +42,8 @@
       transition: background 0.2s, color 0.2s;
 
       &:hover {
-        background: #f1f5f9;
-        color: #1e293b;
+        background: rgba(16, 185, 129, 0.12);
+        color: var(--color-accent-bright);
       }
     }
 
@@ -53,18 +54,19 @@
       text-decoration: none;
 
       .brand-logo {
-        width: 34px;
-        height: 34px;
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #0B3D2E, #10B981);
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
+        box-shadow: 0 4px 12px rgba(11, 61, 46, 0.2);
 
         svg {
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
         }
       }
 
@@ -74,14 +76,16 @@
 
         .brand-title {
           font-weight: 700;
-          font-size: 1.1rem;
-          color: #0f172a;
+          font-size: 1.15rem;
+          color: var(--color-text);
+          font-family: var(--font-display);
           line-height: 1.1;
         }
 
         .brand-subtitle {
           font-size: 0.7rem;
-          color: #64748b;
+          color: var(--color-accent);
+          font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -93,6 +97,25 @@
     display: flex;
     align-items: center;
     gap: 1.25rem;
+
+    .theme-toggle-btn {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--color-border);
+      color: var(--color-accent-bright);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease-in-out;
+
+      &:hover {
+        background: var(--color-accent);
+        color: white;
+        transform: rotate(15deg) scale(1.08);
+      }
+    }
 
     .notification-wrapper {
       position: relative;
@@ -176,34 +199,34 @@
 
           .notification-item {
             padding: 0.75rem 1rem;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--color-border);
             cursor: pointer;
             transition: background 0.2s;
 
             &:hover {
-              background: #f8fafc;
+              background: rgba(16, 185, 129, 0.08);
             }
 
             &.unread {
-              background: #f0f9ff;
-              border-left: 3px solid #0284c7;
+              background: var(--color-success-bg);
+              border-left: 3px solid var(--color-accent-bright);
             }
 
             .notif-title {
               font-size: 0.85rem;
               font-weight: 600;
-              color: #1e293b;
+              color: var(--color-text);
             }
 
             .notif-msg {
               font-size: 0.8rem;
-              color: #64748b;
+              color: var(--color-muted);
               margin-top: 2px;
             }
 
             .notif-time {
               font-size: 0.7rem;
-              color: #94a3b8;
+              color: var(--color-muted);
               margin-top: 4px;
             }
           }
@@ -211,7 +234,7 @@
           .empty-notif {
             padding: 2rem;
             text-align: center;
-            color: #94a3b8;
+            color: var(--color-muted);
             font-size: 0.85rem;
           }
         }
@@ -223,12 +246,12 @@
       align-items: center;
       gap: 0.6rem;
       padding-left: 0.75rem;
-      border-left: 1px solid #e2e8f0;
+      border-left: 1px solid var(--color-border);
 
       .avatar {
         width: 34px;
         height: 34px;
-        background: #3b82f6;
+        background: linear-gradient(135deg, #0B3D2E, #10B981);
         color: white;
         border-radius: 50%;
         display: flex;
@@ -236,6 +259,7 @@
         justify-content: center;
         font-weight: 700;
         font-size: 0.9rem;
+        box-shadow: 0 2px 8px rgba(11, 61, 46, 0.2);
       }
 
       .user-details {
@@ -245,12 +269,12 @@
         .name {
           font-weight: 600;
           font-size: 0.85rem;
-          color: #0f172a;
+          color: var(--color-text);
         }
 
         .role {
           font-size: 0.7rem;
-          color: #64748b;
+          color: var(--color-muted);
         }
       }
     }
@@ -259,9 +283,9 @@
       display: flex;
       align-items: center;
       gap: 0.4rem;
-      background: #fee2e2;
-      color: #dc2626;
-      border: 1px solid #fca5a5;
+      background: var(--color-error-bg);
+      color: var(--color-error);
+      border: 1px solid rgba(220, 38, 38, 0.3);
       padding: 0.4rem 0.75rem;
       border-radius: 6px;
       font-size: 0.8rem;
@@ -270,12 +294,12 @@
       transition: background 0.2s;
 
       &:hover {
-        background: #fecaca;
+        background: rgba(220, 38, 38, 0.2);
       }
     }
 
     .btn-login-link {
-      background: #2563eb;
+      background: linear-gradient(135deg, #0B3D2E, #059669);
       color: white;
       text-decoration: none;
       padding: 0.4rem 0.85rem;
@@ -285,7 +309,7 @@
       transition: background 0.2s;
 
       &:hover {
-        background: #1d4ed8;
+        background: #059669;
       }
     }
   }
@@ -302,8 +326,8 @@
 
   .app-sidebar {
     width: 250px;
-    background: #ffffff;
-    border-right: 1px solid #e2e8f0;
+    background: var(--color-sidebar-bg);
+    border-right: 1px solid var(--color-sidebar-border);
     overflow-y: auto;
     transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
@@ -319,7 +343,7 @@
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.6px;
-          color: #94a3b8;
+          color: var(--color-muted);
           padding: 0 0.75rem 0.5rem 0.75rem;
         }
 
@@ -329,7 +353,7 @@
           gap: 0.75rem;
           padding: 0.6rem 0.75rem;
           border-radius: 8px;
-          color: #475569;
+          color: var(--color-text);
           text-decoration: none;
           font-size: 0.875rem;
           font-weight: 500;
@@ -348,14 +372,15 @@
           }
 
           &:hover {
-            background: #f1f5f9;
-            color: #1e293b;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--color-accent-bright);
           }
 
           &.active {
-            background: #eff6ff;
-            color: #2563eb;
+            background: linear-gradient(135deg, #0B3D2E, #14523F);
+            color: #FFFFFF;
             font-weight: 600;
+            box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
           }
         }
       }
@@ -384,7 +409,7 @@
   .app-main-content {
     flex: 1;
     overflow-y: auto;
-    background: #f8fafc;
+    background: var(--color-bg);
   }
 }
 

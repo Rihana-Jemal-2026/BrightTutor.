@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -17,7 +17,7 @@ export interface SelectOption {
       <label *ngIf="label" class="select-label">{{ label }}</label>
 
       <!-- Selected Value Trigger Box -->
-      <div class="select-trigger" (click)="toggleOpen()">
+      <div class="select-trigger" (click)="toggleOpen($event)">
         <span class="selected-text" [class.placeholder]="!selectedOption">
           {{ selectedOption ? selectedOption.name : placeholder }}
         </span>
@@ -43,7 +43,7 @@ export interface SelectOption {
               <div
                 class="option-item"
                 [class.selected]="opt.id === value"
-                (click)="selectOption(opt)"
+                (click)="selectOption(opt, $event)"
               >
                 <div class="opt-name">{{ opt.name }}</div>
                 @if (opt.subtext) {
@@ -66,7 +66,7 @@ export interface SelectOption {
       padding: 0.75rem 1rem; background: white; border: 1px solid #cbd5e1;
       border-radius: 8px; cursor: pointer; transition: border-color 0.2s;
     }
-    .select-trigger:hover { border-color: #2563eb; }
+    .select-trigger:hover { border-color: #059669; }
     .selected-text { font-size: 0.9rem; color: #0f172a; font-weight: 500; }
     .selected-text.placeholder { color: #94a3b8; font-weight: 400; }
     .chevron { font-size: 0.7rem; color: #64748b; }
@@ -80,14 +80,14 @@ export interface SelectOption {
       width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1;
       border-radius: 6px; font-size: 0.85rem; outline: none;
     }
-    .search-box input:focus { border-color: #2563eb; }
+    .search-box input:focus { border-color: #059669; }
     .options-list { max-height: 200px; overflow-y: auto; }
     .option-item {
       padding: 0.65rem 1rem; cursor: pointer; border-bottom: 1px solid #f1f5f9;
       transition: background 0.15s;
     }
-    .option-item:hover { background: #eff6ff; }
-    .option-item.selected { background: #dbeafe; font-weight: 600; color: #1e40af; }
+    .option-item:hover { background: #e9f7ef; }
+    .option-item.selected { background: #d1fae5; font-weight: 600; color: #065f46; }
     .opt-name { font-size: 0.9rem; color: #0f172a; }
     .opt-subtext { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
     .no-options { padding: 1rem; text-align: center; color: #94a3b8; font-size: 0.85rem; }
@@ -105,6 +105,15 @@ export class SearchableSelectComponent {
   isOpen = signal<boolean>(false);
   searchQuery: string = '';
 
+  constructor(private elementRef: ElementRef) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isOpen.set(false);
+    }
+  }
+
   get selectedOption(): SelectOption | null {
     return (this.options || []).find(opt => opt.id === this.value) || null;
   }
@@ -118,11 +127,13 @@ export class SearchableSelectComponent {
     );
   }
 
-  toggleOpen(): void {
+  toggleOpen(event: MouseEvent): void {
+    event.stopPropagation();
     this.isOpen.update(val => !val);
   }
 
-  selectOption(opt: SelectOption): void {
+  selectOption(opt: SelectOption, event: MouseEvent): void {
+    event.stopPropagation();
     this.value = opt.id;
     this.valueChange.emit(opt.id);
     this.isOpen.set(false);

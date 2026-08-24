@@ -425,13 +425,18 @@ export class UsersComponent implements OnInit {
   }
 
   private extractErrorMessage(err: any): string {
-    if (typeof err?.error === 'string') return err.error;
-    if (err?.error?.message) return err.error.message;
-    if (err?.error?.detail) return err.error.detail;
     if (err?.error?.errors) {
-      if (Array.isArray(err.error.errors)) return err.error.errors.join(', ');
-      if (typeof err.error.errors === 'object') return Object.values(err.error.errors).flat().join(', ');
+      if (Array.isArray(err.error.errors) && err.error.errors.length > 0) {
+        return err.error.errors.join(', ');
+      }
+      if (typeof err.error.errors === 'object') {
+        const vals = Object.values(err.error.errors).flat();
+        if (vals.length > 0) return vals.join(', ');
+      }
     }
-    return 'An error occurred processing the request.';
+    if (typeof err?.error === 'string') return err.error;
+    if (err?.error?.message && err.error.message !== 'Validation Failed') return err.error.message;
+    if (err?.error?.detail) return err.error.detail;
+    return err?.statusText || 'An error occurred processing the request.';
   }
 }

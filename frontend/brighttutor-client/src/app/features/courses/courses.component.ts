@@ -47,7 +47,15 @@ import { ToastService } from '../../services/toast.service';
               <h3>{{ course.name }}</h3>
               <p>{{ course.description || 'No description provided.' }}</p>
               <div class="course-footer">
-                <span>👥 {{ course.classGroupCount }} Class Groups</span>
+                <span>
+                  @if (parseServiceTypeNumber(course.serviceType) === 2) {
+                    👥 {{ course.classGroupCount }} Class Groups
+                  } @else if (parseServiceTypeNumber(course.serviceType) === 3) {
+                    🏠 Home-to-Home Visit Session
+                  } @else {
+                    💻 1-on-1 Online Session
+                  }
+                </span>
                 <div class="card-actions">
                   <button
                     type="button"
@@ -151,7 +159,7 @@ import { ToastService } from '../../services/toast.service';
                 <select id="serviceType" name="serviceType" [(ngModel)]="newCourse.serviceType">
                   <option [ngValue]="1">Online Session (1-on-1)</option>
                   <option [ngValue]="2">Group Session</option>
-                  <option [ngValue]="3">Home Visit Tutoring</option>
+                  <option [ngValue]="3">Home-to-Home Visit Tutoring</option>
                 </select>
               </div>
               <div class="modal-footer">
@@ -185,7 +193,7 @@ import { ToastService } from '../../services/toast.service';
                 <select id="editServiceType" name="editServiceType" [(ngModel)]="editingCourse.serviceType">
                   <option [ngValue]="1">Online Session (1-on-1)</option>
                   <option [ngValue]="2">Group Session</option>
-                  <option [ngValue]="3">Home Visit Tutoring</option>
+                  <option [ngValue]="3">Home-to-Home Visit Tutoring</option>
                 </select>
               </div>
               <div class="modal-footer">
@@ -358,12 +366,22 @@ export class CoursesComponent implements OnInit {
     this.isCourseModalOpen.set(false);
   }
 
+  parseServiceTypeNumber(val: any): number {
+    if (val === null || val === undefined) return 1;
+    const s = String(val).toLowerCase().trim();
+    if (s === '1' || s === 'online') return 1;
+    if (s === '2' || s === 'group') return 2;
+    if (s === '3' || s === 'hometohome' || s === 'home' || s === 'homevisit') return 3;
+    const num = Number(val);
+    return isNaN(num) ? 1 : num;
+  }
+
   openEditCourseModal(course: CourseDto): void {
     this.editingCourse = {
       id: course.id,
       name: course.name,
       description: course.description || '',
-      serviceType: Number(course.serviceType)
+      serviceType: this.parseServiceTypeNumber(course.serviceType)
     };
     this.isEditCourseModalOpen.set(true);
   }
@@ -402,7 +420,11 @@ export class CoursesComponent implements OnInit {
       return;
     }
     this.submitting.set(true);
-    this.courseService.createCourse(this.newCourse).subscribe({
+    this.courseService.createCourse({
+      name: this.newCourse.name,
+      description: this.newCourse.description,
+      serviceType: this.parseServiceTypeNumber(this.newCourse.serviceType)
+    }).subscribe({
       next: () => {
         this.submitting.set(false);
         this.closeCourseModal();
@@ -422,7 +444,7 @@ export class CoursesComponent implements OnInit {
     this.courseService.updateCourse(this.editingCourse.id, {
       name: this.editingCourse.name,
       description: this.editingCourse.description,
-      serviceType: Number(this.editingCourse.serviceType)
+      serviceType: this.parseServiceTypeNumber(this.editingCourse.serviceType)
     }).subscribe({
       next: () => {
         this.submitting.set(false);
@@ -501,17 +523,19 @@ export class CoursesComponent implements OnInit {
     });
   }
 
-  getServiceName(type: number): string {
-    switch (type) {
-      case 1: return 'Online';
-      case 2: return 'Group';
-      case 3: return 'Home Visit';
+  getServiceName(type: any): string {
+    const num = this.parseServiceTypeNumber(type);
+    switch (num) {
+      case 1: return 'Online (1-on-1)';
+      case 2: return 'Group Session';
+      case 3: return 'Home-to-Home Visit';
       default: return 'General';
     }
   }
 
-  getServiceClass(type: number): string {
-    switch (type) {
+  getServiceClass(type: any): string {
+    const num = this.parseServiceTypeNumber(type);
+    switch (num) {
       case 1: return 'online';
       case 2: return 'group';
       case 3: return 'home';
