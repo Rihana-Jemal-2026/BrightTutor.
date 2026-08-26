@@ -18,11 +18,28 @@ public class GetTeacherAssignmentsHandler : IRequestHandler<GetTeacherAssignment
 
     public async Task<List<TeacherAssignmentDto>> Handle(GetTeacherAssignmentsQuery request, CancellationToken cancellationToken)
     {
-        var assignments = await _context.TeacherAssignments
+        var query = _context.TeacherAssignments
             .Include(a => a.Course)
             .Include(a => a.ClassGroup)
             .Include(a => a.Teacher).ThenInclude(t => t.User)
-            .Where(a => a.TeacherId == request.TeacherId)
+            .AsQueryable();
+
+        if (request.TeacherId.HasValue && request.TeacherId.Value != Guid.Empty)
+        {
+            query = query.Where(a => a.TeacherId == request.TeacherId.Value || (a.Teacher != null && a.Teacher.UserId == request.TeacherId.Value));
+        }
+
+        if (request.CourseId.HasValue && request.CourseId.Value != Guid.Empty)
+        {
+            query = query.Where(a => a.CourseId == request.CourseId.Value);
+        }
+
+        if (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty)
+        {
+            query = query.Where(a => a.ClassGroupId == request.ClassGroupId.Value);
+        }
+
+        var assignments = await query
             .OrderByDescending(a => a.StartDate)
             .ToListAsync(cancellationToken);
 

@@ -29,14 +29,15 @@ public class CreateScheduleHandler : IRequestHandler<CreateScheduleCommand, Crea
             throw new InvalidOperationException($"Course with ID '{request.CourseId}' not found.");
         }
 
-        var teacherExists = await _context.Teachers
-            .AnyAsync(t => t.Id == request.TeacherId, cancellationToken);
-        if (!teacherExists)
+        var teacher = await _context.Teachers
+            .FirstOrDefaultAsync(t => t.Id == request.TeacherId || t.UserId == request.TeacherId, cancellationToken);
+        if (teacher == null)
         {
             throw new InvalidOperationException($"Teacher with ID '{request.TeacherId}' not found.");
         }
+        var actualTeacherId = teacher.Id;
 
-        if (request.ClassGroupId.HasValue)
+        if (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty)
         {
             var groupExists = await _context.ClassGroups
                 .AnyAsync(g => g.Id == request.ClassGroupId.Value, cancellationToken);
@@ -46,22 +47,24 @@ public class CreateScheduleHandler : IRequestHandler<CreateScheduleCommand, Crea
             }
         }
 
-        if (request.StudentId.HasValue)
+        Guid? actualStudentId = null;
+        if (request.StudentId.HasValue && request.StudentId.Value != Guid.Empty)
         {
-            var studentExists = await _context.Students
-                .AnyAsync(s => s.Id == request.StudentId.Value, cancellationToken);
-            if (!studentExists)
+            var student = await _context.Students
+                .FirstOrDefaultAsync(s => s.Id == request.StudentId.Value || s.UserId == request.StudentId.Value, cancellationToken);
+            if (student == null)
             {
                 throw new InvalidOperationException($"Student with ID '{request.StudentId}' not found.");
             }
+            actualStudentId = student.Id;
         }
 
         var schedule = new Schedule
         {
             CourseId = request.CourseId,
-            TeacherId = request.TeacherId,
-            ClassGroupId = request.ClassGroupId,
-            StudentId = request.StudentId,
+            TeacherId = actualTeacherId,
+            ClassGroupId = (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty) ? request.ClassGroupId : null,
+            StudentId = actualStudentId,
             ServiceType = request.ServiceType,
             StartTime = request.StartTime,
             EndTime = request.EndTime,

@@ -16,32 +16,33 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
 
     public async Task<EnrollStudentResponse> Handle(EnrollStudentCommand request, CancellationToken cancellationToken)
     {
-        var studentExists = await _context.Students
-            .AnyAsync(s => s.Id == request.StudentId, cancellationToken);
-        if (!studentExists)
+        var student = await _context.Students
+            .FirstOrDefaultAsync(s => s.Id == request.StudentId || s.UserId == request.StudentId, cancellationToken);
+        if (student == null)
         {
-            throw new InvalidOperationException($"Student with ID '{request.StudentId}' not found.");
+            throw new InvalidOperationException($"Student not found.");
         }
+        var actualStudentId = student.Id;
 
         var courseExists = await _context.Courses
             .AnyAsync(c => c.Id == request.CourseId, cancellationToken);
         if (!courseExists)
         {
-            throw new InvalidOperationException($"Course with ID '{request.CourseId}' not found.");
+            throw new InvalidOperationException($"Course not found.");
         }
 
-        if (request.ClassGroupId.HasValue)
+        if (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty)
         {
             var groupExists = await _context.ClassGroups
                 .AnyAsync(g => g.Id == request.ClassGroupId.Value && g.CourseId == request.CourseId, cancellationToken);
             if (!groupExists)
             {
-                throw new InvalidOperationException($"Class group with ID '{request.ClassGroupId}' not found for this course.");
+                throw new InvalidOperationException($"Class group not found for this course.");
             }
         }
 
         var activeEnrollment = await _context.Enrollments
-            .AnyAsync(e => e.StudentId == request.StudentId && e.CourseId == request.CourseId && e.IsActive, cancellationToken);
+            .AnyAsync(e => e.StudentId == actualStudentId && e.CourseId == request.CourseId && e.IsActive, cancellationToken);
         if (activeEnrollment)
         {
             throw new InvalidOperationException($"Student is already actively enrolled in this course.");
@@ -49,9 +50,9 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
 
         var enrollment = new Enrollment
         {
-            StudentId = request.StudentId,
+            StudentId = actualStudentId,
             CourseId = request.CourseId,
-            ClassGroupId = request.ClassGroupId,
+            ClassGroupId = (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty) ? request.ClassGroupId : null,
             EnrollmentDate = DateTime.UtcNow,
             IsActive = true
         };

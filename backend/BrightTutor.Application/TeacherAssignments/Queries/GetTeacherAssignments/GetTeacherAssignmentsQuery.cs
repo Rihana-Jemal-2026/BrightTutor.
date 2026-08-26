@@ -4,5 +4,7 @@ namespace BrightTutor.Application.TeacherAssignments.Queries.GetTeacherAssignmen
 
 public class GetTeacherAssignmentsQuery : IRequest<List<TeacherAssignmentDto>>
 {
-    public Guid TeacherId { get; set; }
+    public Guid? TeacherId { get; set; }
+    public Guid? CourseId { get; set; }
+    public Guid? ClassGroupId { get; set; }
 }

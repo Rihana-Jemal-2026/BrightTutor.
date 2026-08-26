@@ -45,8 +45,13 @@
           </div>
           <div class="dropdown-body">
             @for (item of notificationService.notifications(); track item.id) {
-              <div class="notification-item" [class.unread]="item.status === 1" (click)="notificationService.markAsRead(item.id)">
-                <div class="notif-title">{{ item.title }}</div>
+              <div class="notification-item" [class.unread]="isUnread(item.status)" (click)="onNotificationClick(item)">
+                <div class="notif-header-row">
+                  <div class="notif-title">{{ item.title }}</div>
+                  @if (isUnread(item.status)) {
+                    <span class="unread-dot" title="Unread Notice">●</span>
+                  }
+                </div>
                 <div class="notif-msg">{{ item.message }}</div>
                 <div class="notif-time">{{ item.createdAt | date:'shortTime' }}</div>
               </div>
@@ -105,6 +110,26 @@
           <a routerLink="/courses" routerLinkActive="active" class="nav-item">
             <span class="nav-icon">📚</span>
             <span class="nav-text">Courses & Groups</span>
+          </a>
+          <a routerLink="/enrollments" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">🎓</span>
+            <span class="nav-text">Enrollments</span>
+          </a>
+          <a routerLink="/teacher-assignments" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">👨‍🏫</span>
+            <span class="nav-text">Teacher Allocations</span>
+          </a>
+        }
+        @if (authService.hasPermission('schedules.view')) {
+          <a routerLink="/schedules" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">📅</span>
+            <span class="nav-text">Class Schedules</span>
+          </a>
+        }
+        @if (authService.hasPermission('notifications.send') && authService.isAdmin()) {
+          <a routerLink="/announcements" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">📢</span>
+            <span class="nav-text">Announcements</span>
           </a>
         }
       </div>

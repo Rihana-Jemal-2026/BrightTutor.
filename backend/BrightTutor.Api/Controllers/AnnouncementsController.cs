@@ -2,12 +2,14 @@ using BrightTutor.Application.Announcements.Commands.CreateAnnouncement;
 using BrightTutor.Application.Announcements.Queries.GetAnnouncementsList;
 using BrightTutor.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BrightTutor.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class AnnouncementsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -18,6 +20,7 @@ public class AnnouncementsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CreateAnnouncementResponse>> CreateAnnouncement([FromBody] CreateAnnouncementCommand command)
     {
         var result = await _mediator.Send(command);

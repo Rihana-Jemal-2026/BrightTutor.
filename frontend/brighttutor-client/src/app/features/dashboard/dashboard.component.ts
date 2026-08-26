@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DashboardService, DashboardSummaryDto } from '../../services/dashboard.service';
 import { AttendanceService } from '../../services/attendance.service';
+import { AnnouncementService } from '../../services/announcement.service';
 import { AuthService } from '../../services/auth.service';
 import { StudentAttendanceSummary } from '../../models/attendance.model';
+import { AnnouncementDto } from '../../models/announcement.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -126,6 +128,14 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
 
         <div class="section-title">🚀 Quick Actions & Tools</div>
         <div class="quick-actions-grid">
+          <a routerLink="/schedules" class="action-card">
+            <div class="action-icon">📅</div>
+            <div class="action-details">
+              <h3>Timetables & Schedules</h3>
+              <p>View upcoming class timetables, online meeting rooms, and home sessions.</p>
+            </div>
+          </a>
+
           <a routerLink="/mark-group-attendance" class="action-card">
             <div class="action-icon">👨‍👩‍👧‍👦</div>
             <div class="action-details">
@@ -147,14 +157,6 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
             <div class="action-details">
               <h3>Home Visit Check-In</h3>
               <p>Perform GPS-verified check-in/out for student home visits.</p>
-            </div>
-          </a>
-
-          <a routerLink="/teacher-report" class="action-card">
-            <div class="action-icon">📝</div>
-            <div class="action-details">
-              <h3>My Teaching Reports</h3>
-              <p>View total sessions conducted and detailed performance logs.</p>
             </div>
           </a>
         </div>
@@ -204,8 +206,16 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
 
         <div class="section-title">🚀 Quick Actions & Portals</div>
         <div class="quick-actions-grid">
-          <a routerLink="/student-calendar" class="action-card">
+          <a routerLink="/schedules" class="action-card">
             <div class="action-icon">📅</div>
+            <div class="action-details">
+              <h3>My Class Timetable</h3>
+              <p>Check scheduled class hours, room numbers, and online video links.</p>
+            </div>
+          </a>
+
+          <a routerLink="/student-calendar" class="action-card">
+            <div class="action-icon">📆</div>
             <div class="action-details">
               <h3>My Attendance Calendar</h3>
               <p>View monthly color-coded attendance days and timestamps.</p>
@@ -219,16 +229,31 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
               <p>View aggregate attendance rate percentages and status breakdown.</p>
             </div>
           </a>
-
-          <a routerLink="/view-group-attendance" class="action-card">
-            <div class="action-icon">📋</div>
-            <div class="action-details">
-              <h3>View My Class Attendance</h3>
-              <p>Filter your attendance records by class group and session date.</p>
-            </div>
-          </a>
         </div>
       }
+
+      <!-- Campus Announcements Feed Widget (Visible across all roles) -->
+      <div class="section-header-row">
+        <div class="section-title" style="margin: 0;">📢 Campus Announcements Bulletin</div>
+        <a routerLink="/announcements" class="view-all-link">View All Notices →</a>
+      </div>
+
+      <div class="announcements-preview-grid">
+        @for (item of announcements(); track item.id) {
+          <div class="announcement-preview-card">
+            <div class="announcement-meta">
+              <span class="badge-role">{{ getTargetRoleLabel(item.targetRole) }}</span>
+              <span class="badge-date">{{ item.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <h4 class="preview-title">{{ item.title }}</h4>
+            <p class="preview-content">{{ item.content }}</p>
+          </div>
+        } @empty {
+          <div class="empty-notices">
+            <span>📢</span> No announcements currently published.
+          </div>
+        }
+      </div>
     </div>
   `,
   styles: [`
@@ -243,7 +268,11 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
     .metric-icon { font-size: 2rem; }
     .metric-info .value { display: block; font-size: 1.75rem; font-weight: 700; color: #0f172a; }
     .metric-info .label { font-size: 0.875rem; color: #64748b; }
-    .section-title { font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; margin-top: 1rem; }
+    .section-title { font-size: 1.25rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem; margin-top: 1.5rem; }
+    .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem; }
+    .view-all-link { color: #2563eb; text-decoration: none; font-weight: 600; font-size: 0.88rem; }
+    .view-all-link:hover { text-decoration: underline; }
+
     .attendance-summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
     .stat-box { background: white; padding: 1.25rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
     .stat-box .number { display: block; font-size: 1.5rem; font-weight: 700; min-height: 2rem; }
@@ -260,6 +289,16 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
     .action-icon { font-size: 2.25rem; }
     .action-details h3 { margin: 0 0 0.35rem 0; font-size: 1.1rem; color: #0f172a; }
     .action-details p { margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.4; }
+
+    .announcements-preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; }
+    .announcement-preview-card { background: white; border-radius: 12px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid #7c3aed; }
+    .announcement-meta { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .badge-role { font-size: 0.75rem; font-weight: 600; background: #f3e8ff; color: #7e22ce; padding: 0.15rem 0.5rem; border-radius: 10px; }
+    .badge-date { font-size: 0.75rem; color: #94a3b8; }
+    .preview-title { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0 0 0.4rem 0; }
+    .preview-content { font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .empty-notices { background: white; border-radius: 12px; padding: 1.5rem; text-align: center; color: #94a3b8; font-size: 0.9rem; grid-column: 1 / -1; }
+
     .loading-spinner { padding: 2rem; text-align: center; color: #64748b; }
   `]
 })
@@ -267,10 +306,12 @@ export class DashboardComponent implements OnInit {
   authService = inject(AuthService);
   private dashboardService = inject(DashboardService);
   private attendanceService = inject(AttendanceService);
+  private announcementService = inject(AnnouncementService);
 
   summary = signal<DashboardSummaryDto | null>(null);
   studentStats = signal<StudentAttendanceSummary | null>(null);
   teacherStats = signal<any | null>(null);
+  announcements = signal<AnnouncementDto[]>([]);
   loading = signal<boolean>(true);
 
   ngOnInit(): void {
@@ -279,6 +320,8 @@ export class DashboardComponent implements OnInit {
       this.loading.set(false);
       return;
     }
+
+    this.loadAnnouncements();
 
     if (this.authService.isAdmin()) {
       this.dashboardService.getSummary().subscribe({
@@ -311,5 +354,25 @@ export class DashboardComponent implements OnInit {
     } else {
       this.loading.set(false);
     }
+  }
+
+  loadAnnouncements(): void {
+    const user = this.authService.currentUser();
+    const role = user ? (user.role === 'Admin' || user.role === 1 ? 1 : user.role === 'Teacher' || user.role === 2 ? 2 : user.role === 'Student' || user.role === 3 ? 3 : 4) : undefined;
+
+    this.announcementService.getAnnouncements(role).subscribe({
+      next: (list) => {
+        this.announcements.set(list.slice(0, 3)); // show top 3 on dashboard
+      },
+      error: () => {}
+    });
+  }
+
+  getTargetRoleLabel(role?: any): string {
+    if (role === 1 || role === '1' || role === 'Admin') return 'Admins';
+    if (role === 2 || role === '2' || role === 'Teacher') return 'Teachers';
+    if (role === 3 || role === '3' || role === 'Student') return 'Students';
+    if (role === 4 || role === '4' || role === 'Parent') return 'Parents';
+    return 'Campus';
   }
 }

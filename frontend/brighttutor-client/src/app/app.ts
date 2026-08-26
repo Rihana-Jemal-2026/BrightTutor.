@@ -1,9 +1,9 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ToastService } from './services/toast.service';
-import { NotificationService } from './services/notification.service';
+import { NotificationService, NotificationDto } from './services/notification.service';
 import { AuthService } from './services/auth.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
   title = 'BrightTutor Academic Portal';
   toastService = inject(ToastService);
   notificationService = inject(NotificationService);
@@ -31,16 +31,64 @@ export class App {
     confirmPassword: ''
   };
 
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user?.userId) {
+        this.fetchUserNotifications(user.userId);
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    const user = this.authService.currentUser();
+    if (user?.userId) {
+      this.fetchUserNotifications(user.userId);
+    }
+  }
+
+  fetchUserNotifications(userId: string): void {
+    this.notificationService.loadNotifications(userId).subscribe({
+      next: () => {},
+      error: () => {}
+    });
+  }
+
   toggleSidebar(): void {
     this.isSidebarCollapsed.update(val => !val);
   }
 
   toggleNotificationDropdown(): void {
-    this.isNotificationDropdownOpen.update(val => !val);
+    const opening = !this.isNotificationDropdownOpen();
+    this.isNotificationDropdownOpen.set(opening);
+    if (opening) {
+      const user = this.authService.currentUser();
+      if (user?.userId) {
+        this.fetchUserNotifications(user.userId);
+      }
+    }
   }
 
   closeNotificationDropdown(): void {
     this.isNotificationDropdownOpen.set(false);
+  }
+
+  isUnread(status: any): boolean {
+    return status === 1 || status === '1' || status === 'Unread';
+  }
+
+  onNotificationClick(item: NotificationDto): void {
+    if (this.isUnread(item.status)) {
+      this.notificationService.markAsRead(item.id).subscribe();
+    }
+    this.closeNotificationDropdown();
+    if (item.type === 3 || item.type === 'GeneralAnnouncement' || item.title.includes('Notice') || item.title.includes('Announcement')) {
+      this.router.navigate(['/announcements']);
+    } else if (item.type === 2 || item.type === 'ScheduleAlert' || item.title.includes('Schedule')) {
+      this.router.navigate(['/schedules']);
+    } else if (item.type === 1 || item.type === 'AttendanceAlert' || item.title.includes('Attendance')) {
+      this.router.navigate(['/view-group-attendance']);
+    }
   }
 
   openProfileModal(): void {
