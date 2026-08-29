@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { EnrollmentDto, EnrollStudentRequest, EnrollStudentResponse } from '../models/enrollment.model';
 
+export type { EnrollmentDto, EnrollStudentRequest, EnrollStudentResponse };
+
 @Injectable({
   providedIn: 'root'
 })

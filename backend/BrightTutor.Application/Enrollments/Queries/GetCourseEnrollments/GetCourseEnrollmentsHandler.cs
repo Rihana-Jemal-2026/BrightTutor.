@@ -23,6 +23,7 @@ public class GetCourseEnrollmentsHandler : IRequestHandler<GetCourseEnrollmentsQ
             .Include(e => e.Course)
             .Include(e => e.ClassGroup)
             .Include(e => e.Student).ThenInclude(s => s.User)
+            .AsQueryable();
         if (request.CourseId.HasValue && request.CourseId.Value != Guid.Empty)
         {
             query = query.Where(e => e.CourseId == request.CourseId.Value);

@@ -10,6 +10,7 @@ export interface EnrollmentDto {
   enrollmentDate: string;
   endDate?: string;
   isActive: boolean;
+  serviceType?: number | string;
 }
 
 export interface EnrollStudentRequest {

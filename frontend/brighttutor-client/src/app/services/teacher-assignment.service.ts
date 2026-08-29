@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TeacherAssignmentDto, AssignTeacherRequest } from '../models/teacher-assignment.model';
 
+export type { TeacherAssignmentDto, AssignTeacherRequest };
+
 @Injectable({
   providedIn: 'root'
 })
