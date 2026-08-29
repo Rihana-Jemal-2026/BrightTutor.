@@ -1,72 +1,124 @@
-<div class="page">
-  <h1>Admin Actions & Attendance Correction</h1>
-
-  <div class="card">
-    <h2>Correct Attendance Record</h2>
-    @if (updateResult()) { <div class="success">{{ updateResult() }}</div> }
-    @if (updateError()) { <div class="error">{{ updateError() }}</div> }
-
-    <form [formGroup]="updateForm" (ngSubmit)="submitUpdate()">
-      <div class="field-group">
-        <app-searchable-select
-          label="📋 Select Attendance Record to Correct"
-          placeholder="Choose Attendance Record..."
-          searchPlaceholder="Search record by student name or date..."
-          [options]="attendanceRecordOptions()"
-          [value]="selectedUpdateId()"
-          (valueChange)="onUpdateRecordSelected($event)"
-        ></app-searchable-select>
+<div class="admin-actions-page">
+  <!-- Page Header Card -->
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
       </div>
-
-      <div class="field-group">
-        <label for="newStatus">New Attendance Status</label>
-        <select id="newStatus" formControlName="newStatus" class="form-control">
-          @for (option of statusOptions; track option.value) {
-            <option [ngValue]="option.value">{{ option.label }}</option>
-          }
-        </select>
+      <div>
+        <h1>Administrative Operations & System Tools</h1>
+        <p class="subtitle">Override past attendance logs, audit home tutoring GPS geofences, and manage system operations.</p>
       </div>
-
-      <div class="field-group">
-        <label for="updateNotes">Correction Notes</label>
-        <input id="updateNotes" formControlName="notes" placeholder="Reason for correction..." class="form-control" />
-      </div>
-
-      <button type="submit" class="btn-submit" [disabled]="updateForm.invalid">Update Record</button>
-    </form>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Verify Home Attendance</h2>
-    @if (verifyResult()) { <div class="success">{{ verifyResult() }}</div> }
-    @if (verifyError()) { <div class="error">{{ verifyError() }}</div> }
-
-    <form [formGroup]="verifyForm" (ngSubmit)="submitVerify()">
-      <div class="field-group">
-        <app-searchable-select
-          label="🏠 Select Home Visit Record to Verify"
-          placeholder="Choose Home Visit Record..."
-          searchPlaceholder="Search record by student or date..."
-          [options]="attendanceRecordOptions()"
-          [value]="selectedVerifyId()"
-          (valueChange)="onVerifyRecordSelected($event)"
-        ></app-searchable-select>
+  <div class="actions-grid">
+    <!-- Card 1: Correct Attendance Record -->
+    <div class="action-card-panel">
+      <div class="panel-header">
+        <div class="panel-icon edit-icon">📋</div>
+        <div>
+          <h2>Correct Attendance Record</h2>
+          <p>Modify status or rectify mistaken attendance check-ins for past sessions.</p>
+        </div>
       </div>
 
-      <div class="field-group">
-        <label for="isVerified">Verification Status</label>
-        <select id="isVerified" formControlName="isVerified" class="form-control">
-          <option [ngValue]="true">Yes - Verified</option>
-          <option [ngValue]="false">No - Rejected</option>
-        </select>
+      <form [formGroup]="updateForm" (ngSubmit)="submitUpdate()" class="panel-form">
+        <div class="form-group z-3">
+          <app-searchable-select
+            label="📋 Select Attendance Record"
+            placeholder="Choose Attendance Record..."
+            searchPlaceholder="Search record by student name or date..."
+            [options]="attendanceRecordOptions()"
+            [value]="selectedUpdateId()"
+            (valueChange)="onUpdateRecordSelected($event)"
+          ></app-searchable-select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newStatus">New Attendance Status</label>
+          <select id="newStatus" formControlName="newStatus" class="form-control">
+            @for (option of statusOptions; track option.value) {
+              <option [ngValue]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="updateNotes">Correction Reason / Notes</label>
+          <input id="updateNotes" formControlName="notes" placeholder="Reason for status adjustment..." class="form-control" />
+        </div>
+
+        @if (updateResult()) {
+          <div class="alert alert-success">
+            <span class="icon">✓</span> {{ updateResult() }}
+          </div>
+        }
+        @if (updateError()) {
+          <div class="alert alert-danger">
+            <span class="icon">⚠</span> {{ updateError() }}
+          </div>
+        }
+
+        <button type="submit" class="btn-primary-action" [disabled]="updateForm.invalid">
+          Apply Attendance Correction
+        </button>
+      </form>
+    </div>
+
+    <!-- Card 2: Verify Home Attendance -->
+    <div class="action-card-panel">
+      <div class="panel-header">
+        <div class="panel-icon home-icon">🏠</div>
+        <div>
+          <h2>Audit & Verify Home Visit</h2>
+          <p>Approve GPS geo-fence distance calculations for home tutoring check-ins.</p>
+        </div>
       </div>
 
-      <div class="field-group">
-        <label for="distanceFromStudentHomeInMeters">Distance from Student Home (meters)</label>
-        <input id="distanceFromStudentHomeInMeters" type="number" formControlName="distanceFromStudentHomeInMeters" class="form-control" />
-      </div>
+      <form [formGroup]="verifyForm" (ngSubmit)="submitVerify()" class="panel-form">
+        <div class="form-group z-3">
+          <app-searchable-select
+            label="🏠 Select Home Visit Session"
+            placeholder="Choose Home Visit Record..."
+            searchPlaceholder="Search record by student or date..."
+            [options]="attendanceRecordOptions()"
+            [value]="selectedVerifyId()"
+            (valueChange)="onVerifyRecordSelected($event)"
+          ></app-searchable-select>
+        </div>
 
-      <button type="submit" class="btn-submit" [disabled]="verifyForm.invalid">Verify Home Visit</button>
-    </form>
+        <div class="form-group">
+          <label class="form-label" for="isVerified">Verification Decision</label>
+          <select id="isVerified" formControlName="isVerified" class="form-control">
+            <option [ngValue]="true">✅ Verified (Within Radius)</option>
+            <option [ngValue]="false">❌ Rejected (Invalid Location)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="distanceFromStudentHomeInMeters">Distance from Student Home (Meters)</label>
+          <input id="distanceFromStudentHomeInMeters" type="number" formControlName="distanceFromStudentHomeInMeters" class="form-control" placeholder="e.g. 15" />
+        </div>
+
+        @if (verifyResult()) {
+          <div class="alert alert-success">
+            <span class="icon">✓</span> {{ verifyResult() }}
+          </div>
+        }
+        @if (verifyError()) {
+          <div class="alert alert-danger">
+            <span class="icon">⚠</span> {{ verifyError() }}
+          </div>
+        }
+
+        <button type="submit" class="btn-primary-action" [disabled]="verifyForm.invalid">
+          Submit Audit Verification
+        </button>
+      </form>
+    </div>
   </div>
 </div>

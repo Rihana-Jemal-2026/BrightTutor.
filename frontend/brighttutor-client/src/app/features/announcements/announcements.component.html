@@ -1,0 +1,217 @@
+<div class="announcements-page">
+  <!-- Page Header -->
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Campus Announcements & Notifications</h1>
+        <p class="subtitle">Official school notices, public academic bulletins, and direct student/teacher push alerts.</p>
+      </div>
+    </div>
+    @if (authService.isAdmin() && activeTab() === 'bulletin') {
+      <button type="button" class="btn-primary-action" (click)="openCreateModal()">
+        <span class="btn-icon">+</span> Post Announcement
+      </button>
+    }
+  </div>
+
+  <!-- Admin Tab Bar -->
+  @if (authService.isAdmin()) {
+    <div class="portal-tab-bar">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'bulletin'"
+        (click)="activeTab.set('bulletin')"
+      >
+        📢 Campus Bulletin Board ({{ announcements().length }})
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'direct'"
+        (click)="activeTab.set('direct')"
+      >
+        🔔 Direct User Push Dispatcher
+      </button>
+    </div>
+  }
+
+  <!-- TAB 1: Campus Announcements Bulletin Board -->
+  @if (activeTab() === 'bulletin') {
+    <!-- Filter Audience Bar (Admin Only) -->
+    @if (authService.isAdmin()) {
+      <div class="filter-audience-card">
+        <span class="filter-title">🎯 Target Audience:</span>
+        <div class="audience-chips">
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === ''" (click)="onFilterChange('')">All Notices</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '2'" (click)="onFilterChange('2')">👨‍🏫 Teachers</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '3'" (click)="onFilterChange('3')">🎓 Students</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '4'" (click)="onFilterChange('4')">👨‍👩‍👧 Parents</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '1'" (click)="onFilterChange('1')">👑 Admins</button>
+        </div>
+      </div>
+    }
+
+    <!-- Announcements Grid -->
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading announcements bulletin...</p>
+      </div>
+    } @else {
+      <div class="announcements-grid">
+        @for (item of announcements(); track item.id) {
+          <div class="announcement-card">
+            <div class="card-top">
+              @if (authService.isAdmin()) {
+                <span class="audience-badge" [class]="getTargetRoleClass(item.targetRole)">
+                  {{ getTargetRoleLabel(item.targetRole) }}
+                </span>
+              } @else {
+                <span class="audience-badge role-all">
+                  📢 Notice
+                </span>
+              }
+              <span class="date-badge">{{ item.createdAt | date:'mediumDate' }}</span>
+            </div>
+
+            <h3 class="card-title">{{ item.title }}</h3>
+            <p class="card-body-text">{{ item.content }}</p>
+
+            <div class="card-footer">
+              <div class="author-meta">
+                <span class="author-avatar">{{ item.createdByName?.charAt(0) || 'A' }}</span>
+                <span class="author-name">Posted by {{ item.createdByName || 'Administrator' }}</span>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state-full">
+            <span class="empty-icon">📢</span>
+            <p>No active announcements posted for your role.</p>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- TAB 2: Direct User Push Dispatcher -->
+  @if (activeTab() === 'direct') {
+    <div class="direct-dispatcher-container">
+      <div class="dispatcher-card">
+        <div class="dispatcher-header">
+          <div class="dispatcher-icon">🔔</div>
+          <div>
+            <h2>Dispatch Direct User Push Notification</h2>
+            <p>Send an instant priority notification directly to a student, teacher, or parent account inbox.</p>
+          </div>
+        </div>
+
+        <form (ngSubmit)="submitSendNotification()" class="dispatcher-form">
+          <div class="form-group z-3">
+            <app-searchable-select
+              label="👤 Target Recipient User"
+              placeholder="Choose Student, Teacher or Parent..."
+              searchPlaceholder="Type name or email to search..."
+              [options]="userOptions()"
+              [value]="selectedNotifUserId()"
+              (valueChange)="onNotifUserSelected($event)"
+            ></app-searchable-select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="directNotifType">Alert Category</label>
+            <select id="directNotifType" [(ngModel)]="notifForm.type" name="type" class="form-control">
+              <option [ngValue]="1">ℹ️ General Information</option>
+              <option [ngValue]="2">⚠️ Attendance Reminder / Warning</option>
+              <option [ngValue]="3">📚 Course & Schedule Update</option>
+              <option [ngValue]="4">🚨 Urgent Alert</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="directNotifTitle">Alert Subject / Title</label>
+            <input id="directNotifTitle" type="text" [(ngModel)]="notifForm.title" name="title" placeholder="e.g. Urgent: Timetable Room Change" class="form-control" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="directNotifMessage">Notification Message</label>
+            <textarea id="directNotifMessage" rows="5" [(ngModel)]="notifForm.message" name="message" placeholder="Type notification content here..." class="form-control form-textarea" required></textarea>
+          </div>
+
+          @if (notifResult()) {
+            <div class="alert alert-success">
+              <span class="icon">✓</span> {{ notifResult() }}
+            </div>
+          }
+          @if (notifError()) {
+            <div class="alert alert-danger">
+              <span class="icon">⚠</span> {{ notifError() }}
+            </div>
+          }
+
+          <div class="form-actions">
+            <button type="submit" class="btn-dispatch" [disabled]="sendingNotif()">
+              @if (sendingNotif()) { Sending Alert... } @else { 🚀 Dispatch Notification }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Post Announcement Modal (Admin Only) -->
+@if (isCreateModalOpen()) {
+  <div class="modal-overlay" (click)="closeCreateModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>📢 Post New Campus Announcement</h3>
+        <button type="button" class="close-btn" (click)="closeCreateModal()">&times;</button>
+      </div>
+
+      <form (ngSubmit)="submitAnnouncement()" class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Announcement Title</label>
+          <input type="text" class="form-input" [(ngModel)]="announcementForm.title" name="title" placeholder="e.g. Mid-Term Examination Schedule & Holidays" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Audience</label>
+          <select class="form-select" [(ngModel)]="announcementForm.targetRole" name="targetRole">
+            <option [ngValue]="null">🌐 All Users (Public Notice)</option>
+            <option [ngValue]="2">👨‍🏫 Teachers Only</option>
+            <option [ngValue]="3">🎓 Students Only</option>
+            <option [ngValue]="4">👨‍👩‍👧 Parents Only</option>
+            <option [ngValue]="1">👑 Administrators Only</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Notice Message Content</label>
+          <textarea class="form-textarea" rows="5" [(ngModel)]="announcementForm.content" name="content" placeholder="Type the full announcement details, instructions, or notice here..." required></textarea>
+        </div>
+
+        @if (modalError()) {
+          <div class="alert alert-danger mt-3">
+            <span class="icon">⚠</span>
+            <span>{{ modalError() }}</span>
+          </div>
+        }
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeCreateModal()">Cancel</button>
+          <button type="submit" class="btn-save" [disabled]="submitting()">
+            @if (submitting()) { Publishing... } @else { Broadcast Notice }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

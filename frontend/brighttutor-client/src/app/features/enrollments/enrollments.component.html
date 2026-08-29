@@ -1,0 +1,215 @@
+<div class="enrollments-page">
+  <!-- Page Header -->
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+          <path d="M5 13.18v4.27l7 3.82 7-3.82v-4.27l-7 3.82-7-3.82z"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Student Enrollments Management</h1>
+        <p class="subtitle">Assign students to courses and class groups, manage official rosters, and handle course unenrollments.</p>
+      </div>
+    </div>
+    @if (authService.isAdmin()) {
+      <button type="button" class="btn-enroll-primary" (click)="openEnrollModal()">
+        <span class="btn-icon">+</span> Enroll Student
+      </button>
+    }
+  </div>
+
+  <!-- Filter & Roster Selection Grid -->
+  <div class="filter-card">
+    <div class="filter-col">
+      <app-searchable-select
+        label="📚 Filter by Course"
+        placeholder="Select Course..."
+        searchPlaceholder="Type course name to filter..."
+        [options]="filterCourseOptions()"
+        [value]="selectedFilterCourseId()"
+        (valueChange)="onFilterCourseChange($event)"
+      ></app-searchable-select>
+    </div>
+
+    <div class="filter-col">
+      <app-searchable-select
+        label="👥 Filter by Class Group"
+        placeholder="Select Class Group..."
+        searchPlaceholder="Type class group name..."
+        [options]="filterGroupOptions()"
+        [value]="selectedFilterGroupId()"
+        (valueChange)="onFilterGroupChange($event)"
+      ></app-searchable-select>
+    </div>
+
+    <div class="filter-stats">
+      <span class="count-badge">{{ enrollments().length }} Total Enrolled</span>
+    </div>
+  </div>
+
+  <!-- Enrollments Table Card -->
+  <div class="table-card">
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading enrolled students...</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student Name & Code</th>
+            <th>Enrolled Course</th>
+            <th>Assigned Class Group</th>
+            <th>Enrollment Date</th>
+            <th>Status</th>
+            @if (authService.isAdmin()) {
+              <th class="text-right">Actions</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (enrollment of enrollments(); track enrollment.id) {
+            <tr>
+              <td>
+                <div class="student-cell">
+                  <div class="student-avatar">{{ enrollment.studentName?.charAt(0) || 'S' }}</div>
+                  <div>
+                    <div class="student-name">{{ enrollment.studentName || 'Student' }}</div>
+                    <div class="student-code">{{ enrollment.studentCode || 'STD' }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="course-pill">📚 {{ enrollment.courseName }}</span>
+              </td>
+              <td>
+                @if (enrollment.classGroupName) {
+                  <span class="group-pill">👥 {{ enrollment.classGroupName }}</span>
+                } @else {
+                  <span class="unassigned-pill">No Group Assigned</span>
+                }
+              </td>
+              <td class="date-cell">
+                {{ enrollment.enrollmentDate | date:'mediumDate' }}
+              </td>
+              <td>
+                @if (enrollment.isActive) {
+                  <span class="status-badge active">● Active</span>
+                } @else {
+                  <span class="status-badge inactive">○ Inactive</span>
+                }
+              </td>
+              @if (authService.isAdmin()) {
+                <td class="text-right">
+                  <div class="action-buttons-group">
+                    <button
+                      type="button"
+                      class="btn-action-icon btn-edit"
+                      (click)="openEditModal(enrollment)"
+                      title="Edit Enrollment / Switch Course & Group"
+                    >
+                      ✏️
+                    </button>
+                    @if (enrollment.isActive) {
+                      <button
+                        type="button"
+                        class="btn-action-icon btn-unenroll"
+                        (click)="onUnenroll(enrollment)"
+                        title="Unenroll Student"
+                      >
+                        ⏸️
+                      </button>
+                    }
+                  </div>
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-cell">
+                <div class="empty-state">
+                  <span class="empty-icon">🎓</span>
+                  <p>No enrollment records found matching the selected filters.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+<!-- Enroll / Edit Student Modal -->
+@if (isEnrollModalOpen()) {
+  <div class="modal-overlay" (click)="closeEnrollModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          @if (isEditMode()) {
+            ✏️ Edit Student Enrollment (Course & Group)
+          } @else {
+            🎓 Enroll Student to Course & Group
+          }
+        </h3>
+        <button type="button" class="close-btn" (click)="closeEnrollModal()">&times;</button>
+      </div>
+
+      <form (ngSubmit)="submitEnrollment()" class="modal-form">
+        <div class="form-group z-3">
+          <app-searchable-select
+            label="👤 Student"
+            placeholder="Choose Student..."
+            searchPlaceholder="Type student name or email..."
+            [options]="modalStudentOptions()"
+            [value]="enrollForm.studentId"
+            [disabled]="isEditMode()"
+            (valueChange)="onModalStudentSelected($event)"
+          ></app-searchable-select>
+        </div>
+
+        <div class="form-group z-2">
+          <app-searchable-select
+            label="📚 Course"
+            placeholder="Choose Course..."
+            searchPlaceholder="Type course name..."
+            [options]="modalCourseOptions()"
+            [value]="enrollForm.courseId"
+            (valueChange)="onModalCourseSelected($event)"
+          ></app-searchable-select>
+        </div>
+
+        <div class="form-group z-1">
+          <app-searchable-select
+            label="👥 Class Group (Optional)"
+            placeholder="Choose Class Group..."
+            searchPlaceholder="Type class group..."
+            [options]="modalGroupOptions()"
+            [value]="enrollForm.classGroupId || ''"
+            (valueChange)="onModalGroupSelected($event)"
+          ></app-searchable-select>
+        </div>
+
+        <!-- Feedback Alert at Bottom -->
+        @if (modalError()) {
+          <div class="alert alert-danger mt-3">
+            <span class="icon">⚠</span>
+            <span>{{ modalError() }}</span>
+          </div>
+        }
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeEnrollModal()">Cancel</button>
+          <button type="submit" class="btn-save" [disabled]="submitting()">
+            @if (submitting()) { Saving... }
+            @else if (isEditMode()) { Update Enrollment }
+            @else { Confirm Enrollment }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

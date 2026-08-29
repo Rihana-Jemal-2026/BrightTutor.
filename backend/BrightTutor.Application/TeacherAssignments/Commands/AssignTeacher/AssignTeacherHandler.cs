@@ -23,6 +23,7 @@ public class AssignTeacherHandler : IRequestHandler<AssignTeacherCommand, Assign
         {
             throw new InvalidOperationException($"Teacher with ID '{request.TeacherId}' not found.");
         }
+        var actualTeacherId = teacher.Id;
 
         var courseExists = await _context.Courses
             .AnyAsync(c => c.Id == request.CourseId, cancellationToken);
@@ -31,7 +32,7 @@ public class AssignTeacherHandler : IRequestHandler<AssignTeacherCommand, Assign
             throw new InvalidOperationException($"Course with ID '{request.CourseId}' not found.");
         }
 
-        if (request.ClassGroupId.HasValue)
+        if (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty)
         {
             var groupExists = await _context.ClassGroups
                 .AnyAsync(g => g.Id == request.ClassGroupId.Value && g.CourseId == request.CourseId, cancellationToken);
@@ -45,7 +46,7 @@ public class AssignTeacherHandler : IRequestHandler<AssignTeacherCommand, Assign
         {
             TeacherId = teacher.Id,
             CourseId = request.CourseId,
-            ClassGroupId = request.ClassGroupId,
+            ClassGroupId = (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty) ? request.ClassGroupId : null,
             StartDate = DateTime.UtcNow
         };
 

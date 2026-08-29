@@ -1,40 +1,29 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface TeacherAssignmentDto {
-  id: string;
-  teacherId: string;
-  teacherName: string;
-  courseId: string;
-  courseName: string;
-  classGroupId?: string;
-  classGroupName?: string;
-  startDate: string;
-}
-
-export interface AssignTeacherRequest {
-  teacherId: string;
-  courseId: string;
-  classGroupId?: string;
-}
+import { TeacherAssignmentDto, AssignTeacherRequest } from '../models/teacher-assignment.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeacherAssignmentService {
+  private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5198/api/teacherassignments';
 
-  constructor(private http: HttpClient) {}
-
-  getTeacherAssignments(teacherId?: string): Observable<TeacherAssignmentDto[]> {
-    let url = this.apiUrl;
-    if (teacherId) url += `?teacherId=${teacherId}`;
-    return this.http.get<TeacherAssignmentDto[]>(url);
+  getTeacherAssignments(teacherId?: string, courseId?: string, classGroupId?: string): Observable<TeacherAssignmentDto[]> {
+    let params = new HttpParams();
+    if (teacherId) params = params.set('teacherId', teacherId);
+    if (courseId) params = params.set('courseId', courseId);
+    if (classGroupId) params = params.set('classGroupId', classGroupId);
+    return this.http.get<TeacherAssignmentDto[]>(this.apiUrl, { params });
   }
 
-  assignTeacher(request: AssignTeacherRequest): Observable<any> {
-    return this.http.post(this.apiUrl, request);
+  assignTeacher(request: AssignTeacherRequest): Observable<TeacherAssignmentDto> {
+    return this.http.post<TeacherAssignmentDto>(this.apiUrl, request);
+  }
+
+  updateTeacherAssignment(id: string, request: { courseId: string; classGroupId?: string; teacherId?: string }): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, request);
   }
 
   removeTeacherAssignment(id: string): Observable<void> {

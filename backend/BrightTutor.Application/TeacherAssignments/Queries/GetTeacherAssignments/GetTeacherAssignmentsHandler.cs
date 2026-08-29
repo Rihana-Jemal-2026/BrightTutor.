@@ -26,7 +26,17 @@ public class GetTeacherAssignmentsHandler : IRequestHandler<GetTeacherAssignment
 
         if (request.TeacherId.HasValue && request.TeacherId.Value != Guid.Empty)
         {
-            query = query.Where(a => a.TeacherId == request.TeacherId.Value);
+            query = query.Where(a => a.TeacherId == request.TeacherId.Value || (a.Teacher != null && a.Teacher.UserId == request.TeacherId.Value));
+        }
+
+        if (request.CourseId.HasValue && request.CourseId.Value != Guid.Empty)
+        {
+            query = query.Where(a => a.CourseId == request.CourseId.Value);
+        }
+
+        if (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty)
+        {
+            query = query.Where(a => a.ClassGroupId == request.ClassGroupId.Value);
         }
 
         var assignments = await query

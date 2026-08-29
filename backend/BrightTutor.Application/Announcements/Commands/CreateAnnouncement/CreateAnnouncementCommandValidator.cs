@@ -1,4 +1,3 @@
-using BrightTutor.Application.Announcements.Commands.CreateAnnouncement;
 using FluentValidation;
 
 namespace BrightTutor.Application.Announcements.Commands.CreateAnnouncement;
@@ -13,8 +12,5 @@ public class CreateAnnouncementCommandValidator : AbstractValidator<CreateAnnoun
 
         RuleFor(x => x.Content)
             .NotEmpty().WithMessage("Announcement content is required.");
-
-        RuleFor(x => x.CreatedByUserId)
-            .NotEmpty().WithMessage("Author User ID is required.");
     }
 }

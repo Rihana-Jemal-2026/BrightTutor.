@@ -1,0 +1,207 @@
+<div class="assignments-page">
+  <!-- Header Card -->
+  <div class="page-header-card">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Teacher Course & Group Allocations</h1>
+        <p class="subtitle">Assign teaching staff to curriculum courses and manage departmental workloads.</p>
+      </div>
+    </div>
+    @if (authService.isAdmin()) {
+      <button type="button" class="btn-primary-action" (click)="openAssignModal()">
+        <span class="btn-icon">+</span> Assign Teacher
+      </button>
+    }
+  </div>
+
+  <!-- Filter Card -->
+  <div class="filter-card">
+    <div class="filter-col">
+      <app-searchable-select
+        label="👨‍🏫 Filter by Teacher"
+        placeholder="Select Teacher..."
+        searchPlaceholder="Type teacher name..."
+        [options]="filterTeacherOptions()"
+        [value]="selectedFilterTeacherId()"
+        (valueChange)="onFilterTeacherChange($event)"
+      ></app-searchable-select>
+    </div>
+
+    <div class="filter-col">
+      <app-searchable-select
+        label="📚 Filter by Course"
+        placeholder="Select Course..."
+        searchPlaceholder="Type course name..."
+        [options]="filterCourseOptions()"
+        [value]="selectedFilterCourseId()"
+        (valueChange)="onFilterCourseChange($event)"
+      ></app-searchable-select>
+    </div>
+
+    <div class="filter-stats">
+      <span class="badge-total">{{ assignments().length }} Total Allocations</span>
+    </div>
+  </div>
+
+  <!-- Assignments Table -->
+  <div class="table-card">
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading teacher course allocations...</p>
+      </div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Assigned Teacher</th>
+            <th>Teaching Course</th>
+            <th>Assigned Class Group</th>
+            <th>Start Date</th>
+            @if (authService.isAdmin()) {
+              <th class="text-right">Actions</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of assignments(); track item.id) {
+            <tr>
+              <td>
+                <div class="teacher-meta">
+                  <div class="avatar">{{ item.teacherName?.charAt(0) || 'T' }}</div>
+                  <div>
+                    <div class="teacher-name">{{ item.teacherName }}</div>
+                    <div class="teacher-code">{{ item.teacherCode }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="course-chip">
+                  <span>📚 {{ item.courseName }}</span>
+                </div>
+              </td>
+              <td>
+                @if (item.classGroupName) {
+                  <span class="group-pill">👥 {{ item.classGroupName }}</span>
+                } @else {
+                  <span class="group-pill all">🌐 Entire Course</span>
+                }
+              </td>
+              <td>
+                <span class="date-text">{{ item.startDate | date:'mediumDate' }}</span>
+              </td>
+              @if (authService.isAdmin()) {
+                <td class="text-right">
+                  <div class="actions-group">
+                    <button
+                      type="button"
+                      class="btn-action-icon btn-edit"
+                      (click)="openEditModal(item)"
+                      title="Edit Allocation Details"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-action-icon btn-delete"
+                      (click)="onRemove(item)"
+                      title="Remove Allocation"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-cell">
+                <div class="empty-state">
+                  <span class="empty-icon">👨‍🏫</span>
+                  <p>No teacher assignments found matching your filters.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+<!-- Assign / Edit Teacher Modal -->
+@if (isAssignModalOpen()) {
+  <div class="modal-overlay" (click)="closeAssignModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          @if (isEditMode()) {
+            ✏️ Edit Teacher Allocation
+          } @else {
+            👨‍🏫 Assign Teacher to Course & Group
+          }
+        </h3>
+        <button type="button" class="close-btn" (click)="closeAssignModal()">&times;</button>
+      </div>
+
+      <form (ngSubmit)="submitAssignment()" class="modal-form">
+        <div class="form-group z-3">
+          <app-searchable-select
+            label="👨‍🏫 Select Teacher"
+            placeholder="Choose Teacher..."
+            searchPlaceholder="Type teacher name..."
+            [options]="modalTeacherOptions()"
+            [value]="assignForm.teacherId"
+            (valueChange)="onModalTeacherSelected($event)"
+          ></app-searchable-select>
+        </div>
+
+        <div class="form-group z-2">
+          <app-searchable-select
+            label="📚 Select Course"
+            placeholder="Choose Course..."
+            searchPlaceholder="Type course name..."
+            [options]="modalCourseOptions()"
+            [value]="assignForm.courseId"
+            (valueChange)="onModalCourseSelected($event)"
+          ></app-searchable-select>
+        </div>
+
+        <div class="form-group z-1">
+          <app-searchable-select
+            label="👥 Select Class Group (Optional)"
+            placeholder="Whole Course / All Sections..."
+            searchPlaceholder="Type class group..."
+            [options]="modalGroupOptions()"
+            [value]="assignForm.classGroupId || ''"
+            (valueChange)="onModalGroupSelected($event)"
+          ></app-searchable-select>
+        </div>
+
+        @if (modalError()) {
+          <div class="alert alert-danger mt-3">
+            <span class="icon">⚠</span>
+            <span>{{ modalError() }}</span>
+          </div>
+        }
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeAssignModal()">Cancel</button>
+          <button type="submit" class="btn-save" [disabled]="submitting()">
+            @if (submitting()) { Saving... }
+            @else if (isEditMode()) { Update Allocation }
+            @else { Confirm Assignment }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

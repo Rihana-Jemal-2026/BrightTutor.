@@ -21,23 +21,24 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
             .FirstOrDefaultAsync(s => s.Id == request.StudentId || s.UserId == request.StudentId, cancellationToken);
         if (student == null)
         {
-            throw new InvalidOperationException($"Student with ID '{request.StudentId}' not found.");
+            throw new InvalidOperationException($"Student not found.");
         }
+        var actualStudentId = student.Id;
 
         var courseExists = await _context.Courses
             .AnyAsync(c => c.Id == request.CourseId, cancellationToken);
         if (!courseExists)
         {
-            throw new InvalidOperationException($"Course with ID '{request.CourseId}' not found.");
+            throw new InvalidOperationException($"Course not found.");
         }
 
-        if (request.ClassGroupId.HasValue)
+        if (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty)
         {
             var groupExists = await _context.ClassGroups
                 .AnyAsync(g => g.Id == request.ClassGroupId.Value && g.CourseId == request.CourseId, cancellationToken);
             if (!groupExists)
             {
-                throw new InvalidOperationException($"Class group with ID '{request.ClassGroupId}' not found for this course.");
+                throw new InvalidOperationException($"Class group not found for this course.");
             }
         }
 
@@ -52,7 +53,7 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
         {
             StudentId = student.Id,
             CourseId = request.CourseId,
-            ClassGroupId = request.ClassGroupId,
+            ClassGroupId = (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty) ? request.ClassGroupId : null,
             EnrollmentDate = DateTime.UtcNow,
             IsActive = true
         };

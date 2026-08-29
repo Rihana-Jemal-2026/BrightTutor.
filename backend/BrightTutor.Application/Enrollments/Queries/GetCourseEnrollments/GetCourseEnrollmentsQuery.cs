@@ -7,4 +7,5 @@ public class GetCourseEnrollmentsQuery : IRequest<List<EnrollmentDto>>
 {
     public Guid? CourseId { get; set; }
     public Guid? ClassGroupId { get; set; }
+    public Guid? StudentId { get; set; }
 }

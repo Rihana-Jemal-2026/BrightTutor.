@@ -23,16 +23,19 @@ public class GetCourseEnrollmentsHandler : IRequestHandler<GetCourseEnrollmentsQ
             .Include(e => e.Course)
             .Include(e => e.ClassGroup)
             .Include(e => e.Student).ThenInclude(s => s.User)
-            .AsQueryable();
-
         if (request.CourseId.HasValue && request.CourseId.Value != Guid.Empty)
         {
             query = query.Where(e => e.CourseId == request.CourseId.Value);
         }
 
-        if (request.ClassGroupId.HasValue)
+        if (request.ClassGroupId.HasValue && request.ClassGroupId.Value != Guid.Empty)
         {
             query = query.Where(e => e.ClassGroupId == request.ClassGroupId.Value);
+        }
+
+        if (request.StudentId.HasValue && request.StudentId.Value != Guid.Empty)
+        {
+            query = query.Where(e => e.StudentId == request.StudentId.Value || (e.Student != null && e.Student.UserId == request.StudentId.Value));
         }
 
         var enrollments = await query

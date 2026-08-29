@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DashboardService, DashboardSummaryDto } from '../../services/dashboard.service';
 import { AttendanceService } from '../../services/attendance.service';
+import { AnnouncementService } from '../../services/announcement.service';
 import { AuthService } from '../../services/auth.service';
 import { CertificateService, CertificateDto } from '../../services/certificate.service';
 import { StudentAttendanceSummary } from '../../models/attendance.model';
+import { AnnouncementDto } from '../../models/announcement.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -119,6 +121,14 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
 
         <div class="section-title">🚀 Quick Actions & Tools</div>
         <div class="quick-actions-grid">
+          <a routerLink="/schedules" class="action-card">
+            <div class="action-icon">📅</div>
+            <div class="action-details">
+              <h3>Timetables & Schedules</h3>
+              <p>View upcoming class timetables, online meeting rooms, and home sessions.</p>
+            </div>
+          </a>
+
           <a routerLink="/mark-group-attendance" class="action-card">
             <div class="action-icon">👨‍👩‍👧‍👦</div>
             <div class="action-details">
@@ -194,8 +204,16 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
 
         <div class="section-title">🚀 Quick Actions & Portals</div>
         <div class="quick-actions-grid">
-          <a routerLink="/student-calendar" class="action-card">
+          <a routerLink="/schedules" class="action-card">
             <div class="action-icon">📅</div>
+            <div class="action-details">
+              <h3>My Class Timetable</h3>
+              <p>Check scheduled class hours, room numbers, and online video links.</p>
+            </div>
+          </a>
+
+          <a routerLink="/student-calendar" class="action-card">
+            <div class="action-icon">📆</div>
             <div class="action-details">
               <h3>My Attendance Calendar</h3>
               <p>View monthly color-coded attendance days and timestamps.</p>
@@ -235,6 +253,29 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
           </div>
         </div>
       }
+
+      <!-- Campus Announcements Feed Widget (Visible across all roles) -->
+      <div class="section-header-row">
+        <div class="section-title" style="margin: 0;">📢 Campus Announcements Bulletin</div>
+        <a routerLink="/announcements" class="view-all-link">View All Notices →</a>
+      </div>
+
+      <div class="announcements-preview-grid">
+        @for (item of announcements(); track item.id) {
+          <div class="announcement-preview-card">
+            <div class="announcement-meta">
+              <span class="badge-role">{{ getTargetRoleLabel(item.targetRole) }}</span>
+              <span class="badge-date">{{ item.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <h4 class="preview-title">{{ item.title }}</h4>
+            <p class="preview-content">{{ item.content }}</p>
+          </div>
+        } @empty {
+          <div class="empty-notices">
+            <span>📢</span> No announcements currently published.
+          </div>
+        }
+      </div>
     </div>
   `,
   styles: [`
@@ -251,8 +292,13 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
     .metric-info .value { display: block; font-size: 1.75rem; font-weight: 700; color: var(--color-text); }
     .metric-info .label { font-size: 0.85rem; color: var(--color-muted); }
     .section-title { font-size: 1.2rem; font-weight: 700; color: var(--color-primary); margin: 1.5rem 0 0.75rem 0; }
+    .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; margin-bottom: 1rem; }
+    .view-all-link { color: var(--color-accent-bright); text-decoration: none; font-weight: 600; font-size: 0.88rem; }
+    .view-all-link:hover { text-decoration: underline; }
+
     .quick-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
-    .action-card { background: var(--color-surface); border-radius: 12px; padding: 1.25rem; display: flex; align-items: flex-start; gap: 1rem; text-decoration: none; color: inherit; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); }
+    .action-card { background: var(--color-surface); border-radius: 12px; padding: 1.25rem; display: flex; align-items: flex-start; gap: 1rem; text-decoration: none; color: inherit; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); transition: transform 0.2s, box-shadow 0.2s; }
+    .action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
     .action-card.cert-action { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.05); }
     .action-icon { font-size: 2.25rem; }
     .action-details h3 { margin: 0 0 0.35rem 0; font-size: 1.1rem; color: var(--color-primary); }
@@ -264,6 +310,15 @@ import { StudentAttendanceSummary } from '../../models/attendance.model';
     .cert-banner h3 { margin: 0 0 0.25rem 0; color: var(--color-text); font-size: 1.1rem; }
     .cert-banner p { margin: 0; font-size: 0.85rem; color: var(--color-muted); }
     .btn-cert-action { background: #8b5cf6; color: #fff; border: none; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap; }
+
+    .announcements-preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; }
+    .announcement-preview-card { background: var(--color-surface); border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow-card); border-left: 4px solid #7c3aed; border: 1px solid var(--color-border); }
+    .announcement-meta { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .badge-role { font-size: 0.75rem; font-weight: 600; background: #f3e8ff; color: #7e22ce; padding: 0.15rem 0.5rem; border-radius: 10px; }
+    .badge-date { font-size: 0.75rem; color: var(--color-muted); }
+    .preview-title { font-size: 1rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.4rem 0; }
+    .preview-content { font-size: 0.85rem; color: var(--color-muted); line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .empty-notices { background: var(--color-surface); border-radius: 12px; padding: 1.5rem; text-align: center; color: var(--color-muted); font-size: 0.9rem; grid-column: 1 / -1; border: 1px solid var(--color-border); }
 
     /* Digital Certificate Frame */
     .cert-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
@@ -287,10 +342,12 @@ export class DashboardComponent implements OnInit {
   authService = inject(AuthService);
   private dashboardService = inject(DashboardService);
   private attendanceService = inject(AttendanceService);
+  private announcementService = inject(AnnouncementService);
 
   summary = signal<DashboardSummaryDto | null>(null);
   studentStats = signal<StudentAttendanceSummary | null>(null);
   teacherStats = signal<any | null>(null);
+  announcements = signal<AnnouncementDto[]>([]);
   loading = signal<boolean>(true);
   viewingCert = signal<boolean>(false);
 
@@ -300,6 +357,8 @@ export class DashboardComponent implements OnInit {
       this.loading.set(false);
       return;
     }
+
+    this.loadAnnouncements();
 
     if (this.authService.isAdmin()) {
       this.dashboardService.getSummary().subscribe({
@@ -336,5 +395,25 @@ export class DashboardComponent implements OnInit {
 
   openCertificatesModal(): void {
     this.viewingCert.set(true);
+  }
+
+  loadAnnouncements(): void {
+    const user = this.authService.currentUser();
+    const role = user ? (user.role === 'Admin' || user.role === 1 ? 1 : user.role === 'Teacher' || user.role === 2 ? 2 : user.role === 'Student' || user.role === 3 ? 3 : 4) : undefined;
+
+    this.announcementService.getAnnouncements(role).subscribe({
+      next: (list) => {
+        this.announcements.set(list.slice(0, 3)); // show top 3 on dashboard
+      },
+      error: () => {}
+    });
+  }
+
+  getTargetRoleLabel(role?: any): string {
+    if (role === 1 || role === '1' || role === 'Admin') return 'Admins';
+    if (role === 2 || role === '2' || role === 'Teacher') return 'Teachers';
+    if (role === 3 || role === '3' || role === 'Student') return 'Students';
+    if (role === 4 || role === '4' || role === 'Parent') return 'Parents';
+    return 'Campus';
   }
 }

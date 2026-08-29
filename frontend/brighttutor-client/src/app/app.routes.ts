@@ -5,6 +5,10 @@ export const routes: Routes = [
   { path: "dashboard", loadComponent: () => import("./features/dashboard/dashboard.component").then((m) => m.DashboardComponent) },
   { path: "users", loadComponent: () => import("./features/users/users.component").then((m) => m.UsersComponent) },
   { path: "courses", loadComponent: () => import("./features/courses/courses.component").then((m) => m.CoursesComponent) },
+  { path: "enrollments", loadComponent: () => import("./features/enrollments/enrollments.component").then((m) => m.EnrollmentsComponent) },
+  { path: "teacher-assignments", loadComponent: () => import("./features/teacher-assignments/teacher-assignments.component").then((m) => m.TeacherAssignmentsComponent) },
+  { path: "schedules", loadComponent: () => import("./features/schedules/schedules.component").then((m) => m.SchedulesComponent) },
+  { path: "announcements", loadComponent: () => import("./features/announcements/announcements.component").then((m) => m.AnnouncementsComponent) },
   { path: "permissions", loadComponent: () => import("./features/permissions/permissions.component").then((m) => m.PermissionsComponent) },
 
   // Attendance Features

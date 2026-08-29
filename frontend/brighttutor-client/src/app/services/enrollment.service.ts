@@ -1,45 +1,44 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface EnrollmentDto {
-  id: string;
-  studentId: string;
-  studentName: string;
-  courseId: string;
-  courseName: string;
-  classGroupId?: string;
-  classGroupName?: string;
-  enrollmentDate: string;
-  serviceType: number;
-}
-
-export interface EnrollStudentRequest {
-  studentId: string;
-  courseId: string;
-  classGroupId?: string;
-}
+import { EnrollmentDto, EnrollStudentRequest, EnrollStudentResponse } from '../models/enrollment.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnrollmentService {
+  private http = inject(HttpClient);
   private apiUrl = 'http://localhost:5198/api/enrollments';
 
-  constructor(private http: HttpClient) {}
+  getEnrollments(courseId?: string, classGroupId?: string, studentId?: string): Observable<EnrollmentDto[]> {
+    let params = new HttpParams();
+    if (courseId) params = params.set('courseId', courseId);
+    if (classGroupId) params = params.set('classGroupId', classGroupId);
+    if (studentId) params = params.set('studentId', studentId);
 
-  getAllEnrollments(courseId?: string, classGroupId?: string): Observable<EnrollmentDto[]> {
-    let url = this.apiUrl;
-    const params: string[] = [];
-    if (courseId) params.push(`courseId=${courseId}`);
-    if (classGroupId) params.push(`classGroupId=${classGroupId}`);
-    if (params.length > 0) url += `?${params.join('&')}`;
-
-    return this.http.get<EnrollmentDto[]>(url);
+    return this.http.get<EnrollmentDto[]>(this.apiUrl, { params });
   }
 
-  enrollStudent(request: EnrollStudentRequest): Observable<any> {
-    return this.http.post(this.apiUrl, request);
+  getAllEnrollments(courseId?: string, classGroupId?: string): Observable<EnrollmentDto[]> {
+    return this.getEnrollments(courseId, classGroupId);
+  }
+
+  getStudentEnrollments(studentId: string): Observable<EnrollmentDto[]> {
+    return this.http.get<EnrollmentDto[]>(`${this.apiUrl}/student/${studentId}`);
+  }
+
+  getCourseEnrollments(courseId: string, classGroupId?: string): Observable<EnrollmentDto[]> {
+    let params = new HttpParams();
+    if (classGroupId) params = params.set('classGroupId', classGroupId);
+    return this.http.get<EnrollmentDto[]>(`${this.apiUrl}/course/${courseId}`, { params });
+  }
+
+  enrollStudent(request: EnrollStudentRequest): Observable<EnrollStudentResponse> {
+    return this.http.post<EnrollStudentResponse>(this.apiUrl, request);
+  }
+
+  updateEnrollment(id: string, request: { courseId?: string; classGroupId?: string; isActive: boolean }): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, request);
   }
 
   unenrollStudent(enrollmentId: string): Observable<void> {

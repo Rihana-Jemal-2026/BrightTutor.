@@ -212,16 +212,30 @@
               border-left: 3px solid var(--color-accent-bright);
             }
 
-            .notif-title {
-              font-size: 0.85rem;
-              font-weight: 600;
-              color: var(--color-text);
+            .notif-header-row {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 0.5rem;
+
+              .notif-title {
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: var(--color-text);
+              }
+
+              .unread-dot {
+                color: var(--color-accent-bright);
+                font-size: 0.85rem;
+                line-height: 1;
+              }
             }
 
             .notif-msg {
               font-size: 0.8rem;
               color: var(--color-muted);
-              margin-top: 2px;
+              margin-top: 3px;
+              line-height: 1.4;
             }
 
             .notif-time {
