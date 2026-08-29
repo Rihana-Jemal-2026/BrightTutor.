@@ -84,23 +84,27 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 </div>
 
                 <div class="form-group">
-                  <label>Select Course Curriculum *</label>
-                  <select [(ngModel)]="selectedCourseOption" name="selectedCourseOption" required>
-                    <option value="">-- Choose Course Catalog --</option>
+                  <label>Select Course Catalog</label>
+                  <select [(ngModel)]="selectedCourseOption" name="selectedCourseOption">
+                    <option value="">-- Choose From Available Course Catalog --</option>
                     @for (course of courses(); track course.id) {
                       <option [value]="course.id">{{ course.name }}</option>
                     }
-                    <option value="OTHER">➕ Other / Request Custom Course (Not Listed Above)</option>
+                    <option value="OTHER">➕ Other / Request Custom Course (Not Listed)</option>
                   </select>
                 </div>
               </div>
 
-              @if (selectedCourseOption === 'OTHER') {
-                <div class="form-group custom-course-box">
-                  <label class="custom-label">➕ Insert Desired Course / Special Subject Name *</label>
-                  <input type="text" [(ngModel)]="customCourseInput" name="customCourseInput" placeholder="Insert the course name or subject you want to learn (e.g. Python for Data Science, SAT Chemistry, Amharic Literature)" required />
-                </div>
-              }
+              <!-- DEDICATED PERMANENT PLACE FOR CUSTOM REQUESTED COURSE -->
+              <div class="form-group custom-course-box">
+                <label class="custom-label">✏️ Can't find your course above? Insert your requested course or subject here:</label>
+                <input
+                  type="text"
+                  [(ngModel)]="customCourseInput"
+                  name="customCourseInput"
+                  placeholder="Insert the custom course name or subject you want to learn (e.g. Python for Data Science, SAT Chemistry, Amharic Literature)"
+                />
+              </div>
 
               <div class="form-actions">
                 <button type="submit" class="btn-primary" [disabled]="submitting()">
@@ -264,8 +268,8 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .country-code-select { flex: 0 0 150px; font-weight: 600; cursor: pointer; }
     .phone-input-container input { flex: 1; }
 
-    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1px solid var(--color-accent); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
-    .custom-label { color: var(--color-accent) !important; font-weight: 700 !important; }
+    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1.5px dashed var(--color-accent); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+    .custom-label { color: var(--color-accent) !important; font-weight: 700 !important; font-size: 0.9rem !important; }
 
     .form-actions { margin-top: 1.5rem; text-align: right; }
     .btn-primary { background: var(--color-accent); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
@@ -346,17 +350,13 @@ export class StudentRegisterComponent implements OnInit {
   }
 
   onSubmitRegistration(): void {
-    if (!this.form.firstName || !this.form.email || !this.selectedCourseOption || !this.phoneNumberInput || !this.form.gradeLevel) {
-      this.toastService.show('Please fill in all required fields including grade level and phone number.', 'error');
+    if (!this.form.firstName || !this.form.email || (!this.selectedCourseOption && !this.customCourseInput) || !this.phoneNumberInput || !this.form.gradeLevel) {
+      this.toastService.show('Please fill in all required fields including grade level, phone number, and selected/custom course.', 'error');
       return;
     }
 
-    if (this.selectedCourseOption === 'OTHER') {
-      if (!this.customCourseInput || !this.customCourseInput.trim()) {
-        this.toastService.show('Please insert the name of your desired custom course.', 'error');
-        return;
-      }
-      // Pick custom course ID or first course
+    // If student entered a custom requested course name in the dedicated input field
+    if (this.customCourseInput && this.customCourseInput.trim().length > 0) {
       const customCourse = this.courses().find(c => c.name.toLowerCase().includes('custom') || c.name.toLowerCase().includes('requested')) || this.courses()[0];
       this.form.courseId = customCourse.id;
       this.form.gradeLevel = `${this.form.gradeLevel.trim()} (Requested Custom Subject: ${this.customCourseInput.trim()})`;
