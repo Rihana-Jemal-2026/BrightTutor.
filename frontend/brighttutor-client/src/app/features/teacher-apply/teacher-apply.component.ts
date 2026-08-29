@@ -40,6 +40,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               <div class="form-group">
                 <label>Insert Your Phone Number *</label>
                 <div class="phone-input-container">
+                  <div class="flag-badge" title="Selected Country Flag">
+                    <img [src]="getSelectedCountryFlagUrl(selectedCountryCode)" [alt]="selectedCountryCode" class="flag-img" />
+                  </div>
                   <select [(ngModel)]="selectedCountryCode" name="selectedCountryCode" class="country-code-select">
                     @for (c of countryList; track c.code) {
                       <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
@@ -102,9 +105,13 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
     .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
     .form-group input, .form-group textarea, .form-group select { padding: 0.65rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
-    .phone-input-container { display: flex; gap: 0.5rem; }
-    .country-code-select { flex: 0 0 150px; font-weight: 600; cursor: pointer; }
+
+    .phone-input-container { display: flex; align-items: center; gap: 0.5rem; }
+    .flag-badge { display: flex; align-items: center; justify-content: center; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.4rem 0.6rem; height: 40px; }
+    .flag-img { width: 24px; height: 16px; object-fit: cover; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
     .phone-input-container input { flex: 1; }
+
     .form-actions { margin-top: 1.5rem; text-align: right; }
     .btn-primary { background: var(--color-accent); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
     .success-box { text-align: center; padding: 2rem; }
@@ -133,6 +140,11 @@ export class TeacherApplyComponent {
 
   private teacherService = inject(TeacherApplicationService);
   private toastService = inject(ToastService);
+
+  getSelectedCountryFlagUrl(dialCode: string): string {
+    const item = this.countryList.find(c => c.dialCode === dialCode);
+    return item ? item.flagUrl : 'https://flagcdn.com/w40/et.png';
+  }
 
   onSubmitApplication(): void {
     if (!this.form.firstName || !this.form.email || !this.form.specialization || !this.phoneNumberInput) {

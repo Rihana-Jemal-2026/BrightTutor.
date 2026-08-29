@@ -52,6 +52,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <div class="form-group">
                   <label>Insert Your Phone Number *</label>
                   <div class="phone-input-container">
+                    <div class="flag-badge" title="Selected Country Flag">
+                      <img [src]="getSelectedCountryFlagUrl(selectedCountryCode)" [alt]="selectedCountryCode" class="flag-img" />
+                    </div>
                     <select [(ngModel)]="selectedCountryCode" name="selectedCountryCode" class="country-code-select">
                       @for (c of countryList; track c.code) {
                         <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
@@ -264,8 +267,10 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
     .form-group input, .form-group select { padding: 0.7rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
 
-    .phone-input-container { display: flex; gap: 0.5rem; }
-    .country-code-select { flex: 0 0 150px; font-weight: 600; cursor: pointer; }
+    .phone-input-container { display: flex; align-items: center; gap: 0.5rem; }
+    .flag-badge { display: flex; align-items: center; justify-content: center; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.4rem 0.6rem; height: 42px; }
+    .flag-img { width: 24px; height: 16px; object-fit: cover; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
     .phone-input-container input { flex: 1; }
 
     .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1.5px dashed var(--color-accent); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
@@ -349,13 +354,17 @@ export class StudentRegisterComponent implements OnInit {
     this.courseService.getCourses().subscribe(res => this.courses.set(res));
   }
 
+  getSelectedCountryFlagUrl(dialCode: string): string {
+    const item = this.countryList.find(c => c.dialCode === dialCode);
+    return item ? item.flagUrl : 'https://flagcdn.com/w40/et.png';
+  }
+
   onSubmitRegistration(): void {
     if (!this.form.firstName || !this.form.email || (!this.selectedCourseOption && !this.customCourseInput) || !this.phoneNumberInput || !this.form.gradeLevel) {
       this.toastService.show('Please fill in all required fields including grade level, phone number, and selected/custom course.', 'error');
       return;
     }
 
-    // If student entered a custom requested course name in the dedicated input field
     if (this.customCourseInput && this.customCourseInput.trim().length > 0) {
       const customCourse = this.courses().find(c => c.name.toLowerCase().includes('custom') || c.name.toLowerCase().includes('requested')) || this.courses()[0];
       this.form.courseId = customCourse.id;

@@ -116,6 +116,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   <div class="form-group">
                     <label>Insert Your Phone Number *</label>
                     <div class="phone-input-container">
+                      <div class="flag-badge" title="Selected Country Flag">
+                        <img [src]="getSelectedCountryFlagUrl(studentCountryCode)" [alt]="studentCountryCode" class="flag-img" />
+                      </div>
                       <select [(ngModel)]="studentCountryCode" name="studentCountryCode" class="country-code-select">
                         @for (c of countryList; track c.code) {
                           <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
@@ -251,6 +254,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   <div class="form-group">
                     <label>Insert Your Phone Number *</label>
                     <div class="phone-input-container">
+                      <div class="flag-badge" title="Selected Country Flag">
+                        <img [src]="getSelectedCountryFlagUrl(teacherCountryCode)" [alt]="teacherCountryCode" class="flag-img" />
+                      </div>
                       <select [(ngModel)]="teacherCountryCode" name="teacherCountryCode" class="country-code-select">
                         @for (c of countryList; track c.code) {
                           <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
@@ -356,7 +362,10 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       &:focus { outline: none; border-color: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
     }
     .form-row { display: flex; gap: 0.75rem; }
-    .phone-input-container { display: flex; gap: 0.5rem; width: 100%; }
+
+    .phone-input-container { display: flex; align-items: center; gap: 0.5rem; width: 100%; }
+    .flag-badge { display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #DCE8E1; border-radius: 8px; padding: 0.4rem 0.6rem; height: 38px; }
+    .flag-img { width: 24px; height: 16px; object-fit: cover; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
     .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
     .phone-input-container input { flex: 1; }
 
@@ -442,6 +451,11 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.courseService.getCourses().subscribe(res => this.courses.set(res));
+  }
+
+  getSelectedCountryFlagUrl(dialCode: string): string {
+    const item = this.countryList.find(c => c.dialCode === dialCode);
+    return item ? item.flagUrl : 'https://flagcdn.com/w40/et.png';
   }
 
   toggleShowPassword(): void {
