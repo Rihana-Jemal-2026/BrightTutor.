@@ -1,5 +1,6 @@
 using BrightTutor.Application.Abstractions.Persistence;
 using BrightTutor.Domain.Entities;
+using BrightTutor.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,9 +17,9 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
 
     public async Task<EnrollStudentResponse> Handle(EnrollStudentCommand request, CancellationToken cancellationToken)
     {
-        var studentExists = await _context.Students
-            .AnyAsync(s => s.Id == request.StudentId, cancellationToken);
-        if (!studentExists)
+        var student = await _context.Students
+            .FirstOrDefaultAsync(s => s.Id == request.StudentId || s.UserId == request.StudentId, cancellationToken);
+        if (student == null)
         {
             throw new InvalidOperationException($"Student with ID '{request.StudentId}' not found.");
         }
@@ -41,7 +42,7 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
         }
 
         var activeEnrollment = await _context.Enrollments
-            .AnyAsync(e => e.StudentId == request.StudentId && e.CourseId == request.CourseId && e.IsActive, cancellationToken);
+            .AnyAsync(e => e.StudentId == student.Id && e.CourseId == request.CourseId && e.IsActive, cancellationToken);
         if (activeEnrollment)
         {
             throw new InvalidOperationException($"Student is already actively enrolled in this course.");
@@ -49,7 +50,7 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
 
         var enrollment = new Enrollment
         {
-            StudentId = request.StudentId,
+            StudentId = student.Id,
             CourseId = request.CourseId,
             ClassGroupId = request.ClassGroupId,
             EnrollmentDate = DateTime.UtcNow,
@@ -57,6 +58,37 @@ public class EnrollStudentHandler : IRequestHandler<EnrollStudentCommand, Enroll
         };
 
         _context.Enrollments.Add(enrollment);
+
+        // Auto-generate 4 weekly recurring schedule slots if a teacher is assigned
+        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == request.CourseId, cancellationToken);
+        var teacherAssignment = await _context.TeacherAssignments
+            .FirstOrDefaultAsync(a => a.CourseId == request.CourseId && (!request.ClassGroupId.HasValue || a.ClassGroupId == request.ClassGroupId), cancellationToken);
+
+        if (course != null && teacherAssignment != null)
+        {
+            var baseDate = DateTime.UtcNow.Date.AddDays(1).AddHours(10); // Tomorrow 10:00 AM
+            for (int i = 0; i < 4; i++)
+            {
+                var startTime = baseDate.AddDays(i * 7);
+                var endTime = startTime.AddHours(1);
+
+                var schedule = new Schedule
+                {
+                    CourseId = course.Id,
+                    TeacherId = teacherAssignment.TeacherId,
+                    ClassGroupId = request.ClassGroupId,
+                    StudentId = student.Id,
+                    ServiceType = course.ServiceType,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    Status = ScheduleStatus.Scheduled,
+                    MeetingLink = course.ServiceType == Domain.Enums.ServiceType.Online ? $"https://meet.brighttutor.com/room-{Guid.NewGuid().ToString()[..8]}" : null,
+                    LocationAddress = course.ServiceType == Domain.Enums.ServiceType.HomeToHome ? "Student Registered Home Address" : null
+                };
+                _context.Schedules.Add(schedule);
+            }
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
 
         return new EnrollStudentResponse

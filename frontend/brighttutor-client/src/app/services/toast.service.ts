@@ -23,6 +23,10 @@ export class ToastService {
     this.addToast("info", message, durationMs);
   }
 
+  show(message: string, type: "success" | "error" | "info" = "info", durationMs = 2500) {
+    this.addToast(type, message, durationMs);
+  }
+
   private addToast(type: "success" | "error" | "info", message: string, durationMs: number) {
     const id = ++this.counter;
     const newToast: ToastMessage = { id, type, message };

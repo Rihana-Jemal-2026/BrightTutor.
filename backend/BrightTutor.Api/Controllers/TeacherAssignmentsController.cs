@@ -17,6 +17,13 @@ public class TeacherAssignmentsController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<TeacherAssignmentDto>>> GetAllTeacherAssignments([FromQuery] Guid? teacherId)
+    {
+        var result = await _mediator.Send(new GetTeacherAssignmentsQuery { TeacherId = teacherId });
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<AssignTeacherResponse>> AssignTeacher([FromBody] AssignTeacherCommand command)
     {

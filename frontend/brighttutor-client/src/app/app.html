@@ -154,6 +154,10 @@
             <span class="nav-icon">🏠</span>
             <span class="nav-text">Home Visit</span>
           </a>
+          <a routerLink="/qr-attendance" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">📱</span>
+            <span class="nav-text">QR + Face ID Check-In</span>
+          </a>
         </div>
       }
 
@@ -196,12 +200,37 @@
             <span class="nav-text">Daily Overview</span>
           </a>
         }
+        <a routerLink="/certificates" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">📜</span>
+          <span class="nav-text">Digital Certificates</span>
+        </a>
+      </div>
+
+      <!-- Section: Admissions & Public Portals -->
+      <div class="nav-section">
+        <div class="section-label">Admissions & Screening</div>
+        <a routerLink="/student-register" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">🎓</span>
+          <span class="nav-text">Student Register & Pay</span>
+        </a>
+        <a routerLink="/teacher-apply" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">👨‍🏫</span>
+          <span class="nav-text">Teacher Job Application</span>
+        </a>
       </div>
 
       <!-- Section: Administration & System (Admin Only) -->
       @if (authService.hasPermission('settings.manage') && authService.isAdmin()) {
         <div class="nav-section">
           <div class="section-label">System & Security</div>
+          <a routerLink="/payment-approvals" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">💳</span>
+            <span class="nav-text">Payment Slip Verification</span>
+          </a>
+          <a routerLink="/teacher-screening" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">📑</span>
+            <span class="nav-text">Teacher CV Screening</span>
+          </a>
           <a routerLink="/permissions" routerLinkActive="active" class="nav-item">
             <span class="nav-icon">🔐</span>
             <span class="nav-text">Permission Matrix</span>
@@ -209,6 +238,10 @@
           <a routerLink="/admin-actions" routerLinkActive="active" class="nav-item">
             <span class="nav-icon">⚙️</span>
             <span class="nav-text">Admin Settings</span>
+          </a>
+          <a routerLink="/payroll" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Payroll & Invoicing</span>
           </a>
         </div>
       }

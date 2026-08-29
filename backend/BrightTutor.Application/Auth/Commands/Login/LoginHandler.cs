@@ -28,13 +28,18 @@ public class LoginHandler : IRequestHandler<LoginCommand, LoginResponse>
 
         if (user == null)
         {
-            throw new InvalidOperationException("Invalid email or password.");
+            throw new InvalidOperationException("Incorrect email or password.");
+        }
+
+        if (user.Status != Domain.Enums.UserStatus.Active)
+        {
+            throw new InvalidOperationException("Your account is deactivated or unassigned. Please contact system administrator.");
         }
 
         var isPasswordValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
         if (!isPasswordValid)
         {
-            throw new InvalidOperationException("Invalid email or password.");
+            throw new InvalidOperationException("Incorrect email or password.");
         }
 
         var token = _jwtTokenGenerator.GenerateToken(user);

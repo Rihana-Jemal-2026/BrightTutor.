@@ -35,5 +35,9 @@ public interface IApplicationDbContext
     DbSet<Permission> Permissions { get; }
     DbSet<RolePermission> RolePermissions { get; }
 
+    DbSet<StudentRegistration> StudentRegistrations { get; }
+    DbSet<TeacherApplication> TeacherApplications { get; }
+    DbSet<Certificate> Certificates { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

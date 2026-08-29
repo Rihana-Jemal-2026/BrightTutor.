@@ -115,7 +115,24 @@ import { ToastService } from '../../services/toast.service';
               <div class="form-row">
                 <div class="form-group">
                   <label for="password">Initial Password</label>
-                  <input id="password" type="password" name="password" [(ngModel)]="newUser.password" placeholder="••••••••" required />
+                  <div class="password-input-wrapper">
+                    <input
+                      id="password"
+                      [type]="showNewUserPassword() ? 'text' : 'password'"
+                      name="password"
+                      [(ngModel)]="newUser.password"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="btn-toggle-pass"
+                      (click)="showNewUserPassword.set(!showNewUserPassword())"
+                      title="Toggle Password Visibility"
+                    >
+                      {{ showNewUserPassword() ? '🙈' : '👁️' }}
+                    </button>
+                  </div>
                 </div>
 
                 <div class="form-group">
@@ -201,44 +218,49 @@ import { ToastService } from '../../services/toast.service';
   styles: [`
     .users-page { padding: 1.5rem; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .page-header h1 { font-size: 1.75rem; color: #1e293b; margin-bottom: 0.25rem; }
-    .page-header p { color: #64748b; margin: 0; }
-    .btn-create-user { background: #2563eb; color: white; border: none; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .btn-create-user:hover { background: #1d4ed8; }
-    .table-card { background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .page-header h1 { font-size: 1.75rem; color: var(--color-primary); margin-bottom: 0.25rem; }
+    .page-header p { color: var(--color-muted); margin: 0; }
+    .btn-create-user { background: var(--color-accent); color: white; border: none; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-create-user:hover { background: var(--color-primary-light); }
+    .table-card { background: var(--color-surface); border-radius: 12px; padding: 1rem; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); }
     .data-table { width: 100%; border-collapse: collapse; text-align: left; }
-    .data-table th, .data-table td { padding: 0.875rem 1rem; border-bottom: 1px solid #f1f5f9; }
-    .data-table th { background: #f8fafc; font-weight: 600; color: #475569; font-size: 0.85rem; text-transform: uppercase; }
-    .user-name { font-weight: 600; color: #0f172a; }
+    .data-table th, .data-table td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
+    .data-table th { background: var(--color-bg); font-weight: 600; color: var(--color-muted); font-size: 0.85rem; text-transform: uppercase; }
+    .user-name { font-weight: 600; color: var(--color-text); }
     .role-badge { padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-    .role-badge.admin { background: #fee2e2; color: #dc2626; }
-    .role-badge.teacher { background: #e0e7ff; color: #4338ca; }
-    .role-badge.student { background: #d1fae5; color: #059669; }
-    .role-badge.parent { background: #fef3c7; color: #d97706; }
-    .status-badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; background: #fee2e2; color: #dc2626; font-weight: 600; }
-    .status-badge.active { background: #d1fae5; color: #059669; }
+    .role-badge.admin { background: var(--color-error-bg); color: var(--color-error); }
+    .role-badge.teacher { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+    .role-badge.student { background: var(--color-success-bg); color: var(--color-success); }
+    .role-badge.parent { background: var(--status-late-bg); color: var(--status-late); }
+    .status-badge { padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; background: var(--color-error-bg); color: var(--color-error); font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .status-badge.active { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); }
     .text-right { text-align: right; }
     .actions-cell { display: flex; justify-content: flex-end; gap: 0.4rem; align-items: center; }
-    .icon-action-btn { border: 1px solid #cbd5e1; background: #f8fafc; padding: 0.4rem 0.65rem; border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
-    .icon-action-btn:hover { background: #e2e8f0; transform: scale(1.05); }
-    .icon-action-btn.edit { border-color: #bfdbfe; background: #eff6ff; }
-    .icon-action-btn.toggle.deactivate { border-color: #fca5a5; background: #fef2f2; }
-    .protected-pill { font-size: 0.75rem; background: #f1f5f9; color: #475569; padding: 0.25rem 0.6rem; border-radius: 20px; font-weight: 600; border: 1px solid #cbd5e1; }
-    .empty-state { text-align: center; color: #94a3b8; padding: 2.5rem; }
+    .icon-action-btn { border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); padding: 0.4rem 0.65rem; border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+    .icon-action-btn:hover { background: var(--color-surface); transform: scale(1.05); }
+    .icon-action-btn.edit { border-color: var(--color-accent-bright); background: rgba(16, 185, 129, 0.1); }
+    .icon-action-btn.toggle { border-color: var(--color-border); }
+    .icon-action-btn.toggle.deactivate { border-color: rgba(239, 68, 68, 0.4); background: var(--color-error-bg); color: var(--color-error); }
+    .protected-pill { font-size: 0.75rem; background: var(--color-bg); color: var(--color-muted); padding: 0.25rem 0.6rem; border-radius: 20px; font-weight: 600; border: 1px solid var(--color-border); }
+    .empty-state { text-align: center; color: var(--color-muted); padding: 2.5rem; }
 
     /* Modal Styles */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-    .modal-card { background: white; border-radius: 14px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
+    .modal-card { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); border-radius: 14px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-card-hover); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
-    .modal-header h3 { margin: 0; font-size: 1.25rem; color: #0f172a; }
-    .close-btn { background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer; }
+    .modal-header h3 { margin: 0; font-size: 1.25rem; color: var(--color-text); }
+    .close-btn { background: none; border: none; font-size: 1.5rem; color: var(--color-muted); cursor: pointer; }
     .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem; }
-    .form-group input, .form-group select { width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.35rem; }
+    .form-group input, .form-group select { width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font-size: 0.9rem; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .password-input-wrapper { position: relative; display: flex; align-items: center; }
+    .password-input-wrapper input { padding-right: 2.2rem; }
+    .btn-toggle-pass { position: absolute; right: 6px; background: none; border: none; font-size: 0.9rem; cursor: pointer; padding: 2px 4px; border-radius: 4px; color: var(--color-muted); }
     .modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
-    .btn-cancel { background: #e2e8f0; color: #475569; border: none; padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
-    .btn-save { background: #2563eb; color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .btn-cancel { background: var(--color-bg); color: var(--color-muted); border: 1px solid var(--color-border); padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .btn-save { background: var(--color-accent); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .btn-save:hover { background: var(--color-primary-light); }
   `]
 })
 export class UsersComponent implements OnInit {
@@ -247,6 +269,7 @@ export class UsersComponent implements OnInit {
   isCreateModalOpen = signal<boolean>(false);
   isEditModalOpen = signal<boolean>(false);
   submitting = signal<boolean>(false);
+  showNewUserPassword = signal<boolean>(false);
 
   newUser: CreateUserRequest = {
     firstName: '',

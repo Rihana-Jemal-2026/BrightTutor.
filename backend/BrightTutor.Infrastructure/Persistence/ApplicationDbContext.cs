@@ -38,6 +38,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
+    public DbSet<StudentRegistration> StudentRegistrations => Set<StudentRegistration>();
+    public DbSet<TeacherApplication> TeacherApplications => Set<TeacherApplication>();
+    public DbSet<Certificate> Certificates => Set<Certificate>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

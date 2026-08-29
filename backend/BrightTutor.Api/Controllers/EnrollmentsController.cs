@@ -18,6 +18,13 @@ public class EnrollmentsController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<EnrollmentDto>>> GetAllEnrollments([FromQuery] Guid? courseId, [FromQuery] Guid? classGroupId)
+    {
+        var result = await _mediator.Send(new GetCourseEnrollmentsQuery { CourseId = courseId, ClassGroupId = classGroupId });
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<ActionResult<EnrollStudentResponse>> EnrollStudent([FromBody] EnrollStudentCommand command)
     {

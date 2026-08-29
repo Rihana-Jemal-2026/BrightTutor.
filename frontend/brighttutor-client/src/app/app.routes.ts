@@ -19,6 +19,15 @@ export const routes: Routes = [
   { path: "student-calendar", loadComponent: () => import("./features/student-calendar/student-calendar.component").then((m) => m.StudentCalendarComponent) },
   { path: "daily-overview", loadComponent: () => import("./features/daily-overview/daily-overview.component").then((m) => m.DailyOverviewComponent) },
   { path: "admin-actions", loadComponent: () => import("./features/admin-actions/admin-actions.component").then((m) => m.AdminActionsComponent) },
+  { path: "payroll", loadComponent: () => import("./features/payroll/payroll.component").then((m) => m.PayrollComponent) },
+
+  // BrightTutor v2.0 Next-Gen Modules
+  { path: "student-register", loadComponent: () => import("./features/student-register/student-register.component").then((m) => m.StudentRegisterComponent) },
+  { path: "payment-approvals", loadComponent: () => import("./features/payment-approvals/payment-approvals.component").then((m) => m.PaymentApprovalsComponent) },
+  { path: "teacher-apply", loadComponent: () => import("./features/teacher-apply/teacher-apply.component").then((m) => m.TeacherApplyComponent) },
+  { path: "teacher-screening", loadComponent: () => import("./features/teacher-screening/teacher-screening.component").then((m) => m.TeacherScreeningComponent) },
+  { path: "qr-attendance", loadComponent: () => import("./features/qr-attendance/qr-attendance.component").then((m) => m.QrAttendanceComponent) },
+  { path: "certificates", loadComponent: () => import("./features/certificates/certificates.component").then((m) => m.CertificatesComponent) },
 
   { path: "", redirectTo: "login", pathMatch: "full" },
 ];
