@@ -147,15 +147,23 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                     </select>
                   </div>
                   <div class="form-group">
-                    <label>3-Month Course Catalog (15 Available) *</label>
-                    <select [(ngModel)]="studentForm.courseId" name="sCourseId" required>
+                    <label>Course Catalog Selection *</label>
+                    <select [(ngModel)]="selectedStudentCourseOption" name="sCourseId" required>
                       <option value="">-- Choose Course --</option>
                       @for (c of courses(); track c.id) {
                         <option [value]="c.id">{{ c.name }}</option>
                       }
+                      <option value="OTHER">➕ Other / Request Custom Course (Not Listed Above)</option>
                     </select>
                   </div>
                 </div>
+
+                @if (selectedStudentCourseOption === 'OTHER') {
+                  <div class="form-group custom-course-box">
+                    <label class="custom-label">➕ Insert Desired Course / Special Subject Name *</label>
+                    <input type="text" [(ngModel)]="customStudentCourseInput" name="customCourseNameInput" placeholder="Insert the course name or subject you want to learn (e.g. Python for Data Science, SAT Chemistry, Amharic Literature)" required />
+                  </div>
+                }
 
                 <button type="submit" class="btn-submit" [disabled]="submittingStudent()">
                   @if (submittingStudent()) { Submitting... } @else { Submit & Proceed to Payment Slip }
@@ -348,6 +356,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
     .phone-input-container input { flex: 1; }
 
+    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1px solid #10B981; padding: 0.85rem; border-radius: 10px; margin-bottom: 1rem; }
+    .custom-label { color: #059669 !important; font-weight: 700 !important; }
+
     .password-input-wrapper { position: relative; display: flex; align-items: center; }
     .password-input-wrapper input { padding-right: 4.5rem; }
     .btn-toggle-password { position: absolute; right: 8px; background: none; border: none; color: #059669; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
@@ -368,6 +379,9 @@ export class LoginComponent implements OnInit {
 
   teacherCountryCode = '+251';
   teacherPhoneInput = '';
+
+  selectedStudentCourseOption = '';
+  customStudentCourseInput = '';
 
   activeTab = signal<'login' | 'student' | 'teacher'>('login');
   email = '';
@@ -456,10 +470,23 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmitStudentReg(): void {
-    if (!this.studentForm.firstName || !this.studentForm.email || !this.studentForm.courseId || !this.studentPhoneInput) {
-      this.toastService.showError('Please fill in all required fields including phone number.');
+    if (!this.studentForm.firstName || !this.studentForm.email || !this.selectedStudentCourseOption || !this.studentPhoneInput || !this.studentForm.gradeLevel) {
+      this.toastService.showError('Please fill in all required fields including grade level and phone number.');
       return;
     }
+
+    if (this.selectedStudentCourseOption === 'OTHER') {
+      if (!this.customStudentCourseInput || !this.customStudentCourseInput.trim()) {
+        this.toastService.showError('Please insert the name of your desired custom course.');
+        return;
+      }
+      const customCourse = this.courses().find(c => c.name.toLowerCase().includes('custom') || c.name.toLowerCase().includes('requested')) || this.courses()[0];
+      this.studentForm.courseId = customCourse.id;
+      this.studentForm.gradeLevel = `${this.studentForm.gradeLevel.trim()} (Requested Custom Subject: ${this.customStudentCourseInput.trim()})`;
+    } else {
+      this.studentForm.courseId = this.selectedStudentCourseOption;
+    }
+
     this.studentForm.phoneNumber = `${this.studentCountryCode} ${this.studentPhoneInput.trim()}`;
 
     this.submittingStudent.set(true);

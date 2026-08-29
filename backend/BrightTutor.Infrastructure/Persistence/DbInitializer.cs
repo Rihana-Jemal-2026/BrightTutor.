@@ -117,30 +117,58 @@ public static class DbInitializer
             });
         }
 
-        // 4. Seed 15 IT & Academic Courses (3-Month Curriculum Timelines)
-        if (!await context.Courses.AnyAsync())
+        // 4. Remove Old Test & Duplicate Courses
+        var testCourseNames = new[]
         {
-            var courses = new List<Course>
-            {
-                new Course { Name = "Full-Stack Web Development (React & .NET)", Description = "3-Month Intensive: HTML/CSS, Modern JavaScript, React 19, C# .NET 8 Web API, PostgreSQL.", ServiceType = ServiceType.Group, IsActive = true },
-                new Course { Name = "Python Programming & Data Structures", Description = "3-Month Intensive: Python syntax, OOP, Algorithms, Data Structures, Problem Solving.", ServiceType = ServiceType.Online, IsActive = true },
-                new Course { Name = "Artificial Intelligence & Machine Learning", Description = "3-Month Intensive: Neural Networks, PyTorch, Model Training, NLP, Computer Vision.", ServiceType = ServiceType.Group, IsActive = true },
-                new Course { Name = "Mobile App Development (Flutter & Dart)", Description = "3-Month Intensive: Cross-platform iOS/Android apps, State Management, Firebase Backend.", ServiceType = ServiceType.Group, IsActive = true },
-                new Course { Name = "Cybersecurity & Network Defense", Description = "3-Month Intensive: Ethical Hacking, Network Protocols, Penetration Testing, Cryptography.", ServiceType = ServiceType.Online, IsActive = true },
-                new Course { Name = "Data Science & Analytics with Python", Description = "3-Month Intensive: Pandas, NumPy, Data Visualization, Statistical Analysis, BigQuery.", ServiceType = ServiceType.Group, IsActive = true },
-                new Course { Name = "SAT Math & Verbal Prep Masterclass", Description = "3-Month Intensive: Complete SAT prep, Problem Solving, Practice Exams, Strategy.", ServiceType = ServiceType.HomeToHome, IsActive = true },
-                new Course { Name = "Grade 11-12 Physics & Mechanics", Description = "3-Month Intensive: Kinematics, Dynamics, Electromagnetism, Quantum Physics prep.", ServiceType = ServiceType.HomeToHome, IsActive = true },
-                new Course { Name = "Advanced Organic & Inorganic Chemistry", Description = "3-Month Intensive: Reaction Mechanisms, Stoichiometry, Molecular Structure.", ServiceType = ServiceType.HomeToHome, IsActive = true },
-                new Course { Name = "Calculus & Linear Algebra Mastery", Description = "3-Month Intensive: Differential/Integral Calculus, Matrices, Vector Spaces.", ServiceType = ServiceType.Online, IsActive = true },
-                new Course { Name = "English Business Communication & IELTS", Description = "3-Month Intensive: Speaking, Academic Writing, IELTS 8.0 Band Prep.", ServiceType = ServiceType.Online, IsActive = true },
-                new Course { Name = "Graphic Design & UI/UX Design (Figma)", Description = "3-Month Intensive: User Interface Design, Wireframing, Color Theory, Figma Prototype.", ServiceType = ServiceType.Group, IsActive = true },
-                new Course { Name = "Cloud Computing & DevOps Essentials", Description = "3-Month Intensive: Docker, Kubernetes, CI/CD Pipelines, AWS & GCP Deployment.", ServiceType = ServiceType.Group, IsActive = true },
-                new Course { Name = "Database Engineering & SQL Mastery", Description = "3-Month Intensive: Relational Data Modeling, Complex SQL Queries, Performance Tuning.", ServiceType = ServiceType.Online, IsActive = true },
-                new Course { Name = "Kids Coding & Scratch Robotics", Description = "3-Month Fun Track: Visual block programming, Game Development, Logic Building.", ServiceType = ServiceType.HomeToHome, IsActive = true }
-            };
+            "full-stack web verification course",
+            "automated test course",
+            "payten",
+            "full stack",
+            "cyber  security ",
+            "ai",
+            "networking",
+            "digital marketing"
+        };
 
-            context.Courses.AddRange(courses);
+        var coursesToDelete = await context.Courses
+            .Where(c => testCourseNames.Contains(c.Name.ToLower().Trim()))
+            .ToListAsync();
+
+        if (coursesToDelete.Any())
+        {
+            context.Courses.RemoveRange(coursesToDelete);
             await context.SaveChangesAsync();
+        }
+
+        // 5. Seed Real Academic & Professional Courses
+        var targetCourses = new List<Course>
+        {
+            new Course { Name = "Full-Stack Web Development (React & .NET)", Description = "3-Month Intensive: HTML/CSS, Modern JavaScript, React 19, C# .NET 10 Web API, PostgreSQL.", ServiceType = ServiceType.Group, IsActive = true },
+            new Course { Name = "Python Programming & Data Structures", Description = "3-Month Intensive: Python syntax, OOP, Algorithms, Data Structures, Problem Solving.", ServiceType = ServiceType.Online, IsActive = true },
+            new Course { Name = "Artificial Intelligence & Machine Learning", Description = "3-Month Intensive: Neural Networks, PyTorch, Model Training, NLP, Computer Vision.", ServiceType = ServiceType.Group, IsActive = true },
+            new Course { Name = "Mobile App Development (Flutter & Dart)", Description = "3-Month Intensive: Cross-platform iOS/Android apps, State Management, Firebase Backend.", ServiceType = ServiceType.Group, IsActive = true },
+            new Course { Name = "Cybersecurity & Network Defense", Description = "3-Month Intensive: Ethical Hacking, Network Protocols, Penetration Testing, Cryptography.", ServiceType = ServiceType.Online, IsActive = true },
+            new Course { Name = "Data Science & Analytics with Python", Description = "3-Month Intensive: Pandas, NumPy, Data Visualization, Statistical Analysis, BigQuery.", ServiceType = ServiceType.Group, IsActive = true },
+            new Course { Name = "SAT Math & Verbal Prep Masterclass", Description = "3-Month Intensive: Complete SAT prep, Problem Solving, Practice Exams, Strategy.", ServiceType = ServiceType.HomeToHome, IsActive = true },
+            new Course { Name = "Grade 11-12 Physics & Mechanics", Description = "3-Month Intensive: Kinematics, Dynamics, Electromagnetism, Quantum Physics prep.", ServiceType = ServiceType.HomeToHome, IsActive = true },
+            new Course { Name = "Advanced Organic & Inorganic Chemistry", Description = "3-Month Intensive: Reaction Mechanisms, Stoichiometry, Molecular Structure.", ServiceType = ServiceType.HomeToHome, IsActive = true },
+            new Course { Name = "Calculus & Linear Algebra Mastery", Description = "3-Month Intensive: Differential/Integral Calculus, Matrices, Vector Spaces.", ServiceType = ServiceType.Online, IsActive = true },
+            new Course { Name = "English Business Communication & IELTS", Description = "3-Month Intensive: Speaking, Academic Writing, IELTS 8.0 Band Prep.", ServiceType = ServiceType.Online, IsActive = true },
+            new Course { Name = "Graphic Design & UI/UX Design (Figma)", Description = "3-Month Intensive: User Interface Design, Wireframing, Color Theory, Figma Prototype.", ServiceType = ServiceType.Group, IsActive = true },
+            new Course { Name = "Cloud Computing & DevOps Essentials", Description = "3-Month Intensive: Docker, Kubernetes, CI/CD Pipelines, AWS & GCP Deployment.", ServiceType = ServiceType.Group, IsActive = true },
+            new Course { Name = "Database Engineering & SQL Mastery", Description = "3-Month Intensive: Relational Data Modeling, Complex SQL Queries, Performance Tuning.", ServiceType = ServiceType.Online, IsActive = true },
+            new Course { Name = "Kids Coding & Scratch Robotics", Description = "3-Month Fun Track: Visual block programming, Game Development, Logic Building.", ServiceType = ServiceType.HomeToHome, IsActive = true },
+            new Course { Name = "Digital Marketing & Social Media Strategy", Description = "3-Month Professional Track: SEO, Content Creation, Ad Campaigns, Analytics.", ServiceType = ServiceType.Online, IsActive = true },
+            new Course { Name = "Custom / Requested Subject Specialization", Description = "Personalized Tutoring: Custom academic or professional course requested by student.", ServiceType = ServiceType.Online, IsActive = true }
+        };
+
+        var existingCourseNames = await context.Courses.Select(c => c.Name.ToLower().Trim()).ToListAsync();
+        foreach (var tc in targetCourses)
+        {
+            if (!existingCourseNames.Contains(tc.Name.ToLower().Trim()))
+            {
+                context.Courses.Add(tc);
+            }
         }
 
         await context.SaveChangesAsync();

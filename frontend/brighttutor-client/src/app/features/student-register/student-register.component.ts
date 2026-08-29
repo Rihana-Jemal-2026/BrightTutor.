@@ -11,29 +11,27 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="register-page">
-      <div class="page-header">
-        <h1>🎓 BrightTutor Student Admission & Enrollment Portal</h1>
-        <p>Apply for 1-on-1 and Group Classes, track tutor assignment (3–5 working hours SLA), and upload tuition payment receipts.</p>
+    <div class="register-portal-page">
+      <div class="portal-header">
+        <h1>🎓 Student Admissions & Tutoring Portal</h1>
+        <p>Register for 1-on-1 tutoring, check teacher availability (3-5 hr SLA), and manage payment slips.</p>
       </div>
 
-      <!-- Navigation Tabs -->
       <div class="portal-tabs">
-        <button [class.active]="activeTab() === 'apply'" (click)="activeTab.set('apply')">
-          📝 1. Apply as New Student
+        <button type="button" class="tab-btn" [class.active]="activeTab() === 'apply'" (click)="activeTab.set('apply')">
+          📝 Submit New Admission Request
         </button>
-        <button [class.active]="activeTab() === 'track'" (click)="activeTab.set('track')">
-          🔍 2. Track Application & Upload Payment Slip
+        <button type="button" class="tab-btn" [class.active]="activeTab() === 'track'" (click)="activeTab.set('track')">
+          🔍 Track Admission Status & Pay
         </button>
       </div>
 
-      <!-- TAB 1: NEW REGISTRATION FORM -->
+      <!-- TAB 1: SUBMIT NEW ADMISSION REQUEST -->
       @if (activeTab() === 'apply') {
-        <div class="registration-card">
+        <div class="portal-card">
           @if (currentStep() === 1) {
             <form (ngSubmit)="onSubmitRegistration()">
-              <h3>Student Application Form</h3>
-              <p class="subtitle">Complete your details to start the tutor availability check (Estimated 3–5 working hours).</p>
+              <h3>Student Registration & Tutor Screening Form</h3>
 
               <div class="form-row">
                 <div class="form-group">
@@ -87,14 +85,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
                 <div class="form-group">
                   <label>Select Course Curriculum *</label>
-                  <select [(ngModel)]="form.courseId" name="courseId" required>
+                  <select [(ngModel)]="selectedCourseOption" name="selectedCourseOption" required>
                     <option value="">-- Choose Course Catalog --</option>
                     @for (course of courses(); track course.id) {
                       <option [value]="course.id">{{ course.name }}</option>
                     }
+                    <option value="OTHER">➕ Other / Request Custom Course (Not Listed Above)</option>
                   </select>
                 </div>
               </div>
+
+              @if (selectedCourseOption === 'OTHER') {
+                <div class="form-group custom-course-box">
+                  <label class="custom-label">➕ Insert Desired Course / Special Subject Name *</label>
+                  <input type="text" [(ngModel)]="customCourseInput" name="customCourseInput" placeholder="Insert the course name or subject you want to learn (e.g. Python for Data Science, SAT Chemistry, Amharic Literature)" required />
+                </div>
+              }
 
               <div class="form-actions">
                 <button type="submit" class="btn-primary" [disabled]="submitting()">
@@ -139,108 +145,98 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           <h3>Look Up Registration & Payment Portal</h3>
           <p class="subtitle">Enter your Email Address or Registration Code to view tutor assignment and submit payment.</p>
 
-          <form (ngSubmit)="onSearchTrack()" class="search-bar-form">
-            <input type="text" [(ngModel)]="searchEmail" name="searchEmail" placeholder="Enter your email or registration code..." required />
-            <button type="submit" class="btn-primary" [disabled]="searchingTrack()">
-              @if (searchingTrack()) { Searching... } @else { Search Application }
+          <div class="search-bar">
+            <input type="text" [(ngModel)]="searchEmail" name="searchEmail" placeholder="Enter Email or Reg ID (e.g. samuel@gmail.com)" (keyup.enter)="onSearchTrack()" />
+            <button type="button" class="btn-primary" (click)="onSearchTrack()" [disabled]="searchingTrack()">
+              @if (searchingTrack()) { Searching... } @else { Search Status }
             </button>
-          </form>
+          </div>
 
-          @if (trackedResult(); as res) {
-            <div class="track-details-box">
-              <div class="status-header">
-                <div>
-                  <h3>{{ res.fullName }}</h3>
-                  <p class="course-name">Course: <strong>{{ res.courseName }}</strong> | Grade: {{ res.gradeLevel }}</p>
-                </div>
-                <div class="status-pill" [ngClass]="getStatusClass(res.statusCode)">
-                  {{ res.statusText }}
-                </div>
+          @if (trackedResult()) {
+            <div class="result-box">
+              <div class="status-header" [ngClass]="trackedResult()!.status.toLowerCase()">
+                <div class="status-badge">{{ trackedResult()!.statusText }}</div>
+                <h3>{{ trackedResult()!.fullName }}</h3>
+                <p>Course: <strong>{{ trackedResult()!.courseName }}</strong> | Email: {{ trackedResult()!.email }}</p>
               </div>
 
-              <div class="notice-banner" [ngClass]="getNoticeClass(res.statusCode)">
-                📢 <strong>Status Update:</strong> {{ res.notice }}
+              <div class="notice-card">
+                <div class="notice-title">📋 Status Notice:</div>
+                <p>{{ trackedResult()!.notice }}</p>
               </div>
 
-              @if (res.assignedTeacherName) {
-                <div class="teacher-matched-card">
-                  <span class="teacher-icon">👨‍🏫</span>
+              @if (trackedResult()!.assignedTeacherName) {
+                <div class="teacher-card">
+                  <div class="teacher-icon">👨‍🏫</div>
                   <div>
-                    <strong>Assigned Tutor: {{ res.assignedTeacherName }}</strong>
-                    <p>Verified & Matched for {{ res.courseName }}</p>
+                    <h4>Assigned Certified Educator</h4>
+                    <p class="teacher-name">{{ trackedResult()!.assignedTeacherName }}</p>
                   </div>
                 </div>
               }
 
-              <!-- PAYMENT PORTAL IF APPROVED -->
-              @if (res.statusCode === 2) {
-                <div class="payment-upload-section">
-                  <h3>💰 Submit Tuition Payment Slip (CBE / Telebirr)</h3>
-                  <p>Please pay your tuition fee and attach the transaction ID & screenshot slip below:</p>
+              <!-- PAYMENT SLIP UPLOAD CARD -->
+              @if (trackedResult()!.statusCode === 2 || trackedResult()!.statusCode === 3) {
+                <div class="payment-card">
+                  <h3>💳 Tuition Payment Instructions</h3>
+                  <p>Please send tuition fees to one of the official BrightTutor accounts below:</p>
 
-                  <div class="bank-accounts-card">
-                    <div class="account-item">
-                      <span class="account-icon">🏦</span>
-                      <div>
-                        <strong>Commercial Bank of Ethiopia (CBE)</strong>
-                        <p>Account: 1000123456789 | Name: BrightTutor Academy</p>
-                      </div>
+                  <div class="bank-options">
+                    <div class="bank-pill">
+                      <strong>🏦 Commercial Bank of Ethiopia (CBE)</strong><br />
+                      Account No: <code>1000123456789</code><br />
+                      Account Name: BrightTutor Academy PLC
                     </div>
-                    <div class="account-item">
-                      <span class="account-icon">📱</span>
-                      <div>
-                        <strong>Telebirr Transfer / Merchant</strong>
-                        <p>Mobile: 0911000000 | Merchant Shortcode: 889900</p>
-                      </div>
+                    <div class="bank-pill">
+                      <strong>📱 Telebirr Mobile Transfer</strong><br />
+                      Mobile / Till: <code>0911000000</code> / Merchant ID 889900<br />
+                      Account Name: BrightTutor Academy
                     </div>
                   </div>
 
-                  <form (ngSubmit)="onSubmitReceiptForTrack(res.registrationId)">
+                  <form (ngSubmit)="onSubmitReceipt(trackedResult()!.registrationId)" class="receipt-form">
+                    <h4>Upload Payment Receipt Slip</h4>
                     <div class="form-row">
                       <div class="form-group">
                         <label>Payment Channel *</label>
-                        <select [(ngModel)]="receiptForm.paymentChannel" name="paymentChannel">
-                          <option value="CBE Birr">CBE Birr / CBE Bank</option>
+                        <select [(ngModel)]="receiptForm.paymentChannel" name="pChannel" required>
+                          <option value="CBE Birr">CBE Birr / Bank Transfer</option>
                           <option value="Telebirr">Telebirr Transfer</option>
-                          <option value="Bank Transfer">Other Bank Transfer</option>
                         </select>
                       </div>
                       <div class="form-group">
                         <label>Transaction Reference ID *</label>
-                        <input type="text" [(ngModel)]="receiptForm.transactionId" name="transactionId" placeholder="e.g. FT26082699X" required />
+                        <input type="text" [(ngModel)]="receiptForm.transactionId" name="pTxn" placeholder="e.g. FT26082699X" required />
                       </div>
                       <div class="form-group">
                         <label>Amount Paid (ETB) *</label>
-                        <input type="number" [(ngModel)]="receiptForm.amountPaid" name="amountPaid" placeholder="3500.00" required />
+                        <input type="number" [(ngModel)]="receiptForm.amountPaid" name="pAmount" placeholder="3500" required />
                       </div>
                     </div>
 
                     <div class="form-group">
-                      <label>Upload Receipt Screenshot *</label>
+                      <label>Upload Screenshot / Photo of Receipt Slip *</label>
                       <input type="file" (change)="onFileSelected($event)" accept="image/*" required />
+                      @if (receiptForm.receiptImageBase64) {
+                        <div class="preview-box">
+                          <p>✅ Screenshot attached cleanly.</p>
+                          <img [src]="receiptForm.receiptImageBase64" alt="Receipt Preview" />
+                        </div>
+                      }
                     </div>
 
-                    @if (receiptForm.receiptImageBase64) {
-                      <div class="receipt-preview">
-                        <p>Receipt Preview Screenshot:</p>
-                        <img [src]="receiptForm.receiptImageBase64" alt="Receipt Screenshot" />
-                      </div>
-                    }
-
-                    <div class="form-actions">
-                      <button type="submit" class="btn-success" [disabled]="submittingReceipt()">
-                        @if (submittingReceipt()) { Uploading... } @else { Upload Receipt & Request Final Verification }
-                      </button>
-                    </div>
+                    <button type="submit" class="btn-success" [disabled]="submittingReceipt()">
+                      @if (submittingReceipt()) { Submitting Receipt... } @else { Submit Payment Receipt for Admin Verification }
+                    </button>
                   </form>
                 </div>
               }
 
-              @if (res.statusCode === 4) {
+              @if (trackedResult()!.issuedStudentCode) {
                 <div class="credentials-card">
-                  <h4>🎉 Account Active & Credentials Dispatched!</h4>
-                  <p>Student ID Code: <strong>{{ res.issuedStudentCode }}</strong></p>
-                  <p>You can now log in using your email <code>{{ res.email }}</code> and your default password sent via email.</p>
+                  <h3>🎉 Registration Complete & Verified</h3>
+                  <p>Your permanent Student ID: <strong>{{ trackedResult()!.issuedStudentCode }}</strong></p>
+                  <p>You can now sign in using your registered email and default password sent to your email.</p>
                 </div>
               }
             </div>
@@ -250,73 +246,58 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     </div>
   `,
   styles: [`
-    .register-page { padding: 1.5rem; max-width: 950px; margin: 0 auto; }
-    .page-header h1 { color: var(--color-primary); margin-bottom: 0.25rem; font-size: 1.75rem; }
-    .page-header p { color: var(--color-muted); margin-bottom: 1.5rem; }
-    
-    .portal-tabs { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
-    .portal-tabs button { flex: 1; padding: 0.85rem 1rem; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-    .portal-tabs button.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25); }
-    
-    .registration-card, .tracking-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.75rem; border-radius: 14px; box-shadow: var(--shadow-card); }
-    .subtitle { color: var(--color-muted); font-size: 0.88rem; margin-bottom: 1.25rem; }
-    
+    .register-portal-page { padding: 1.5rem; max-width: 900px; margin: 0 auto; }
+    .portal-header h1 { color: var(--color-primary); margin-bottom: 0.25rem; font-size: 1.75rem; }
+    .portal-header p { color: var(--color-muted); margin-bottom: 1.5rem; }
+
+    .portal-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .tab-btn { flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--color-border); background: var(--color-surface); border-radius: 10px; font-weight: 700; cursor: pointer; color: var(--color-text-muted); }
+    .tab-btn.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+
+    .portal-card, .tracking-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.75rem; border-radius: 14px; box-shadow: var(--shadow-card); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
     .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
     .form-group input, .form-group select { padding: 0.7rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
+
     .phone-input-container { display: flex; gap: 0.5rem; }
     .country-code-select { flex: 0 0 150px; font-weight: 600; cursor: pointer; }
     .phone-input-container input { flex: 1; }
+
+    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1px solid var(--color-accent); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
+    .custom-label { color: var(--color-accent) !important; font-weight: 700 !important; }
+
     .form-actions { margin-top: 1.5rem; text-align: right; }
-    
     .btn-primary { background: var(--color-accent); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    .btn-secondary { background: var(--color-bg); color: var(--color-text); border: 1px solid var(--color-border); padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    .btn-success { background: #10b981; color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    
-    .sla-banner { display: flex; gap: 1.25rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 1.25rem; border-radius: 12px; margin-bottom: 1.25rem; }
+    .btn-secondary { background: var(--color-surface-hover); color: var(--color-text); padding: 0.75rem 1.5rem; border: 1px solid var(--color-border); border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .btn-success { background: #10B981; color: #fff; padding: 0.85rem 1.75rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 1rem; }
+
+    .sla-banner { display: flex; gap: 1rem; background: rgba(245, 158, 11, 0.1); border: 1px solid #F59E0B; padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; align-items: center; }
     .sla-icon { font-size: 2.5rem; }
-    .sla-info h2 { font-size: 1.25rem; color: #d97706; margin-bottom: 0.25rem; }
-    .sla-info p { margin: 0 0 0.5rem 0; color: var(--color-text); }
-    .sla-timer-badge { display: inline-block; background: #f59e0b; color: #fff; font-weight: 700; font-size: 0.8rem; padding: 0.3rem 0.75rem; border-radius: 20px; }
-    
-    .tracking-summary-card { background: var(--color-bg); padding: 1rem 1.25rem; border-radius: 10px; border: 1px solid var(--color-border); margin-bottom: 1.5rem; }
+    .sla-info h2 { color: #B45309; margin: 0 0 0.25rem 0; font-size: 1.25rem; }
+    .sla-info p { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #78350F; }
+    .sla-timer-badge { display: inline-block; background: #F59E0B; color: #fff; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
+
+    .tracking-summary-card { background: var(--color-bg); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; }
     .action-buttons { display: flex; gap: 1rem; justify-content: flex-end; }
-    
-    .search-bar-form { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
-    .search-bar-form input { flex: 1; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
-    
-    .track-details-box { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 12px; padding: 1.25rem; }
-    .status-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
-    .status-header h3 { margin: 0 0 0.25rem 0; color: var(--color-text); }
-    .course-name { margin: 0; font-size: 0.85rem; color: var(--color-muted); }
-    
-    .status-pill { padding: 0.4rem 0.85rem; border-radius: 20px; font-weight: 700; font-size: 0.8rem; }
-    .status-pending { background: rgba(245, 158, 11, 0.2); color: #d97706; border: 1px solid #f59e0b; }
-    .status-payment { background: rgba(59, 130, 246, 0.2); color: #2563eb; border: 1px solid #3b82f6; }
-    .status-submitted { background: rgba(139, 92, 246, 0.2); color: #7c3aed; border: 1px solid #8b5cf6; }
-    .status-verified { background: rgba(16, 185, 129, 0.2); color: #059669; border: 1px solid #10b981; }
-    .status-rejected { background: rgba(239, 68, 68, 0.2); color: #dc2626; border: 1px solid #ef4444; }
-    
-    .notice-banner { padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.88rem; }
-    .notice-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #b45309; }
-    .notice-info { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #1d4ed8; }
-    .notice-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #047857; }
-    
-    .teacher-matched-card { display: flex; align-items: center; gap: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1.25rem; }
-    .teacher-icon { font-size: 1.75rem; }
-    .teacher-matched-card strong { color: #047857; font-size: 0.95rem; }
-    .teacher-matched-card p { margin: 0; font-size: 0.8rem; color: var(--color-muted); }
-    
-    .bank-accounts-card { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; background: var(--color-surface); padding: 1rem; border-radius: 10px; border: 1px solid var(--color-border); }
-    .account-item { display: flex; align-items: center; gap: 0.75rem; }
-    .account-icon { font-size: 1.5rem; }
-    .account-item strong { display: block; font-size: 0.88rem; color: var(--color-text); }
-    .account-item p { margin: 0; font-size: 0.78rem; color: var(--color-muted); }
-    .receipt-preview img { max-width: 240px; max-height: 240px; border-radius: 8px; border: 1px solid var(--color-border); margin-top: 0.5rem; }
-    
-    .credentials-card { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1.25rem; border-radius: 10px; text-align: center; }
-    .credentials-card h4 { color: #047857; margin-bottom: 0.5rem; }
+
+    .search-bar { display: flex; gap: 0.75rem; margin-top: 1rem; margin-bottom: 1.5rem; }
+    .search-bar input { flex: 1; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); }
+
+    .result-box { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 12px; padding: 1.25rem; }
+    .status-badge { display: inline-block; background: var(--color-accent); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .notice-card { background: var(--color-surface); padding: 1rem; border-radius: 10px; border-left: 4px solid var(--color-accent); margin: 1rem 0; }
+    .notice-title { font-weight: 700; margin-bottom: 0.25rem; color: var(--color-text); }
+    .teacher-card { display: flex; gap: 0.75rem; background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; align-items: center; }
+    .teacher-icon { font-size: 2rem; }
+    .teacher-name { font-size: 1.1rem; font-weight: 700; color: var(--color-accent); margin: 0; }
+
+    .payment-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.25rem; border-radius: 12px; margin-top: 1.5rem; }
+    .bank-options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    .bank-pill { background: var(--color-bg); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); font-size: 0.85rem; }
+    .preview-box { margin-top: 0.5rem; }
+    .preview-box img { max-width: 250px; border-radius: 8px; border: 1px solid var(--color-border); margin-top: 0.5rem; }
+    .credentials-card { background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; padding: 1.25rem; border-radius: 12px; text-align: center; margin-top: 1rem; }
   `]
 })
 export class StudentRegisterComponent implements OnInit {
@@ -334,6 +315,9 @@ export class StudentRegisterComponent implements OnInit {
   searchEmail = '';
   searchingTrack = signal<boolean>(false);
   trackedResult = signal<RegistrationTrackDto | null>(null);
+
+  selectedCourseOption = '';
+  customCourseInput = '';
 
   form = {
     firstName: '',
@@ -362,9 +346,22 @@ export class StudentRegisterComponent implements OnInit {
   }
 
   onSubmitRegistration(): void {
-    if (!this.form.firstName || !this.form.email || !this.form.courseId || !this.phoneNumberInput) {
-      this.toastService.show('Please fill in all required fields including phone number.', 'error');
+    if (!this.form.firstName || !this.form.email || !this.selectedCourseOption || !this.phoneNumberInput || !this.form.gradeLevel) {
+      this.toastService.show('Please fill in all required fields including grade level and phone number.', 'error');
       return;
+    }
+
+    if (this.selectedCourseOption === 'OTHER') {
+      if (!this.customCourseInput || !this.customCourseInput.trim()) {
+        this.toastService.show('Please insert the name of your desired custom course.', 'error');
+        return;
+      }
+      // Pick custom course ID or first course
+      const customCourse = this.courses().find(c => c.name.toLowerCase().includes('custom') || c.name.toLowerCase().includes('requested')) || this.courses()[0];
+      this.form.courseId = customCourse.id;
+      this.form.gradeLevel = `${this.form.gradeLevel.trim()} (Requested Custom Subject: ${this.customCourseInput.trim()})`;
+    } else {
+      this.form.courseId = this.selectedCourseOption;
     }
 
     this.form.phoneNumber = `${this.selectedCountryCode} ${this.phoneNumberInput.trim()}`;
@@ -386,19 +383,19 @@ export class StudentRegisterComponent implements OnInit {
 
   onSearchTrack(): void {
     if (!this.searchEmail) {
-      this.toastService.show('Please enter your email or tracking code.', 'error');
+      this.toastService.show('Please enter your email or registration code.', 'error');
       return;
     }
 
     this.searchingTrack.set(true);
-    this.registrationService.trackRegistration(this.searchEmail).subscribe({
+    this.registrationService.trackRegistration(this.searchEmail.trim()).subscribe({
       next: (res) => {
         this.searchingTrack.set(false);
         this.trackedResult.set(res);
       },
       error: (err) => {
         this.searchingTrack.set(false);
-        this.toastService.show(err.error?.message || 'No registration found.', 'error');
+        this.toastService.show(err.error?.message || 'No registration record found.', 'error');
       }
     });
   }
@@ -407,22 +404,20 @@ export class StudentRegisterComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.receiptForm.receiptImageBase64 = e.target.result;
-      };
+      reader.onload = (e: any) => this.receiptForm.receiptImageBase64 = e.target.result;
       reader.readAsDataURL(file);
     }
   }
 
-  onSubmitReceiptForTrack(registrationId: string): void {
-    if (!this.receiptForm.transactionId) {
-      this.toastService.show('Please enter transaction reference ID.', 'error');
+  onSubmitReceipt(regId: string): void {
+    if (!this.receiptForm.transactionId || !this.receiptForm.receiptImageBase64) {
+      this.toastService.show('Please enter transaction ID and attach receipt image.', 'error');
       return;
     }
 
     this.submittingReceipt.set(true);
     this.registrationService.uploadReceipt({
-      registrationId,
+      registrationId: regId,
       ...this.receiptForm
     }).subscribe({
       next: (res) => {
@@ -439,29 +434,18 @@ export class StudentRegisterComponent implements OnInit {
 
   resetForm(): void {
     this.currentStep.set(1);
-    this.form = { firstName: '', lastName: '', email: '', phoneNumber: '', gradeLevel: '', address: '', desiredServiceType: 1, courseId: '' };
-    this.receiptForm = { paymentChannel: 'CBE Birr', transactionId: '', amountPaid: 3500, receiptImageBase64: '' };
-  }
-
-  getStatusClass(code: number): string {
-    switch (code) {
-      case 1: return 'status-pending';
-      case 2: return 'status-payment';
-      case 3: return 'status-submitted';
-      case 4: return 'status-verified';
-      case 5: return 'status-rejected';
-      default: return 'status-pending';
-    }
-  }
-
-  getNoticeClass(code: number): string {
-    switch (code) {
-      case 1: return 'notice-warning';
-      case 2: return 'notice-info';
-      case 3: return 'notice-info';
-      case 4: return 'notice-success';
-      case 5: return 'notice-warning';
-      default: return 'notice-info';
-    }
+    this.selectedCourseOption = '';
+    this.customCourseInput = '';
+    this.phoneNumberInput = '';
+    this.form = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      gradeLevel: '',
+      address: '',
+      desiredServiceType: 1,
+      courseId: ''
+    };
   }
 }
