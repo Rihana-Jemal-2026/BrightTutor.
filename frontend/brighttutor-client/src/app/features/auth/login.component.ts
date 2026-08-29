@@ -7,6 +7,7 @@ import { ToastService } from '../../services/toast.service';
 import { StudentRegistrationService } from '../../services/student-registration.service';
 import { TeacherApplicationService } from '../../services/teacher-application.service';
 import { CourseService, CourseDto } from '../../services/course.service';
+import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
 @Component({
   selector: 'app-login',
@@ -113,15 +114,22 @@ import { CourseService, CourseDto } from '../../services/course.service';
                     <input type="email" [(ngModel)]="studentForm.email" name="sEmail" placeholder="samuel@gmail.com" required />
                   </div>
                   <div class="form-group">
-                    <label>Phone Number *</label>
-                    <input type="tel" [(ngModel)]="studentForm.phoneNumber" name="sPhone" placeholder="+251 911 000 000" required />
+                    <label>Insert Your Phone Number *</label>
+                    <div class="phone-input-container">
+                      <select [(ngModel)]="studentCountryCode" name="studentCountryCode" class="country-code-select">
+                        @for (c of countryList; track c.code) {
+                          <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
+                        }
+                      </select>
+                      <input type="tel" [(ngModel)]="studentPhoneInput" name="studentPhoneInput" placeholder="Insert your phone number (e.g. 911 000 000)" required />
+                    </div>
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label>Grade Level / Professional Status *</label>
-                    <input type="text" [(ngModel)]="studentForm.gradeLevel" name="sGrade" placeholder="Grade 11 / University" required />
+                    <label>Insert Your Grade Level *</label>
+                    <input type="text" [(ngModel)]="studentForm.gradeLevel" name="sGrade" placeholder="Insert your grade level (e.g. Grade 9, Grade 10, Grade 11, Grade 12, University)" required />
                   </div>
                   <div class="form-group">
                     <label>Home Address / GPS *</label>
@@ -229,8 +237,15 @@ import { CourseService, CourseDto } from '../../services/course.service';
                     <input type="email" [(ngModel)]="teacherForm.email" name="tEmail" placeholder="abebe@gmail.com" required />
                   </div>
                   <div class="form-group">
-                    <label>Phone Number *</label>
-                    <input type="tel" [(ngModel)]="teacherForm.phoneNumber" name="tPhone" placeholder="+251 911 222 333" required />
+                    <label>Insert Your Phone Number *</label>
+                    <div class="phone-input-container">
+                      <select [(ngModel)]="teacherCountryCode" name="teacherCountryCode" class="country-code-select">
+                        @for (c of countryList; track c.code) {
+                          <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
+                        }
+                      </select>
+                      <input type="tel" [(ngModel)]="teacherPhoneInput" name="teacherPhoneInput" placeholder="Insert your phone number (e.g. 911 222 333)" required />
+                    </div>
                   </div>
                 </div>
 
@@ -298,7 +313,7 @@ import { CourseService, CourseDto } from '../../services/course.service';
       border: 1px solid rgba(255, 255, 255, 0.2);
       transition: max-width 0.3s ease;
     }
-    .glass-card.wide-card { max-width: 720px; }
+    .glass-card.wide-card { max-width: 760px; }
 
     .login-header { text-align: center; margin-bottom: 1.5rem; }
     .logo {
@@ -329,6 +344,10 @@ import { CourseService, CourseDto } from '../../services/course.service';
       &:focus { outline: none; border-color: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
     }
     .form-row { display: flex; gap: 0.75rem; }
+    .phone-input-container { display: flex; gap: 0.5rem; width: 100%; }
+    .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
+    .phone-input-container input { flex: 1; }
+
     .password-input-wrapper { position: relative; display: flex; align-items: center; }
     .password-input-wrapper input { padding-right: 4.5rem; }
     .btn-toggle-password { position: absolute; right: 8px; background: none; border: none; color: #059669; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
@@ -343,6 +362,13 @@ import { CourseService, CourseDto } from '../../services/course.service';
   `]
 })
 export class LoginComponent implements OnInit {
+  countryList = COUNTRY_PHONE_LIST;
+  studentCountryCode = '+251';
+  studentPhoneInput = '';
+
+  teacherCountryCode = '+251';
+  teacherPhoneInput = '';
+
   activeTab = signal<'login' | 'student' | 'teacher'>('login');
   email = '';
   password = '';
@@ -430,10 +456,12 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmitStudentReg(): void {
-    if (!this.studentForm.firstName || !this.studentForm.email || !this.studentForm.courseId) {
-      this.toastService.showError('Please fill in required fields.');
+    if (!this.studentForm.firstName || !this.studentForm.email || !this.studentForm.courseId || !this.studentPhoneInput) {
+      this.toastService.showError('Please fill in all required fields including phone number.');
       return;
     }
+    this.studentForm.phoneNumber = `${this.studentCountryCode} ${this.studentPhoneInput.trim()}`;
+
     this.submittingStudent.set(true);
     this.studentRegService.submitRegistration(this.studentForm).subscribe({
       next: (res) => {
@@ -481,10 +509,12 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmitTeacherApp(): void {
-    if (!this.teacherForm.firstName || !this.teacherForm.email || !this.teacherForm.specialization) {
-      this.toastService.showError('Please fill in required fields.');
+    if (!this.teacherForm.firstName || !this.teacherForm.email || !this.teacherForm.specialization || !this.teacherPhoneInput) {
+      this.toastService.showError('Please fill in all required fields including phone number.');
       return;
     }
+    this.teacherForm.phoneNumber = `${this.teacherCountryCode} ${this.teacherPhoneInput.trim()}`;
+
     this.submittingTeacher.set(true);
     this.teacherAppService.applyTeacher(this.teacherForm).subscribe({
       next: (res) => {

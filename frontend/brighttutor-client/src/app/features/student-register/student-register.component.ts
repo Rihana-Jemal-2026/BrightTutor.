@@ -52,22 +52,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   <input type="email" [(ngModel)]="form.email" name="email" placeholder="samuel@gmail.com" required />
                 </div>
                 <div class="form-group">
-                  <label>Phone Number *</label>
+                  <label>Insert Your Phone Number *</label>
                   <div class="phone-input-container">
                     <select [(ngModel)]="selectedCountryCode" name="selectedCountryCode" class="country-code-select">
                       @for (c of countryList; track c.code) {
                         <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
                       }
                     </select>
-                    <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="911 000 000" required />
+                    <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="Insert your phone number (e.g. 911 000 000)" required />
                   </div>
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label>Grade Level / Academic Status *</label>
-                  <input type="text" [(ngModel)]="form.gradeLevel" name="gradeLevel" placeholder="Grade 11 / University / Adult Learner" required />
+                  <label>Insert Your Grade Level *</label>
+                  <input type="text" [(ngModel)]="form.gradeLevel" name="gradeLevel" placeholder="Insert your grade level (e.g. Grade 9, Grade 10, Grade 11, Grade 12, University)" required />
                 </div>
                 <div class="form-group">
                   <label>Home Address / Subcity *</label>

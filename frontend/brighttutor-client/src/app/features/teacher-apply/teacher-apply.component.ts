@@ -38,14 +38,14 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <input type="email" [(ngModel)]="form.email" name="email" placeholder="abebe@gmail.com" required />
               </div>
               <div class="form-group">
-                <label>Phone Number *</label>
+                <label>Insert Your Phone Number *</label>
                 <div class="phone-input-container">
                   <select [(ngModel)]="selectedCountryCode" name="selectedCountryCode" class="country-code-select">
                     @for (c of countryList; track c.code) {
                       <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
                     }
                   </select>
-                  <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="911 222 333" required />
+                  <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="Insert your phone number (e.g. 911 222 333)" required />
                 </div>
               </div>
             </div>
