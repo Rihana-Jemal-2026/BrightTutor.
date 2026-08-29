@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TeacherApplicationService } from '../../services/teacher-application.service';
 import { ToastService } from '../../services/toast.service';
+import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
 @Component({
   selector: 'app-teacher-apply',
@@ -38,7 +39,14 @@ import { ToastService } from '../../services/toast.service';
               </div>
               <div class="form-group">
                 <label>Phone Number *</label>
-                <input type="tel" [(ngModel)]="form.phoneNumber" name="phoneNumber" placeholder="+251 911 222 333" required />
+                <div class="phone-input-container">
+                  <select [(ngModel)]="selectedCountryCode" name="selectedCountryCode" class="country-code-select">
+                    @for (c of countryList; track c.code) {
+                      <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
+                    }
+                  </select>
+                  <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="911 222 333" required />
+                </div>
               </div>
             </div>
 
@@ -93,7 +101,10 @@ import { ToastService } from '../../services/toast.service';
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
     .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
     .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
-    .form-group input, .form-group textarea { padding: 0.65rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
+    .form-group input, .form-group textarea, .form-group select { padding: 0.65rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
+    .phone-input-container { display: flex; gap: 0.5rem; }
+    .country-code-select { flex: 0 0 150px; font-weight: 600; cursor: pointer; }
+    .phone-input-container input { flex: 1; }
     .form-actions { margin-top: 1.5rem; text-align: right; }
     .btn-primary { background: var(--color-accent); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
     .success-box { text-align: center; padding: 2rem; }
@@ -101,6 +112,10 @@ import { ToastService } from '../../services/toast.service';
   `]
 })
 export class TeacherApplyComponent {
+  countryList = COUNTRY_PHONE_LIST;
+  selectedCountryCode = '+251';
+  phoneNumberInput = '';
+
   submitting = signal<boolean>(false);
   submitted = signal<boolean>(false);
 
@@ -120,10 +135,12 @@ export class TeacherApplyComponent {
   private toastService = inject(ToastService);
 
   onSubmitApplication(): void {
-    if (!this.form.firstName || !this.form.email || !this.form.specialization) {
-      this.toastService.show('Please fill in required fields.', 'error');
+    if (!this.form.firstName || !this.form.email || !this.form.specialization || !this.phoneNumberInput) {
+      this.toastService.show('Please fill in required fields including phone number.', 'error');
       return;
     }
+
+    this.form.phoneNumber = `${this.selectedCountryCode} ${this.phoneNumberInput.trim()}`;
 
     this.submitting.set(true);
     this.teacherService.applyTeacher(this.form).subscribe({

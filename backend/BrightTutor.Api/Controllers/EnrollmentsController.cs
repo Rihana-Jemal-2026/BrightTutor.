@@ -22,9 +22,10 @@ public class EnrollmentsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<EnrollmentDto>>> GetAllEnrollments([FromQuery] Guid? courseId, [FromQuery] Guid? classGroupId)
+    [Authorize]
+    public async Task<ActionResult<List<EnrollmentDto>>> GetEnrollments([FromQuery] Guid? courseId, [FromQuery] Guid? classGroupId, [FromQuery] Guid? studentId)
     {
-        var result = await _mediator.Send(new GetCourseEnrollmentsQuery { CourseId = courseId, ClassGroupId = classGroupId });
+        var result = await _mediator.Send(new GetCourseEnrollmentsQuery { CourseId = courseId, ClassGroupId = classGroupId, StudentId = studentId });
         return Ok(result);
     }
 
@@ -53,14 +54,6 @@ public class EnrollmentsController : ControllerBase
         var success = await _mediator.Send(new UnenrollStudentCommand { EnrollmentId = id });
         if (!success) return NotFound();
         return NoContent();
-    }
-
-    [HttpGet]
-    [Authorize(Roles = "Admin,Teacher")]
-    public async Task<ActionResult<List<EnrollmentDto>>> GetEnrollments([FromQuery] Guid? courseId, [FromQuery] Guid? classGroupId, [FromQuery] Guid? studentId)
-    {
-        var result = await _mediator.Send(new GetCourseEnrollmentsQuery { CourseId = courseId, ClassGroupId = classGroupId, StudentId = studentId });
-        return Ok(result);
     }
 
     [HttpGet("student/{studentId:guid}")]

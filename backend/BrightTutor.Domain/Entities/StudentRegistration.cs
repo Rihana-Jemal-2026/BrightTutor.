@@ -6,9 +6,10 @@ namespace BrightTutor.Domain.Entities;
 public enum RegistrationStatus
 {
     PendingApproval = 1,
-    ApprovedPendingPayment = 2,
-    PaymentSubmitted = 3,
-    VerifiedAndEnrolled = 4,
+    PendingTeacherCheck = 1, // 3-5 working hours SLA for admin to check teacher availability
+    ApprovedPendingPayment = 2, // Admin assigned teacher, waiting for student payment screenshot
+    PaymentSubmitted = 3, // Student submitted payment receipt & TXN ID
+    VerifiedAndEnrolled = 4, // Admin verified receipt, student ID created & enrolled
     Rejected = 5
 }
 
@@ -26,7 +27,11 @@ public class StudentRegistration : BaseEntity
     public ServiceType DesiredServiceType { get; set; }
     public Guid CourseId { get; set; }
 
-    public RegistrationStatus Status { get; set; } = RegistrationStatus.PendingApproval;
+    // Assigned Teacher by Admin
+    public Guid? AssignedTeacherId { get; set; }
+    public string? AssignedTeacherName { get; set; }
+
+    public RegistrationStatus Status { get; set; } = RegistrationStatus.PendingTeacherCheck;
     public string? AdminNotes { get; set; }
 
     // Payment Slip Details (Telebirr / CBE Birr)

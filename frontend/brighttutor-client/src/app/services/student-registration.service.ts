@@ -35,7 +35,9 @@ export interface StudentRegistrationDto {
   gpsLongitude?: number;
   desiredServiceType: number;
   courseId: string;
-  status: number; // 1=PendingApproval, 2=ApprovedPendingPayment, 3=PaymentSubmitted, 4=VerifiedAndEnrolled, 5=Rejected
+  assignedTeacherId?: string;
+  assignedTeacherName?: string;
+  status: number; // 1=PendingTeacherCheck, 2=ApprovedPendingPayment, 3=PaymentSubmitted, 4=VerifiedAndEnrolled, 5=Rejected
   adminNotes?: string;
   paymentChannel?: string;
   transactionId?: string;
@@ -43,6 +45,25 @@ export interface StudentRegistrationDto {
   receiptImageBase64?: string;
   issuedStudentCode?: string;
   createdAt: string;
+}
+
+export interface RegistrationTrackDto {
+  registrationId: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  gradeLevel: string;
+  courseName: string;
+  assignedTeacherName?: string;
+  status: string;
+  statusCode: number;
+  statusText: string;
+  notice: string;
+  paymentChannel?: string;
+  transactionId?: string;
+  amountPaid?: number;
+  receiptUploaded: boolean;
+  issuedStudentCode?: string;
 }
 
 @Injectable({
@@ -57,12 +78,20 @@ export class StudentRegistrationService {
     return this.http.post(`${this.apiUrl}/submit`, dto);
   }
 
+  trackRegistration(emailOrId: string): Observable<RegistrationTrackDto> {
+    return this.http.get<RegistrationTrackDto>(`${this.apiUrl}/track/${encodeURIComponent(emailOrId)}`);
+  }
+
   uploadReceipt(dto: UploadReceiptDto): Observable<any> {
     return this.http.post(`${this.apiUrl}/upload-receipt`, dto);
   }
 
   getPendingApprovals(): Observable<StudentRegistrationDto[]> {
     return this.http.get<StudentRegistrationDto[]>(`${this.apiUrl}/pending-approvals`);
+  }
+
+  assignTeacher(id: string, teacherId: string, adminNotes?: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/assign-teacher`, { teacherId, adminNotes });
   }
 
   approveRegistration(id: string): Observable<any> {
