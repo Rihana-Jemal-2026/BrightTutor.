@@ -22,16 +22,16 @@ import { ToastService } from '../../services/toast.service';
           All Registrations ({{ registrations().length }})
         </button>
         <button [class.active]="filterStatus() === 'pending'" (click)="filterStatus.set('pending')">
-          ⏳ Pending Teacher Check ({{ countByStatus(1) }})
+          ⏳ Pending Teacher Check ({{ countByStatus('pending') }})
         </button>
         <button [class.active]="filterStatus() === 'awaiting_payment'" (click)="filterStatus.set('awaiting_payment')">
-          🔵 Teacher Assigned / Awaiting Payment ({{ countByStatus(2) }})
+          🔵 Teacher Assigned / Awaiting Payment ({{ countByStatus('awaiting_payment') }})
         </button>
         <button [class.active]="filterStatus() === 'submitted'" (click)="filterStatus.set('submitted')">
-          🟣 Payment Submitted (Verify Receipt) ({{ countByStatus(3) }})
+          🟣 Payment Submitted (Verify Receipt) ({{ countByStatus('submitted') }})
         </button>
         <button [class.active]="filterStatus() === 'enrolled'" (click)="filterStatus.set('enrolled')">
-          🟢 Verified & Enrolled ({{ countByStatus(4) }})
+          🟢 Verified & Enrolled ({{ countByStatus('enrolled') }})
         </button>
       </div>
 
@@ -76,19 +76,19 @@ import { ToastService } from '../../services/toast.service';
             }
 
             <div class="card-actions">
-              @if (item.status === 1) {
+              @if (isStatusPending(item.status)) {
                 <button type="button" class="btn-assign" (click)="openAssignModal(item)">
                   👨‍🏫 Check Teacher Availability & Assign Tutor
                 </button>
                 <button type="button" class="btn-reject" (click)="rejectReg(item.id)">Reject</button>
               }
-              @if (item.status === 2 || item.status === 3) {
+              @if (isStatusAwaitingPayment(item.status) || isStatusSubmitted(item.status)) {
                 <button type="button" class="btn-verify" (click)="verifyPayment(item.id)">
                   ✅ Verify Payment & Issue Credentials
                 </button>
                 <button type="button" class="btn-reject" (click)="rejectReg(item.id)">Reject</button>
               }
-              @if (item.status === 4) {
+              @if (isStatusVerified(item.status)) {
                 <span class="verified-badge">✅ Verified Account Issued: <strong>{{ item.issuedStudentCode }}</strong></span>
               }
             </div>
@@ -252,18 +252,42 @@ export class PaymentApprovalsComponent implements OnInit {
     this.regService.getPendingApprovals().subscribe(res => this.registrations.set(res));
   }
 
+  isStatusPending(status: any): boolean {
+    return status === 1 || status === 'PendingTeacherCheck' || status === 'PendingApproval' || status === '1';
+  }
+
+  isStatusAwaitingPayment(status: any): boolean {
+    return status === 2 || status === 'ApprovedPendingPayment' || status === '2';
+  }
+
+  isStatusSubmitted(status: any): boolean {
+    return status === 3 || status === 'PaymentSubmitted' || status === '3';
+  }
+
+  isStatusVerified(status: any): boolean {
+    return status === 4 || status === 'VerifiedAndEnrolled' || status === '4';
+  }
+
+  isStatusRejected(status: any): boolean {
+    return status === 5 || status === 'Rejected' || status === '5';
+  }
+
   filteredRegistrations(): StudentRegistrationDto[] {
     const list = this.registrations();
     const st = this.filterStatus();
-    if (st === 'pending') return list.filter(r => r.status === 1);
-    if (st === 'awaiting_payment') return list.filter(r => r.status === 2);
-    if (st === 'submitted') return list.filter(r => r.status === 3);
-    if (st === 'enrolled') return list.filter(r => r.status === 4);
+    if (st === 'pending') return list.filter(r => this.isStatusPending(r.status));
+    if (st === 'awaiting_payment') return list.filter(r => this.isStatusAwaitingPayment(r.status));
+    if (st === 'submitted') return list.filter(r => this.isStatusSubmitted(r.status));
+    if (st === 'enrolled') return list.filter(r => this.isStatusVerified(r.status));
     return list;
   }
 
-  countByStatus(status: number): number {
-    return this.registrations().filter(r => r.status === status).length;
+  countByStatus(statusKey: 'pending' | 'awaiting_payment' | 'submitted' | 'enrolled'): number {
+    if (statusKey === 'pending') return this.registrations().filter(r => this.isStatusPending(r.status)).length;
+    if (statusKey === 'awaiting_payment') return this.registrations().filter(r => this.isStatusAwaitingPayment(r.status)).length;
+    if (statusKey === 'submitted') return this.registrations().filter(r => this.isStatusSubmitted(r.status)).length;
+    if (statusKey === 'enrolled') return this.registrations().filter(r => this.isStatusVerified(r.status)).length;
+    return 0;
   }
 
   openAssignModal(item: StudentRegistrationDto): void {
@@ -312,25 +336,25 @@ export class PaymentApprovalsComponent implements OnInit {
     });
   }
 
-  getServiceTypeName(type: number): string {
-    if (type === 1) return '💻 Online 1-on-1';
-    if (type === 2) return '👥 In-Person Group';
+  getServiceTypeName(type: any): string {
+    if (type === 1 || type === 'Online' || type === '1') return '💻 Online 1-on-1';
+    if (type === 2 || type === 'Group' || type === '2') return '👥 In-Person Group';
     return '🏠 Home-to-Home Visit';
   }
 
-  getStatusLabel(status: number): string {
-    if (status === 1) return 'Pending Teacher Check (3-5h)';
-    if (status === 2) return 'Tutor Assigned: Awaiting Payment';
-    if (status === 3) return 'Payment Receipt Submitted';
-    if (status === 4) return 'Verified & Enrolled';
+  getStatusLabel(status: any): string {
+    if (this.isStatusPending(status)) return 'Pending Teacher Check (3-5h)';
+    if (this.isStatusAwaitingPayment(status)) return 'Tutor Assigned: Awaiting Payment';
+    if (this.isStatusSubmitted(status)) return 'Payment Receipt Submitted';
+    if (this.isStatusVerified(status)) return 'Verified & Enrolled';
     return 'Rejected';
   }
 
-  getStatusClass(status: number): string {
-    if (status === 1) return 'status-pending';
-    if (status === 2) return 'status-approved';
-    if (status === 3) return 'status-approved';
-    if (status === 4) return 'status-verified';
+  getStatusClass(status: any): string {
+    if (this.isStatusPending(status)) return 'status-pending';
+    if (this.isStatusAwaitingPayment(status)) return 'status-approved';
+    if (this.isStatusSubmitted(status)) return 'status-approved';
+    if (this.isStatusVerified(status)) return 'status-verified';
     return 'status-rejected';
   }
 }

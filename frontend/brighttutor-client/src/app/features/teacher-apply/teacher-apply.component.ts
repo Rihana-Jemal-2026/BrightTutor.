@@ -97,25 +97,157 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     </div>
   `,
   styles: [`
-    .teacher-apply-page { padding: 1.5rem; max-width: 850px; margin: 0 auto; }
-    .page-header h1 { color: var(--color-primary); margin-bottom: 0.25rem; font-size: 1.75rem; }
-    .page-header p { color: var(--color-muted); margin-bottom: 1.5rem; }
-    .apply-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.5rem; border-radius: 14px; box-shadow: var(--shadow-card); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
-    .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
-    .form-group input, .form-group textarea, .form-group select { padding: 0.65rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
+    .teacher-apply-page {
+      padding: 1.5rem 1rem;
+      max-width: 850px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-    .phone-input-container { display: flex; align-items: center; gap: 0.5rem; }
-    .flag-badge { display: flex; align-items: center; justify-content: center; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.4rem 0.6rem; height: 40px; }
-    .flag-img { width: 24px; height: 16px; object-fit: cover; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
-    .phone-input-container input { flex: 1; }
+    .page-header h1 {
+      color: var(--color-primary);
+      margin-bottom: 0.25rem;
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
 
-    .form-actions { margin-top: 1.5rem; text-align: right; }
-    .btn-primary { background: var(--color-accent); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    .success-box { text-align: center; padding: 2rem; }
-    .success-box h2 { color: var(--color-success); margin-bottom: 0.5rem; }
+    .page-header p {
+      color: var(--color-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .apply-card {
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border);
+      padding: 1.75rem;
+      border-radius: 14px;
+      box-shadow: var(--shadow-card);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.7rem 0.85rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-size: 0.95rem;
+    }
+
+    .phone-input-container {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: 100%;
+      box-sizing: border-box;
+
+      .flag-badge {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-bg);
+        border: 1.5px solid var(--color-border);
+        border-radius: 8px;
+        padding: 0.35rem 0.5rem;
+        height: 42px;
+        box-sizing: border-box;
+      }
+
+      .flag-img {
+        width: 24px;
+        height: 16px;
+        object-fit: cover;
+        border-radius: 3px;
+      }
+
+      .country-code-select {
+        width: 130px;
+        flex-shrink: 0;
+        font-weight: 600;
+        cursor: pointer;
+        height: 42px;
+      }
+
+      input {
+        flex: 1;
+        min-width: 0;
+        width: 100%;
+        height: 42px;
+      }
+    }
+
+    .form-actions {
+      margin-top: 1.5rem;
+      text-align: right;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0B3D2E, #059669);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .success-box {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .success-box h2 {
+      color: var(--color-success);
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .teacher-apply-page { padding: 1rem 0.5rem; }
+      .apply-card { padding: 1.25rem; }
+      .form-row { grid-template-columns: 1fr; gap: 0.75rem; }
+      .form-actions button, .btn-primary { width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .phone-input-container {
+        flex-wrap: wrap;
+        .country-code-select {
+          flex: 1;
+          width: auto;
+        }
+        input {
+          width: 100%;
+          flex: 1 1 100%;
+        }
+      }
+    }
   `]
 })
 export class TeacherApplyComponent {

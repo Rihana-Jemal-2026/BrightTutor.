@@ -55,11 +55,11 @@ import { ToastService } from '../../services/toast.service';
             }
 
             <div class="card-actions">
-              @if (item.status === 1) {
+              @if (isStatusPending(item.status)) {
                 <button type="button" class="btn-approve" (click)="approveTeacher(item.id)">Approve Credentials & Generate Teacher Code</button>
                 <button type="button" class="btn-reject" (click)="rejectTeacher(item.id)">Reject Application</button>
               }
-              @if (item.status === 2) {
+              @if (isStatusApproved(item.status)) {
                 <span class="approved-text">✅ Approved Educator (Active for Class Assignment)</span>
               }
             </div>
@@ -130,15 +130,33 @@ export class TeacherScreeningComponent implements OnInit {
     });
   }
 
-  getStatusLabel(status: number): string {
-    if (status === 1) return 'Pending Document Screening';
-    if (status === 2) return 'Approved Educator';
+  isStatusPending(status: any): boolean {
+    if (status === 1 || status === '1') return true;
+    const s = String(status || '').toLowerCase();
+    return s.includes('pending') || s.includes('screening');
+  }
+
+  isStatusApproved(status: any): boolean {
+    if (status === 2 || status === '2') return true;
+    const s = String(status || '').toLowerCase();
+    return s.includes('approved') || s.includes('available');
+  }
+
+  isStatusRejected(status: any): boolean {
+    if (status === 3 || status === '3') return true;
+    const s = String(status || '').toLowerCase();
+    return s.includes('reject');
+  }
+
+  getStatusLabel(status: any): string {
+    if (this.isStatusPending(status)) return 'Pending Document Screening';
+    if (this.isStatusApproved(status)) return 'Approved Educator';
     return 'Rejected Candidate';
   }
 
-  getStatusClass(status: number): string {
-    if (status === 1) return 'status-pending';
-    if (status === 2) return 'status-approved';
+  getStatusClass(status: any): string {
+    if (this.isStatusPending(status)) return 'status-pending';
+    if (this.isStatusApproved(status)) return 'status-approved';
     return 'status-rejected';
   }
 }

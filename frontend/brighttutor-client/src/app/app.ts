@@ -36,6 +36,10 @@ export class App implements OnInit {
   }
 
   ngOnInit(): void {
+    if (window.innerWidth <= 768) {
+      this.isSidebarCollapsed.set(true);
+    }
+
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       this.enableDarkMode();
@@ -93,6 +97,12 @@ export class App implements OnInit {
 
   toggleSidebar(): void {
     this.isSidebarCollapsed.update(val => !val);
+  }
+
+  closeSidebarOnMobile(): void {
+    if (window.innerWidth <= 768) {
+      this.isSidebarCollapsed.set(true);
+    }
   }
 
   toggleNotificationDropdown(event?: MouseEvent): void {

@@ -112,7 +112,10 @@
 </header>
 
 <!-- Main Container Layout: Left Sidebar + Content Area -->
-<div class="app-layout" [class.sidebar-collapsed]="isSidebarCollapsed()">
+<div class="app-layout" [class.sidebar-collapsed]="isSidebarCollapsed()" [class.mobile-sidebar-open]="!isSidebarCollapsed()">
+  <!-- Backdrop for mobile drawer -->
+  <div class="mobile-sidebar-backdrop" (click)="closeSidebarOnMobile()"></div>
+
   <!-- Left Navigation Sidebar -->
   <aside class="app-sidebar">
     <nav class="sidebar-nav">

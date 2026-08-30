@@ -244,3 +244,92 @@ input[type="date"], input[type="time"], input[type="datetime-local"] {
     }
   }
 }
+
+// -------------------------------------------------------------
+// GLOBAL RESPONSIVENESS (MOBILE, TABLET, DESKTOP)
+// -------------------------------------------------------------
+@media (max-width: 768px) {
+  .page {
+    margin: 12px auto !important;
+    padding: 0 10px !important;
+
+    h1 {
+      font-size: 1.45rem !important;
+    }
+  }
+
+  .card {
+    padding: 16px !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .form-grid, .form-grid-2, .form-grid-3, .forms-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .search-bar, .filter-card, .filters-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 14px !important;
+
+    .field, .filter-col {
+      min-width: 100% !important;
+      width: 100% !important;
+    }
+
+    button, .btn-search {
+      width: 100% !important;
+    }
+  }
+
+  .summary-cards, .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .filter-pills {
+    display: flex !important;
+    overflow-x: auto !important;
+    padding-bottom: 6px !important;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap !important;
+    gap: 6px !important;
+
+    button {
+      flex-shrink: 0 !important;
+      font-size: 0.8rem !important;
+      padding: 0.45rem 0.85rem !important;
+    }
+  }
+
+  .table-card, .matrix-card {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.75rem !important;
+
+    table {
+      min-width: 550px !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-cards, .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .page-header {
+    h1 {
+      font-size: 1.25rem !important;
+    }
+    p, .subtitle {
+      font-size: 0.85rem !important;
+    }
+  }
+
+  input, select, textarea, button {
+    font-size: 0.9rem !important;
+  }
+}

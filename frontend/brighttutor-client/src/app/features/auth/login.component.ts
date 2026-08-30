@@ -355,34 +355,93 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .tab-btn.active { background: #fff; color: #0B3D2E; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
     .alert-error { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-    .form-group { margin-bottom: 1rem; flex: 1; }
+    .form-group { margin-bottom: 1rem; flex: 1; width: 100%; box-sizing: border-box; }
     .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #0B241B; margin-bottom: 0.35rem; }
     .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #DCE8E1; font-size: 0.9rem; background: #fff; color: #0f172a;
+      width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #DCE8E1; font-size: 0.9rem; background: #fff; color: #0f172a;
       &:focus { outline: none; border-color: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
     }
-    .form-row { display: flex; gap: 0.75rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; width: 100%; box-sizing: border-box; }
 
-    .phone-input-container { display: flex; align-items: center; gap: 0.5rem; width: 100%; }
-    .flag-badge { display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #DCE8E1; border-radius: 8px; padding: 0.4rem 0.6rem; height: 38px; }
-    .flag-img { width: 24px; height: 16px; object-fit: cover; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
-    .phone-input-container input { flex: 1; }
+    .phone-input-container {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: 100%;
+      box-sizing: border-box;
 
-    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1.5px dashed #10B981; padding: 0.85rem; border-radius: 10px; margin-bottom: 1rem; }
+      .flag-badge {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border: 1px solid #DCE8E1;
+        border-radius: 8px;
+        padding: 0.35rem 0.5rem;
+        height: 38px;
+        box-sizing: border-box;
+      }
+
+      .flag-img {
+        width: 24px;
+        height: 16px;
+        object-fit: cover;
+        border-radius: 3px;
+      }
+
+      .country-code-select {
+        width: 125px;
+        flex-shrink: 0;
+        font-weight: 600;
+        cursor: pointer;
+        height: 38px;
+      }
+
+      input {
+        flex: 1;
+        min-width: 0;
+        width: 100%;
+        height: 38px;
+      }
+    }
+
+    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1.5px dashed #10B981; padding: 0.85rem; border-radius: 10px; margin-bottom: 1rem; width: 100%; box-sizing: border-box; }
     .custom-label { color: #059669 !important; font-weight: 700 !important; font-size: 0.85rem !important; }
 
-    .password-input-wrapper { position: relative; display: flex; align-items: center; }
+    .password-input-wrapper { position: relative; display: flex; align-items: center; width: 100%; box-sizing: border-box; }
     .password-input-wrapper input { padding-right: 4.5rem; }
     .btn-toggle-password { position: absolute; right: 8px; background: none; border: none; color: #059669; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 
     .btn-submit { width: 100%; padding: 0.85rem; background: linear-gradient(135deg, #0B3D2E, #059669); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 0.5rem; }
     .btn-submit:hover { background: linear-gradient(135deg, #14523F, #10B981); }
 
+    .public-registration-box { width: 100%; box-sizing: border-box; }
     .public-registration-box h3 { margin: 0 0 1rem 0; font-size: 1.1rem; color: #0B3D2E; }
     .bank-accounts { background: #f1f5f9; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.82rem; color: #334155; }
     .bank-accounts p { margin: 0.2rem 0; }
     .success-alert { text-align: center; padding: 1.5rem; color: #065f46; }
+
+    @media (max-width: 768px) {
+      .login-fullscreen { padding: 0.75rem; }
+      .glass-card { padding: 1.5rem 1.25rem; border-radius: 14px; max-width: 100%; }
+      .form-row { grid-template-columns: 1fr; gap: 0.5rem; }
+      .login-tabs { flex-direction: column; gap: 0.25rem; }
+    }
+
+    @media (max-width: 480px) {
+      .phone-input-container {
+        flex-wrap: wrap;
+        .country-code-select {
+          flex: 1;
+          width: auto;
+        }
+        input {
+          width: 100%;
+          flex: 1 1 100%;
+        }
+      }
+    }
   `]
 })
 export class LoginComponent implements OnInit {

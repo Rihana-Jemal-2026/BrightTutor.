@@ -182,8 +182,32 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 </div>
               }
 
-              <!-- PAYMENT SLIP UPLOAD CARD -->
-              @if (trackedResult()!.statusCode === 2 || trackedResult()!.statusCode === 3) {
+              <!-- 1. PAYMENT ALREADY SUBMITTED (UNDER ADMIN REVIEW) -->
+              @if (trackedResult()!.statusCode === 3 || trackedResult()!.status === 'PaymentSubmitted') {
+                <div class="payment-submitted-card">
+                  <div class="submitted-header">
+                    <div class="submitted-icon">⏳</div>
+                    <div>
+                      <h3>Payment Receipt Submitted & Under Admin Review</h3>
+                      <p>Your payment screenshot and transaction ID (<code>{{ trackedResult()!.transactionId }}</code>) have been securely received.</p>
+                      <div class="sla-timer-badge">⏰ Verification SLA: 1 to 3 Working Hours</div>
+                    </div>
+                  </div>
+
+                  <div class="submitted-summary-grid">
+                    <div><strong>Channel:</strong> {{ trackedResult()!.paymentChannel }}</div>
+                    <div><strong>Amount:</strong> ETB {{ trackedResult()!.amountPaid }}</div>
+                    <div><strong>Txn Reference:</strong> <code>{{ trackedResult()!.transactionId }}</code></div>
+                  </div>
+
+                  <div class="under-review-notice">
+                    <p>✅ Our finance administration is cross-checking your receipt. Once verified, your Student Credentials will appear right here.</p>
+                  </div>
+                </div>
+              }
+
+              <!-- 2. PAYMENT SLIP UPLOAD FORM (WHEN TUTOR ASSIGNED BUT NOT SUBMITTED YET) -->
+              @if (trackedResult()!.statusCode === 2 || trackedResult()!.status === 'ApprovedPendingPayment') {
                 <div class="payment-card">
                   <h3>💳 Tuition Payment Instructions</h3>
                   <p>Please send tuition fees to one of the official BrightTutor accounts below:</p>
@@ -253,45 +277,211 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     </div>
   `,
   styles: [`
-    .register-portal-page { padding: 1.5rem; max-width: 900px; margin: 0 auto; }
-    .portal-header h1 { color: var(--color-primary); margin-bottom: 0.25rem; font-size: 1.75rem; }
-    .portal-header p { color: var(--color-muted); margin-bottom: 1.5rem; }
+    .register-portal-page {
+      padding: 1.5rem 1rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-    .portal-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-    .tab-btn { flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--color-border); background: var(--color-surface); border-radius: 10px; font-weight: 700; cursor: pointer; color: var(--color-text-muted); }
-    .tab-btn.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+    .portal-header h1 {
+      color: var(--color-primary);
+      margin-bottom: 0.25rem;
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
 
-    .portal-card, .tracking-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.75rem; border-radius: 14px; box-shadow: var(--shadow-card); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
-    .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
-    .form-group input, .form-group select { padding: 0.7rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); }
+    .portal-header p {
+      color: var(--color-muted);
+      margin-bottom: 1.5rem;
+    }
 
-    .phone-input-container { display: flex; align-items: center; gap: 0.5rem; }
-    .flag-badge { display: flex; align-items: center; justify-content: center; background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 8px; padding: 0.4rem 0.6rem; height: 42px; }
-    .flag-img { width: 24px; height: 16px; object-fit: cover; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    .country-code-select { flex: 0 0 140px; font-weight: 600; cursor: pointer; }
-    .phone-input-container input { flex: 1; }
+    .portal-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
 
-    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1.5px dashed var(--color-accent); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; }
-    .custom-label { color: var(--color-accent) !important; font-weight: 700 !important; font-size: 0.9rem !important; }
+    .tab-btn {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--color-text);
+      transition: all 0.2s;
+    }
 
-    .form-actions { margin-top: 1.5rem; text-align: right; }
-    .btn-primary { background: var(--color-accent); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    .btn-secondary { background: var(--color-surface-hover); color: var(--color-text); padding: 0.75rem 1.5rem; border: 1px solid var(--color-border); border-radius: 8px; font-weight: 600; cursor: pointer; }
-    .btn-success { background: #10B981; color: #fff; padding: 0.85rem 1.75rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 1rem; }
+    .tab-btn.active {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
 
-    .sla-banner { display: flex; gap: 1rem; background: rgba(245, 158, 11, 0.1); border: 1px solid #F59E0B; padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; align-items: center; }
+    .portal-card, .tracking-card {
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border);
+      padding: 1.75rem;
+      border-radius: 14px;
+      box-shadow: var(--shadow-card);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.7rem 0.85rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      font-size: 0.95rem;
+    }
+
+    .phone-input-container {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      width: 100%;
+      box-sizing: border-box;
+
+      .flag-badge {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-bg);
+        border: 1.5px solid var(--color-border);
+        border-radius: 8px;
+        padding: 0.35rem 0.5rem;
+        height: 42px;
+        box-sizing: border-box;
+      }
+
+      .flag-img {
+        width: 24px;
+        height: 16px;
+        object-fit: cover;
+        border-radius: 3px;
+      }
+
+      .country-code-select {
+        width: 130px;
+        flex-shrink: 0;
+        font-weight: 600;
+        cursor: pointer;
+        height: 42px;
+      }
+
+      input {
+        flex: 1;
+        min-width: 0;
+        width: 100%;
+        height: 42px;
+      }
+    }
+
+    .custom-course-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1.5px dashed var(--color-accent);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .custom-label {
+      color: var(--color-accent) !important;
+      font-weight: 700 !important;
+      font-size: 0.9rem !important;
+    }
+
+    .form-actions {
+      margin-top: 1.5rem;
+      text-align: right;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0B3D2E, #059669);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary {
+      background: var(--color-surface);
+      color: var(--color-text);
+      padding: 0.75rem 1.5rem;
+      border: 1.5px solid var(--color-border);
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-success {
+      background: #10B981;
+      color: #fff;
+      padding: 0.85rem 1.75rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .sla-banner {
+      display: flex;
+      gap: 1rem;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid #F59E0B;
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+
     .sla-icon { font-size: 2.5rem; }
     .sla-info h2 { color: #B45309; margin: 0 0 0.25rem 0; font-size: 1.25rem; }
     .sla-info p { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #78350F; }
     .sla-timer-badge { display: inline-block; background: #F59E0B; color: #fff; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
 
     .tracking-summary-card { background: var(--color-bg); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; }
-    .action-buttons { display: flex; gap: 1rem; justify-content: flex-end; }
+    .action-buttons { display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap; }
 
     .search-bar { display: flex; gap: 0.75rem; margin-top: 1rem; margin-bottom: 1.5rem; }
-    .search-bar input { flex: 1; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); }
+    .search-bar input { flex: 1; padding: 0.75rem; border-radius: 8px; border: 1.5px solid var(--color-border); background: var(--color-surface); }
 
     .result-box { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 12px; padding: 1.25rem; }
     .status-badge { display: inline-block; background: var(--color-accent); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; }
@@ -301,12 +491,82 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .teacher-icon { font-size: 2rem; }
     .teacher-name { font-size: 1.1rem; font-weight: 700; color: var(--color-accent); margin: 0; }
 
+    .payment-submitted-card {
+      background: var(--color-surface);
+      border: 2px solid var(--color-accent);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow-card);
+
+      .submitted-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--color-border);
+
+        .submitted-icon { font-size: 2.25rem; }
+        h3 { margin: 0 0 0.25rem 0; color: var(--color-text); font-size: 1.2rem; }
+        p { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: var(--color-muted); }
+      }
+
+      .submitted-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+        background: var(--color-bg);
+        padding: 0.85rem;
+        border-radius: 8px;
+        border: 1px solid var(--color-border);
+        font-size: 0.9rem;
+        color: var(--color-text);
+        margin-bottom: 1rem;
+      }
+
+      .under-review-notice {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid var(--color-accent);
+        padding: 0.85rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        color: var(--color-text);
+        line-height: 1.5;
+        p { margin: 0; }
+      }
+    }
+
     .payment-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.25rem; border-radius: 12px; margin-top: 1.5rem; }
     .bank-options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
     .bank-pill { background: var(--color-bg); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); font-size: 0.85rem; }
     .preview-box { margin-top: 0.5rem; }
     .preview-box img { max-width: 250px; border-radius: 8px; border: 1px solid var(--color-border); margin-top: 0.5rem; }
     .credentials-card { background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; padding: 1.25rem; border-radius: 12px; text-align: center; margin-top: 1rem; }
+
+    @media (max-width: 768px) {
+      .register-portal-page { padding: 1rem 0.5rem; }
+      .portal-card, .tracking-card { padding: 1.25rem; }
+      .form-row { grid-template-columns: 1fr; gap: 0.75rem; }
+      .bank-options { grid-template-columns: 1fr; }
+      .form-actions button, .btn-primary, .btn-secondary { width: 100%; }
+      .search-bar { flex-direction: column; }
+      .search-bar button { width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .phone-input-container {
+        flex-wrap: wrap;
+        .country-code-select {
+          flex: 1;
+          width: auto;
+        }
+        input {
+          width: 100%;
+          flex: 1 1 100%;
+        }
+      }
+    }
   `]
 })
 export class StudentRegisterComponent implements OnInit {
