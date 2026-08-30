@@ -1,4 +1,5 @@
 :root, [data-theme="light"] {
+  color-scheme: light;
   --color-bg: #F4FAF6;
   --color-surface: #FFFFFF;
   --color-primary: #0B3D2E;
@@ -40,6 +41,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --color-bg: #071712;
   --color-surface: #0E261E;
   --color-primary: #34D399;
@@ -120,6 +122,22 @@ button {
 
 input, select, textarea {
   font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+input[type="date"], input[type="time"], input[type="datetime-local"] {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  color-scheme: light;
+}
+
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"],
+[data-theme="dark"] input[type="datetime-local"] {
+  color-scheme: dark;
 }
 
 :focus-visible {

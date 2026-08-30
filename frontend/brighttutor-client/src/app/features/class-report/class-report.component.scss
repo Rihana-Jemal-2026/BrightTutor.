@@ -19,8 +19,8 @@
   .field {
     flex: 1;
     min-width: 140px;
-    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--color-primary); margin-bottom: 6px; }
-    input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--color-text); margin-bottom: 6px; }
+    input { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-family: inherit; }
   }
 
   button {

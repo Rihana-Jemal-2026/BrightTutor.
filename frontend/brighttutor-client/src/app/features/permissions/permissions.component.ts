@@ -73,24 +73,25 @@ import { ToastService } from '../../services/toast.service';
   styles: [`
     .permissions-page { padding: 1.5rem; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .page-header h1 { font-size: 1.75rem; color: #1e293b; margin-bottom: 0.25rem; }
-    .page-header p { color: #64748b; margin: 0; }
-    .role-selector { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; color: #334155; }
-    .role-selector select { padding: 0.5rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; font-size: 0.9rem; }
-    .table-card { background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .page-header h1 { font-size: 1.75rem; color: var(--color-text, #0B241B); margin-bottom: 0.25rem; font-weight: 700; }
+    .page-header p { color: var(--color-muted, #5C786A); margin: 0; }
+    .role-selector { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; color: var(--color-text, #0B241B); }
+    .role-selector select { padding: 0.5rem 0.85rem; border-radius: 8px; border: 1.5px solid var(--color-border, #DCE8E1); background: var(--color-surface, #ffffff); color: var(--color-text, #0B241B); font-weight: 600; font-size: 0.9rem; }
+    .table-card { background: var(--color-surface, #ffffff); border: 1px solid var(--color-border, #DCE8E1); border-radius: 12px; padding: 1rem; box-shadow: var(--shadow-card); overflow-x: auto; }
     .matrix-table { width: 100%; border-collapse: collapse; text-align: left; }
-    .matrix-table th, .matrix-table td { padding: 0.875rem 1rem; border-bottom: 1px solid #f1f5f9; }
-    .matrix-table th { background: #f8fafc; font-weight: 600; color: #475569; font-size: 0.85rem; text-transform: uppercase; }
-    .matrix-table tr.assigned { background: #f0fdf4; }
-    .checkbox-col input { width: 18px; height: 18px; cursor: pointer; }
-    .module-badge { background: #eff6ff; color: #2563eb; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; font-size: 0.75rem; }
-    .perm-name { font-weight: 600; color: #0f172a; }
-    code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #475569; }
-    .desc { color: #64748b; font-size: 0.875rem; }
-    .card-footer { display: flex; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid #f1f5f9; margin-top: 1rem; }
-    .btn-save { background: #059669; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
-    .btn-save:hover { background: #047857; }
-    .loading, .empty { text-align: center; color: #94a3b8; padding: 2rem; }
+    .matrix-table th, .matrix-table td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--color-border, #DCE8E1); color: var(--color-text, #0B241B); }
+    .matrix-table th { background: var(--color-bg, #F4FAF6); font-weight: 600; color: var(--color-muted, #5C786A); font-size: 0.85rem; text-transform: uppercase; }
+    .matrix-table tr.assigned { background: var(--color-success-bg, #E9F7EF); }
+    .checkbox-col input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--color-accent-bright, #10B981); }
+    .module-badge { background: var(--color-bg, #F4FAF6); border: 1px solid var(--color-border, #DCE8E1); color: var(--color-accent-bright, #10B981); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; font-size: 0.75rem; }
+    .perm-name { font-weight: 600; color: var(--color-text, #0B241B); }
+    code { background: var(--color-bg, #F4FAF6); border: 1px solid var(--color-border, #DCE8E1); padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: var(--color-accent-bright, #10B981); }
+    .desc { color: var(--color-muted, #809C8E); font-size: 0.875rem; }
+    .card-footer { display: flex; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--color-border, #DCE8E1); margin-top: 1rem; }
+    .btn-save { background: linear-gradient(135deg, #0B3D2E, #059669); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .btn-save:hover:not(:disabled) { background: var(--color-accent-bright, #10B981); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+    .loading, .empty { text-align: center; color: var(--color-muted, #809C8E); padding: 2rem; }
   `]
 })
 export class PermissionsComponent implements OnInit {

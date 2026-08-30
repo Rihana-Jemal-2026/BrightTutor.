@@ -10,12 +10,12 @@
   h1 {
     font-size: 1.8rem;
     font-weight: 800;
-    color: #0B3D2E;
+    color: var(--color-text, #0B241B);
     margin: 0 0 0.25rem 0;
   }
 
   .subtitle {
-    color: #5C7768;
+    color: var(--color-muted, #5C786A);
     margin: 0;
     font-size: 0.95rem;
   }
@@ -31,28 +31,28 @@
   gap: 0.75rem;
 
   &.alert-success {
-    background: #E9F7EF;
-    color: #059669;
-    border: 1px solid #3FBE7C;
+    background: var(--color-success-bg, #E9F7EF);
+    color: var(--color-accent-bright, #10B981);
+    border: 1px solid var(--color-border, #DCE8E1);
   }
 
   &.alert-error {
-    background: #FCEEEC;
-    color: #dc2626;
-    border: 1px solid #fca5a5;
+    background: var(--color-error-bg, #FCEEEC);
+    color: var(--color-error, #DC2626);
+    border: 1px solid var(--color-error, #DC2626);
   }
 }
 
 .form-card {
-  background: #ffffff;
+  background: var(--color-surface, #ffffff);
   border-radius: 1rem;
   padding: 2rem;
-  box-shadow: 0 4px 16px rgba(11, 61, 46, 0.06);
-  border: 1px solid #DCE8E1;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--color-border, #DCE8E1);
   transition: all 0.25s ease-in-out;
 
   &:hover {
-    box-shadow: 0 12px 30px rgba(63, 190, 124, 0.25);
+    box-shadow: var(--shadow-card-hover);
   }
 }
 
@@ -72,30 +72,30 @@
   label {
     font-size: 0.875rem;
     font-weight: 700;
-    color: #0B3D2E;
+    color: var(--color-text, #0B241B);
   }
 
   .form-control {
     width: 100%;
+    box-sizing: border-box;
     padding: 0.75rem 1rem;
-    border: 1.5px solid #DCE8E1;
+    border: 1.5px solid var(--color-border, #DCE8E1);
     border-radius: 0.6rem;
     font-size: 0.95rem;
-    color: #13291F;
-    background: #FAFDFA;
+    color: var(--color-text, #0B241B);
+    background: var(--color-surface, #ffffff);
     transition: all 0.2s ease;
 
     &:focus {
       outline: none;
-      border-color: #0B3D2E;
-      box-shadow: 0 0 0 3px rgba(63, 190, 124, 0.2);
-      background: #ffffff;
+      border-color: var(--color-accent-bright, #10B981);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
     }
   }
 
   .field-error {
     font-size: 0.8rem;
-    color: #dc2626;
+    color: var(--color-error, #DC2626);
     font-weight: 600;
   }
 }
@@ -118,104 +118,52 @@
     gap: 0.5rem;
     padding: 0.85rem 1rem;
     border-radius: 0.75rem;
+    border: 1.5px solid var(--color-border, #DCE8E1);
+    background: var(--color-surface, #ffffff);
+    color: var(--color-text, #0B241B);
     font-weight: 700;
-    font-size: 0.925rem;
+    font-size: 0.9rem;
     cursor: pointer;
-    border: 1.5px solid #DCE8E1;
     transition: all 0.2s ease-in-out;
 
-    &.status-present {
-      background: rgba(233, 247, 239, 0.75);
-      backdrop-filter: blur(8px);
-      color: #059669;
-      border: 1.5px solid #3FBE7C;
-      box-shadow: 0 4px 15px rgba(63, 190, 124, 0.2);
-
-      &:hover, &.active {
-        background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-        color: #ffffff !important;
-        border-color: #047857 !important;
-        box-shadow: 0 8px 24px rgba(5, 150, 105, 0.45), 0 2px 8px rgba(5, 150, 105, 0.25) !important;
-        transform: translateY(-2px);
-      }
+    &:hover {
+      border-color: var(--color-accent-bright, #10B981);
+      background: rgba(16, 185, 129, 0.08);
     }
 
-    &.status-absent {
-      background: rgba(252, 238, 236, 0.75);
-      backdrop-filter: blur(8px);
-      color: #dc2626;
-      border: 1.5px solid #fca5a5;
-      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2);
-
-      &:hover, &.active {
-        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
-        color: #ffffff !important;
-        border-color: #b91c1c !important;
-        box-shadow: 0 8px 24px rgba(220, 38, 38, 0.45), 0 2px 8px rgba(220, 38, 38, 0.25) !important;
-        transform: translateY(-2px);
-      }
-    }
-
-    &.status-late {
-      background: rgba(255, 251, 235, 0.75);
-      backdrop-filter: blur(8px);
-      color: #d97706;
-      border: 1.5px solid #fde68a;
-      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.2);
-
-      &:hover, &.active {
-        background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
-        color: #ffffff !important;
-        border-color: #b45309 !important;
-        box-shadow: 0 8px 24px rgba(217, 119, 6, 0.45), 0 2px 8px rgba(217, 119, 6, 0.25) !important;
-        transform: translateY(-2px);
-      }
-    }
-
-    &.status-excused {
-      background: rgba(240, 249, 255, 0.75);
-      backdrop-filter: blur(8px);
-      color: #0284c7;
-      border: 1.5px solid #bae6fd;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2);
-
-      &:hover, &.active {
-        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-        color: #ffffff !important;
-        border-color: #0369a1 !important;
-        box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45), 0 2px 8px rgba(2, 132, 199, 0.25) !important;
-        transform: translateY(-2px);
-      }
+    &.active {
+      background: linear-gradient(135deg, #0B3D2E, #059669);
+      color: white;
+      border-color: var(--color-accent-bright, #10B981);
+      box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
     }
   }
 }
 
-.form-actions {
-  margin-top: 1.5rem;
+.btn-submit {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #0B3D2E, #059669);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  transition: all 0.2s ease-in-out;
 
-  .btn-submit {
-    background: #0B3D2E;
-    color: #ffffff;
-    border: none;
-    padding: 0.9rem 2rem;
-    border-radius: 0.75rem;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
+  &:hover:not(:disabled) {
+    background: var(--color-accent-bright, #10B981);
+    transform: translateY(-2px);
+  }
 
-    &:hover:not(:disabled) {
-      background: #12513C;
-      box-shadow: 0 8px 24px rgba(63, 190, 124, 0.35);
-      transform: translateY(-1px);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }

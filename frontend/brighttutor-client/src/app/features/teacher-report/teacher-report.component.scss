@@ -1,6 +1,6 @@
 .page { max-width: 720px; margin: 48px auto; padding: 0 24px; h1 { font-size: 2rem; font-weight: 800; } }
 .search-bar { display: flex; align-items: flex-end; gap: 12px; background: var(--color-surface); padding: 20px; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); margin-bottom: 24px; flex-wrap: wrap;
-  .field { flex: 1; min-width: 140px; label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--color-primary); margin-bottom: 6px; } input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); } }
+  .field { flex: 1; min-width: 140px; label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--color-text); margin-bottom: 6px; } input { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1.5px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font-family: inherit; } }
   button { background: var(--color-primary); color: white; border: none; border-radius: var(--radius-md); padding: 10px 20px; font-weight: 600; height: 42px; &:hover { background: var(--color-primary-light); } }
 }
 .summary-cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }

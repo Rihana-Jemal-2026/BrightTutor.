@@ -79,7 +79,7 @@ export interface SelectOption {
       display: block;
       font-size: 0.85rem;
       font-weight: 600;
-      color: #334155;
+      color: var(--color-muted, #5C786A);
       margin-bottom: 0.35rem;
     }
 
@@ -88,34 +88,34 @@ export interface SelectOption {
       justify-content: space-between;
       align-items: center;
       padding: 0.75rem 1rem;
-      background: white;
-      border: 1px solid #cbd5e1;
+      background: var(--color-surface, #ffffff);
+      border: 1.5px solid var(--color-border, #DCE8E1);
       border-radius: 8px;
       cursor: pointer;
       transition: border-color 0.2s, box-shadow 0.2s;
 
       &:hover {
-        border-color: #2563eb;
+        border-color: var(--color-accent-bright, #10B981);
       }
     }
 
     .selected-text {
       font-size: 0.9rem;
-      color: #0f172a;
+      color: var(--color-text, #0B241B);
       font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
 
       &.placeholder {
-        color: #94a3b8;
+        color: var(--color-muted, #809C8E);
         font-weight: 400;
       }
     }
 
     .chevron {
       font-size: 0.65rem;
-      color: #64748b;
+      color: var(--color-muted, #809C8E);
       margin-left: 0.5rem;
     }
 
@@ -124,10 +124,10 @@ export interface SelectOption {
       top: calc(100% + 4px);
       left: 0;
       width: 100%;
-      background: white;
-      border: 1px solid #cbd5e1;
+      background: var(--color-surface, #ffffff);
+      border: 1.5px solid var(--color-border, #DCE8E1);
       border-radius: 10px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
       z-index: 99999;
       overflow: hidden;
       animation: fadeIn 0.15s ease-out;
@@ -135,19 +135,21 @@ export interface SelectOption {
 
     .search-box {
       padding: 0.5rem;
-      background: #f8fafc;
-      border-bottom: 1px solid #e2e8f0;
+      background: var(--color-bg, #F4FAF6);
+      border-bottom: 1px solid var(--color-border, #DCE8E1);
 
       input {
         width: 100%;
         padding: 0.5rem 0.75rem;
-        border: 1px solid #cbd5e1;
+        background: var(--color-surface, #ffffff);
+        color: var(--color-text, #0B241B);
+        border: 1px solid var(--color-border, #DCE8E1);
         border-radius: 6px;
         font-size: 0.85rem;
         outline: none;
 
         &:focus {
-          border-color: #2563eb;
+          border-color: var(--color-accent-bright, #10B981);
         }
       }
     }
@@ -155,40 +157,41 @@ export interface SelectOption {
     .options-list {
       max-height: 210px;
       overflow-y: auto;
+      background: var(--color-surface, #ffffff);
     }
 
     .option-item {
       padding: 0.65rem 1rem;
       cursor: pointer;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--color-border, #DCE8E1);
       transition: background 0.15s;
 
       &:hover {
-        background: #eff6ff;
+        background: rgba(16, 185, 129, 0.12);
       }
 
       &.selected {
-        background: #dbeafe;
+        background: var(--color-success-bg, #E9F7EF);
         font-weight: 600;
-        color: #1e40af;
+        color: var(--color-accent-bright, #10B981);
       }
     }
 
     .opt-name {
       font-size: 0.9rem;
-      color: #0f172a;
+      color: var(--color-text, #0B241B);
     }
 
     .opt-subtext {
       font-size: 0.75rem;
-      color: #64748b;
+      color: var(--color-muted, #809C8E);
       margin-top: 2px;
     }
 
     .no-options {
       padding: 1rem;
       text-align: center;
-      color: #94a3b8;
+      color: var(--color-muted, #809C8E);
       font-size: 0.85rem;
     }
 
