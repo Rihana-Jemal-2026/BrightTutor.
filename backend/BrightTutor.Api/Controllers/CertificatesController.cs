@@ -181,4 +181,12 @@ public class CertificatesController : ControllerBase
 
         return Ok(list);
     }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetCertificateById(Guid id)
+    {
+        var cert = await _context.Certificates.FindAsync(id);
+        if (cert == null) return NotFound(new { message = "Certificate not found." });
+        return Ok(cert);
+    }
 }

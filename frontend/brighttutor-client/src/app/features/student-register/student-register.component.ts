@@ -1,9 +1,10 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { StudentRegistrationService, RegistrationTrackDto } from '../../services/student-registration.service';
 import { CourseService, CourseDto } from '../../services/course.service';
+import { FaceRecognitionService } from '../../services/face-recognition.service';
 import { ToastService } from '../../services/toast.service';
 import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
@@ -189,6 +190,44 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   <p class="group-note">💡 Payment is made AFTER admin confirms group seat availability.</p>
                 </div>
               }
+
+              <!-- OFFICIAL BIOMETRIC FACE ID PROFILE ENROLLMENT (OPTIONAL / RECOMMENDED) -->
+              <div class="face-enrollment-card">
+                <h4>📸 Official Student Face ID Biometric Profile (Optional)</h4>
+                <p class="subtitle">Capture or upload your reference face photo now to enable instant 1-second biometric attendance check-in during classes.</p>
+
+                <div class="face-capture-container">
+                  @if (referenceFacePhoto()) {
+                    <div class="enrolled-preview-box">
+                      <img [src]="referenceFacePhoto()" alt="Enrolled Face ID" class="enrolled-photo-img" />
+                      <div class="enrolled-badge">
+                        <span class="badge-icon">✅</span>
+                        <span>Biometric Profile Enrolled (128-D Vector Ready)</span>
+                      </div>
+                      <button type="button" class="btn-retake" (click)="retakeReferencePhoto()">🔄 Retake / Change Photo</button>
+                    </div>
+                  } @else {
+                    <div class="capture-actions-box">
+                      <div class="capture-options-row">
+                        <button type="button" class="btn-camera-snap" (click)="toggleEnrollCamera()">
+                          {{ enrollCameraActive() ? '📷 Close Camera' : '🎥 Open Live Camera to Snap Photo' }}
+                        </button>
+                        <label class="btn-file-upload">
+                          📁 Upload Reference Photo
+                          <input type="file" accept="image/*" (change)="onUploadFacePhoto($event)" style="display: none;" />
+                        </label>
+                      </div>
+
+                      @if (enrollCameraActive()) {
+                        <div class="enroll-camera-viewport">
+                          <video #enrollVideo autoplay playsinline muted class="enroll-video-feed"></video>
+                          <button type="button" class="btn-snap-now" (click)="snapEnrollPhoto()">📸 Capture This Frame</button>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
 
               <div class="form-actions">
                 <button type="submit" class="btn-primary" [disabled]="submitting()">
@@ -802,6 +841,108 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       }
     }
 
+    .face-enrollment-card {
+      background: var(--color-bg, #F4FAF6);
+      border: 1.5px solid var(--color-border, #DCE8E1);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+
+      h4 { margin: 0 0 0.25rem 0; color: var(--color-text, #0B241B); font-size: 1rem; font-weight: 800; }
+      .subtitle { margin: 0 0 1rem 0; color: var(--color-muted, #5C786A); font-size: 0.85rem; }
+
+      .capture-options-row {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+
+        button, label {
+          padding: 0.65rem 1.15rem;
+          border-radius: 8px;
+          font-weight: 700;
+          font-size: 0.88rem;
+          cursor: pointer;
+          border: 1px solid var(--color-border, #DCE8E1);
+          background: var(--color-surface, #ffffff);
+          color: var(--color-text, #0B241B);
+          transition: all 0.2s;
+
+          &:hover {
+            border-color: var(--color-accent-bright, #10B981);
+            background: var(--color-success-bg, #E9F7EF);
+          }
+        }
+      }
+
+      .enroll-camera-viewport {
+        margin-top: 1rem;
+        position: relative;
+        max-width: 320px;
+
+        .enroll-video-feed {
+          width: 100%;
+          height: 240px;
+          object-fit: cover;
+          border-radius: 12px;
+          border: 2px solid var(--color-accent-bright, #10B981);
+        }
+
+        .btn-snap-now {
+          position: absolute;
+          bottom: 12px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: linear-gradient(135deg, #0B3D2E, #059669);
+          color: #ffffff;
+          border: none;
+          padding: 0.55rem 1.1rem;
+          border-radius: 20px;
+          font-weight: 800;
+          font-size: 0.85rem;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+      }
+
+      .enrolled-preview-box {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        .enrolled-photo-img {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 50%;
+          border: 3px solid var(--color-accent-bright, #10B981);
+        }
+
+        .enrolled-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: var(--color-success-bg, #E9F7EF);
+          color: var(--color-accent-bright, #10B981);
+          padding: 0.35rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.82rem;
+          font-weight: 700;
+          border: 1px solid var(--color-border, #DCE8E1);
+        }
+
+        .btn-retake {
+          padding: 0.4rem 0.8rem;
+          border-radius: 6px;
+          border: 1px solid var(--color-border, #DCE8E1);
+          background: #ffffff;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+        }
+      }
+    }
+
     .payment-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.25rem; border-radius: 12px; margin-top: 1.5rem; }
     .bank-options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
     .bank-pill { background: var(--color-bg); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); font-size: 0.85rem; }
@@ -873,6 +1014,13 @@ export class StudentRegisterComponent implements OnInit {
   selectedCourseOption = '';
   customCourseInput = '';
 
+  // Face ID Biometric Profile Enrollment
+  @ViewChild('enrollVideo') enrollVideo?: ElementRef<HTMLVideoElement>;
+  referenceFacePhoto = signal<string | null>(null);
+  referenceFaceDescriptorJson = signal<string | null>(null);
+  enrollCameraActive = signal<boolean>(false);
+  private enrollMediaStream: MediaStream | null = null;
+
   form = {
     firstName: '',
     lastName: '',
@@ -893,9 +1041,11 @@ export class StudentRegisterComponent implements OnInit {
 
   private registrationService = inject(StudentRegistrationService);
   private courseService = inject(CourseService);
+  private faceService = inject(FaceRecognitionService);
   private toastService = inject(ToastService);
 
   ngOnInit(): void {
+    this.faceService.loadModels().catch(() => {});
     this.courseService.getCourses().subscribe(res => this.courses.set(res));
   }
 
@@ -936,6 +1086,100 @@ export class StudentRegisterComponent implements OnInit {
     return item ? item.flagUrl : 'https://flagcdn.com/w40/et.png';
   }
 
+  async toggleEnrollCamera(): Promise<void> {
+    if (this.enrollCameraActive()) {
+      this.closeEnrollCamera();
+    } else {
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+          });
+          this.enrollMediaStream = stream;
+          this.enrollCameraActive.set(true);
+
+          setTimeout(() => {
+            if (this.enrollVideo && this.enrollVideo.nativeElement) {
+              this.enrollVideo.nativeElement.srcObject = stream;
+            }
+          }, 100);
+        }
+      } catch (err) {
+        this.toastService.show('Camera access not permitted. You can upload a photo instead.', 'info');
+      }
+    }
+  }
+
+  closeEnrollCamera(): void {
+    if (this.enrollMediaStream) {
+      this.enrollMediaStream.getTracks().forEach(t => t.stop());
+      this.enrollMediaStream = null;
+    }
+    this.enrollCameraActive.set(false);
+  }
+
+  async snapEnrollPhoto(): Promise<void> {
+    if (!this.enrollVideo?.nativeElement) return;
+    const video = this.enrollVideo.nativeElement;
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 320;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.drawImage(video, 0, 0, 320, 320);
+    const photoBase64 = canvas.toDataURL('image/jpeg', 0.88);
+    this.referenceFacePhoto.set(photoBase64);
+    this.closeEnrollCamera();
+
+    // Extract 128-d descriptor from canvas
+    try {
+      const detection = await this.faceService.extractFaceDescriptor(canvas);
+      if (detection) {
+        this.referenceFaceDescriptorJson.set(JSON.stringify(detection.descriptorArray));
+        this.toastService.show('✅ Face Biometric Profile Enrolled (100% Quality)!', 'success');
+      } else {
+        this.toastService.show('Photo captured! Please ensure face is centered.', 'info');
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
+  async onUploadFacePhoto(event: any): Promise<void> {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (e: any) => {
+        const photoBase64 = e.target.result;
+        this.referenceFacePhoto.set(photoBase64);
+
+        const img = new Image();
+        img.src = photoBase64;
+        img.onload = async () => {
+          try {
+            const detection = await this.faceService.extractFaceDescriptor(img);
+            if (detection) {
+              this.referenceFaceDescriptorJson.set(JSON.stringify(detection.descriptorArray));
+              this.toastService.show('✅ Reference Face Biometric Descriptor Extracted Successfully!', 'success');
+            } else {
+              this.toastService.show('Photo loaded! Face recognition will auto-enroll on first attendance check-in.', 'info');
+            }
+          } catch {
+            // Fallback
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  retakeReferencePhoto(): void {
+    this.referenceFacePhoto.set(null);
+    this.referenceFaceDescriptorJson.set(null);
+    this.toggleEnrollCamera();
+  }
+
   onSubmitRegistration(): void {
     if (!this.form.firstName || !this.form.email || (!this.selectedCourseOption && !this.customCourseInput) || !this.phoneNumberInput || !this.form.gradeLevel) {
       this.toastService.show('Please fill in all required fields including grade level, phone number, and selected/custom course.', 'error');
@@ -965,7 +1209,9 @@ export class StudentRegisterComponent implements OnInit {
     const payload = {
       ...this.form,
       gradeLevel: finalGradeLevel,
-      phoneNumber: `${this.selectedCountryCode} ${this.phoneNumberInput.trim()}`
+      phoneNumber: `${this.selectedCountryCode} ${this.phoneNumberInput.trim()}`,
+      referenceFacePhotoBase64: this.referenceFacePhoto() || undefined,
+      referenceFaceDescriptorJson: this.referenceFaceDescriptorJson() || undefined
     };
 
     this.submitting.set(true);

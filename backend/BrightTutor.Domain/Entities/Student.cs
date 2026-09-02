@@ -10,6 +10,9 @@ public class Student : BaseEntity
     public string? GradeLevel { get; set; }
     public Guid? ParentId { get; set; }
 
+    public string? ProfilePhotoUrl { get; set; }
+    public string? FaceDescriptorJson { get; set; }
+
     public User User { get; set; } = null!;
     public Parent? Parent { get; set; }
 }

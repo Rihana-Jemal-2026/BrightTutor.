@@ -11,12 +11,26 @@ export interface QrSessionDto {
   qrNonce: string;
 }
 
+export interface LiveAttendeeDto {
+  attendanceId: string;
+  studentId: string;
+  studentName: string;
+  studentCode: string;
+  referencePhotoUrl?: string;
+  liveSnapshotUrl?: string;
+  matchConfidence: number;
+  checkInTime: string;
+  status: string;
+}
+
 export interface QrScanCheckInDto {
   studentId: string;
   classGroupId: string;
   qrNonce: string;
   faceVerified: boolean;
   faceSnapshotBase64?: string;
+  faceMatchConfidence?: number;
+  faceDescriptorJson?: string;
 }
 
 @Injectable({
@@ -33,5 +47,9 @@ export class QrAttendanceService {
 
   scanCheckIn(dto: QrScanCheckInDto): Observable<any> {
     return this.http.post(`${this.apiUrl}/scan-check-in`, dto);
+  }
+
+  getLiveAttendees(classGroupId: string): Observable<LiveAttendeeDto[]> {
+    return this.http.get<LiveAttendeeDto[]>(`${this.apiUrl}/live-attendees?classGroupId=${classGroupId}`);
   }
 }

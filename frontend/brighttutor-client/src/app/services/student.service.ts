@@ -12,6 +12,8 @@ export interface StudentDto {
   lastName: string;
   email: string;
   phoneNumber?: string;
+  profilePhotoUrl?: string;
+  faceDescriptorJson?: string;
 }
 
 @Injectable({
@@ -26,5 +28,9 @@ export class StudentService {
     let url = this.apiUrl;
     if (gradeLevel) url += `?gradeLevel=${encodeURIComponent(gradeLevel)}`;
     return this.http.get<StudentDto[]>(url);
+  }
+
+  enrollFace(studentId: string, profilePhotoUrl: string, faceDescriptorJson: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${studentId}/enroll-face`, { profilePhotoUrl, faceDescriptorJson });
   }
 }

@@ -9,6 +9,78 @@ public static class DbInitializer
 {
     public static async Task SeedAsync(ApplicationDbContext context, IPasswordHasher passwordHasher)
     {
+        // 0. Auto-Migration for Biometric Columns & Assessment Tables
+        try
+        {
+            await context.Database.ExecuteSqlRawAsync(@"
+                ALTER TABLE ""Students"" ADD COLUMN IF NOT EXISTS ""ProfilePhotoUrl"" text;
+                ALTER TABLE ""Students"" ADD COLUMN IF NOT EXISTS ""FaceDescriptorJson"" text;
+                ALTER TABLE ""StudentRegistrations"" ADD COLUMN IF NOT EXISTS ""ReferenceFacePhotoBase64"" text;
+                ALTER TABLE ""StudentRegistrations"" ADD COLUMN IF NOT EXISTS ""ReferenceFaceDescriptorJson"" text;
+                ALTER TABLE ""Attendances"" ADD COLUMN IF NOT EXISTS ""FaceSnapshotBase64"" text;
+                ALTER TABLE ""Attendances"" ADD COLUMN IF NOT EXISTS ""FaceMatchConfidence"" double precision;
+
+                CREATE TABLE IF NOT EXISTS ""Assessments"" (
+                    ""Id"" uuid PRIMARY KEY,
+                    ""CourseId"" uuid NOT NULL,
+                    ""ClassGroupId"" uuid NULL,
+                    ""TeacherId"" uuid NOT NULL,
+                    ""Title"" text NOT NULL,
+                    ""Description"" text NOT NULL,
+                    ""Type"" integer NOT NULL,
+                    ""MaxScore"" numeric NOT NULL,
+                    ""WeightPercentage"" numeric NOT NULL,
+                    ""DueDate"" timestamp with time zone NULL,
+                    ""QuestionsJson"" text NULL,
+                    ""AttachmentUrl"" text NULL,
+                    ""IsPublished"" boolean NOT NULL,
+                    ""CreatedAt"" timestamp with time zone NOT NULL,
+                    ""UpdatedAt"" timestamp with time zone NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS ""AssessmentSubmissions"" (
+                    ""Id"" uuid PRIMARY KEY,
+                    ""AssessmentId"" uuid NOT NULL,
+                    ""StudentId"" uuid NOT NULL,
+                    ""SubmissionText"" text NULL,
+                    ""AttachmentUrl"" text NULL,
+                    ""AnswersJson"" text NULL,
+                    ""SubmittedAt"" timestamp with time zone NOT NULL,
+                    ""Score"" numeric NULL,
+                    ""LetterGrade"" text NULL,
+                    ""Feedback"" text NULL,
+                    ""Status"" integer NOT NULL,
+                    ""GradedAt"" timestamp with time zone NULL,
+                    ""GradedByTeacherId"" uuid NULL,
+                    ""CreatedAt"" timestamp with time zone NOT NULL,
+                    ""UpdatedAt"" timestamp with time zone NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS ""FinalCourseGrades"" (
+                    ""Id"" uuid PRIMARY KEY,
+                    ""StudentId"" uuid NOT NULL,
+                    ""CourseId"" uuid NOT NULL,
+                    ""ClassGroupId"" uuid NULL,
+                    ""TeacherId"" uuid NOT NULL,
+                    ""HomeworkAverage"" numeric NOT NULL,
+                    ""QuizAverage"" numeric NOT NULL,
+                    ""TestAverage"" numeric NOT NULL,
+                    ""FinalWeightedScore"" numeric NOT NULL,
+                    ""LetterGrade"" text NOT NULL,
+                    ""HonorsDistinction"" text NOT NULL,
+                    ""TeacherRemarks"" text NULL,
+                    ""IsFinalized"" boolean NOT NULL,
+                    ""FinalizedAt"" timestamp with time zone NULL,
+                    ""CertificateId"" uuid NULL,
+                    ""CreatedAt"" timestamp with time zone NOT NULL,
+                    ""UpdatedAt"" timestamp with time zone NULL
+                );
+
+                ALTER TABLE ""Assessments"" ADD COLUMN IF NOT EXISTS ""DurationMinutes"" integer NOT NULL DEFAULT 15;
+            ");
+        }
+        catch { }
+
         // 1. Seed Fixed System Permissions (15 Permissions)
         if (!await context.Permissions.AnyAsync())
         {

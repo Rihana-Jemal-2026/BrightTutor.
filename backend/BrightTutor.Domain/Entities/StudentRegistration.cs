@@ -42,6 +42,10 @@ public class StudentRegistration : BaseEntity
     public DateTime? PaymentSubmittedAt { get; set; }
     public DateTime? PaymentVerifiedAt { get; set; }
 
+    // Reference Biometric Face Profile
+    public string? ReferenceFacePhotoBase64 { get; set; }
+    public string? ReferenceFaceDescriptorJson { get; set; }
+
     // Issued Credentials
     public string? IssuedStudentCode { get; set; }
     public Guid? CreatedUserId { get; set; }

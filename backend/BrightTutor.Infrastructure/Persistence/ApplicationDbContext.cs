@@ -42,6 +42,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<TeacherApplication> TeacherApplications => Set<TeacherApplication>();
     public DbSet<Certificate> Certificates => Set<Certificate>();
 
+    public DbSet<Assessment> Assessments => Set<Assessment>();
+    public DbSet<AssessmentSubmission> AssessmentSubmissions => Set<AssessmentSubmission>();
+    public DbSet<FinalCourseGrade> FinalCourseGrades => Set<FinalCourseGrade>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

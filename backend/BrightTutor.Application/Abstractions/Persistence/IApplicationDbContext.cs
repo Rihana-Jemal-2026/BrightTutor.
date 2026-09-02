@@ -39,5 +39,9 @@ public interface IApplicationDbContext
     DbSet<TeacherApplication> TeacherApplications { get; }
     DbSet<Certificate> Certificates { get; }
 
+    DbSet<Assessment> Assessments { get; }
+    DbSet<AssessmentSubmission> AssessmentSubmissions { get; }
+    DbSet<FinalCourseGrade> FinalCourseGrades { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

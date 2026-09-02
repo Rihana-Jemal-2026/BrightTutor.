@@ -13,6 +13,8 @@ export interface SubmitRegistrationDto {
   gpsLongitude?: number;
   desiredServiceType: number; // 1=Online, 2=Group, 3=HomeToHome
   courseId: string;
+  referenceFacePhotoBase64?: string;
+  referenceFaceDescriptorJson?: string;
 }
 
 export interface UploadReceiptDto {
@@ -43,6 +45,8 @@ export interface StudentRegistrationDto {
   transactionId?: string;
   amountPaid?: number;
   receiptImageBase64?: string;
+  referenceFacePhotoBase64?: string;
+  referenceFaceDescriptorJson?: string;
   issuedStudentCode?: string;
   createdAt: string;
 }

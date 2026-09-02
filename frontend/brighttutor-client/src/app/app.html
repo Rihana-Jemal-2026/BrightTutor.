@@ -228,9 +228,13 @@
             <span class="nav-text">Daily Overview</span>
           </a>
         }
+        <a routerLink="/assessments" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">📚</span>
+          <span class="nav-text">{{ authService.isStudent() ? 'My Tasks & Grades' : authService.isTeacher() ? 'Homework & Gradebook' : 'Homework, Tests & Grades' }}</span>
+        </a>
         <a routerLink="/certificates" routerLinkActive="active" class="nav-item">
           <span class="nav-icon">📜</span>
-          <span class="nav-text">Digital Certificates</span>
+          <span class="nav-text">{{ authService.isStudent() ? 'My Certificates' : authService.isTeacher() ? 'Teaching & Student Certificates' : 'Digital Certificates' }}</span>
         </a>
       </div>
 

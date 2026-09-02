@@ -14,5 +14,7 @@ public class StudentDto
     public string? GradeLevel { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public UserStatus Status { get; set; }
+    public string? ProfilePhotoUrl { get; set; }
+    public string? FaceDescriptorJson { get; set; }
     public DateTime CreatedAt { get; set; }
 }

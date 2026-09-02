@@ -34,6 +34,8 @@ public class StudentRegistrationController : ControllerBase
         public decimal? GpsLongitude { get; set; }
         public ServiceType DesiredServiceType { get; set; }
         public Guid CourseId { get; set; }
+        public string? ReferenceFacePhotoBase64 { get; set; }
+        public string? ReferenceFaceDescriptorJson { get; set; }
     }
 
     [HttpPost("submit")]
@@ -87,6 +89,8 @@ public class StudentRegistrationController : ControllerBase
             DesiredServiceType = dto.DesiredServiceType,
             CourseId = dto.CourseId,
             CreatedUserId = user.Id,
+            ReferenceFacePhotoBase64 = dto.ReferenceFacePhotoBase64,
+            ReferenceFaceDescriptorJson = dto.ReferenceFaceDescriptorJson,
             Status = RegistrationStatus.PendingTeacherCheck
         };
 
@@ -302,7 +306,9 @@ public class StudentRegistrationController : ControllerBase
         {
             UserId = user.Id,
             StudentCode = studentCode,
-            GradeLevel = reg.GradeLevel
+            GradeLevel = reg.GradeLevel,
+            ProfilePhotoUrl = reg.ReferenceFacePhotoBase64,
+            FaceDescriptorJson = reg.ReferenceFaceDescriptorJson
         };
         _context.Students.Add(student);
         await _context.SaveChangesAsync();

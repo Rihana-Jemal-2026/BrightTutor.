@@ -70,4 +70,8 @@ export class CertificateService {
   getMyCertificates(userId: string): Observable<CertificateDto[]> {
     return this.http.get<CertificateDto[]>(`${this.apiUrl}/my-certificates?userId=${userId}`);
   }
+
+  getCertificateById(id: string): Observable<CertificateDto> {
+    return this.http.get<CertificateDto>(`${this.apiUrl}/${id}`);
+  }
 }

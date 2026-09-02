@@ -938,7 +938,7 @@ export class CertificatesComponent implements OnInit {
       allowTaint: true, 
       logging: false,
       backgroundColor: '#ffffff'
-    }).then(canvas => {
+    }).then((canvas: HTMLCanvasElement) => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'landscape',
@@ -969,7 +969,7 @@ export class CertificatesComponent implements OnInit {
       const recipient = (this.activeCertificate()?.recipientName || 'Student').replace(/\s+/g, '_');
       pdf.save(`BrightTutor_A4_Certificate_${recipient}.pdf`);
       this.toastService.show('A4 Landscape PDF Certificate downloaded successfully!', 'success');
-    }).catch(err => {
+    }).catch((err: any) => {
       console.error('PDF download error:', err);
       window.print();
     });
@@ -986,14 +986,14 @@ export class CertificatesComponent implements OnInit {
       allowTaint: true, 
       logging: false,
       backgroundColor: '#ffffff'
-    }).then(canvas => {
+    }).then((canvas: HTMLCanvasElement) => {
       const link = document.createElement('a');
       const recipient = (this.activeCertificate()?.recipientName || 'Student').replace(/\s+/g, '_');
       link.download = `BrightTutor_Certificate_${recipient}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
       this.toastService.show('PNG Certificate image downloaded!', 'success');
-    }).catch(err => {
+    }).catch((err: any) => {
       console.error('PNG download error:', err);
     });
   }

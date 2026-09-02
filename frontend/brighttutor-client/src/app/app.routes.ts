@@ -32,6 +32,7 @@ export const routes: Routes = [
   { path: "teacher-screening", loadComponent: () => import("./features/teacher-screening/teacher-screening.component").then((m) => m.TeacherScreeningComponent) },
   { path: "qr-attendance", loadComponent: () => import("./features/qr-attendance/qr-attendance.component").then((m) => m.QrAttendanceComponent) },
   { path: "certificates", loadComponent: () => import("./features/certificates/certificates.component").then((m) => m.CertificatesComponent) },
+  { path: "assessments", loadComponent: () => import("./features/assessments/assessments.component").then((m) => m.AssessmentsComponent) },
 
   { path: "", redirectTo: "login", pathMatch: "full" },
 ];

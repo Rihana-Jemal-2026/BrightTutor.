@@ -20,6 +20,10 @@ public class Attendance : BaseEntity
     public string? Notes { get; set; }
     public string? LessonCovered { get; set; }
 
+    // Biometric Proof of Presence
+    public string? FaceSnapshotBase64 { get; set; }
+    public double? FaceMatchConfidence { get; set; }
+
     public Student Student { get; set; } = null!;
     public Teacher Teacher { get; set; } = null!;
     public ClassGroup ClassGroup { get; set; } = null!;
