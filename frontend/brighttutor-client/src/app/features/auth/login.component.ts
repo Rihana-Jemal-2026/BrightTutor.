@@ -51,13 +51,13 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
             }
 
             <div class="form-group">
-              <label for="email">Email Address</label>
+              <label for="email">Email Address or Student ID Code (e.g. STU-000001) *</label>
               <input
-                type="email"
+                type="text"
                 id="email"
                 name="email"
                 [(ngModel)]="email"
-                placeholder="Enter your email address"
+                placeholder="Enter Email Address or Student ID Code (e.g. STU-000001)"
                 required
               />
             </div>
@@ -93,6 +93,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
         <!-- TAB 2: Student Self-Registration & CBE/Telebirr Slip Upload -->
         @if (activeTab() === 'student') {
           <div class="public-registration-box">
+            <button type="button" class="btn-back-login-tab" (click)="activeTab.set('login')">← Back to Account Login</button>
             @if (studentStep() === 1) {
               <form (ngSubmit)="onSubmitStudentReg()">
                 <h3>🎓 Student Course Enrollment Form</h3>
@@ -172,57 +173,76 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   />
                 </div>
 
+                <!-- 1-ON-1 SCHEDULE SELECTION FOR ONLINE & HOME TUTORING -->
+                @if (studentForm.desiredServiceType === 1 || studentForm.desiredServiceType === 3) {
+                  <div class="schedule-config-card">
+                    <h4>🗓️ Select Wanted Learning Days & Hours Request</h4>
+                    <p class="subtitle">Select your preferred learning days and time window so our admin can match an available teacher.</p>
+
+                    <div class="form-group">
+                      <label>Select Wanted Learning Days *</label>
+                      <div class="days-pill-group">
+                        @for (day of availableDays; track day) {
+                          <button
+                            type="button"
+                            class="day-pill"
+                            [class.selected]="selectedDays.includes(day)"
+                            (click)="toggleDay(day)"
+                          >
+                            {{ selectedDays.includes(day) ? '✓ ' : '' }}{{ day }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label>Wanted Learning Time (From) *</label>
+                        <input type="time" [(ngModel)]="wantedTimeFrom" name="sWantedFrom" required />
+                      </div>
+                      <div class="form-group">
+                        <label>Wanted Learning Time (To) *</label>
+                        <input type="time" [(ngModel)]="wantedTimeTo" name="sWantedTo" required />
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                <!-- GROUP CLASS FIXED SCHEDULE & PRICING DISPLAY -->
+                @if (studentForm.desiredServiceType === 2) {
+                  <div class="group-schedule-card">
+                    <h4>👥 Group Class Schedule (Company Fixed)</h4>
+                    <p>🗓️ <strong>Days:</strong> Mon, Wed, Fri | ⏰ <strong>Time:</strong> 10:00 AM – 12:00 PM (Center Session)</p>
+                  </div>
+                }
+
                 <button type="submit" class="btn-submit" [disabled]="submittingStudent()">
-                  @if (submittingStudent()) { Submitting... } @else { Submit & Proceed to Payment Slip }
+                  @if (submittingStudent()) { Submitting Application... } @else { Submit Application & Check Teacher Availability (3-5 hrs SLA) }
                 </button>
               </form>
             }
 
             @if (studentStep() === 2) {
-              <div class="payment-slip-box">
-                <h3>💳 Upload CBE Birr / Telebirr Tuition Receipt</h3>
-                <div class="bank-accounts">
-                  <p>🏦 <strong>CBE Account:</strong> 1000123456789 (BrightTutor Academy)</p>
-                  <p>📱 <strong>Telebirr Transfer:</strong> 0911000000 / Merchant 889900</p>
+              <div class="pending-step-box">
+                <div class="success-icon">🎉</div>
+                <h3>Registration Application Submitted!</h3>
+                <div class="pending-badge">Status: ⏳ Pending Admin & Teacher Availability Review (3-5 Hours)</div>
+                <p>Thank you for applying to BrightTutor Academy!</p>
+                <p>Our academic coordinator is currently checking tutor availability for your requested course and schedule window.</p>
+
+                <div class="credentials-info-box" style="background: rgba(11, 61, 46, 0.08); border: 1.5px solid #0B3D2E; border-radius: 10px; padding: 1rem; margin: 1rem 0; text-align: left;">
+                  <h4 style="margin: 0 0 0.5rem 0; color: #0B3D2E; font-weight: 700; font-size: 0.95rem;">🔑 Your Student Portal Login Credentials</h4>
+                  <p style="margin: 0 0 0.25rem 0; font-size: 0.88rem;"><strong>Login Email:</strong> <code>{{ studentForm.email }}</code></p>
+                  <p style="margin: 0 0 0.4rem 0; font-size: 0.88rem;"><strong>Default Initial Password:</strong> <code style="background: #0B3D2E; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;">StudentPass123!</code></p>
+                  <p style="margin: 0; font-size: 0.8rem; color: #4b5563;">Use your email address and default password <code>StudentPass123!</code> to sign in to your dashboard at any time. You can change your password anytime after logging in.</p>
                 </div>
 
-                <form (ngSubmit)="onSubmitStudentReceipt()">
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label>Payment Channel *</label>
-                      <select [(ngModel)]="receiptForm.paymentChannel" name="pChannel">
-                        <option value="CBE Birr">CBE Birr / CBE Bank</option>
-                        <option value="Telebirr">Telebirr Transfer</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label>Transaction Reference ID *</label>
-                      <input type="text" [(ngModel)]="receiptForm.transactionId" name="pTxnId" placeholder="FT26082699X" required />
-                    </div>
-                    <div class="form-group">
-                      <label>Amount Paid (ETB) *</label>
-                      <input type="number" [(ngModel)]="receiptForm.amountPaid" name="pAmount" placeholder="3500.00" required />
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Upload Receipt Screenshot *</label>
-                    <input type="file" (change)="onFileSelected($event)" accept="image/*" required />
-                  </div>
-
-                  <button type="submit" class="btn-submit" [disabled]="submittingReceipt()">
-                    @if (submittingReceipt()) { Uploading... } @else { Upload Receipt & Request Verification }
-                  </button>
-                </form>
-              </div>
-            }
-
-            @if (studentStep() === 3) {
-              <div class="success-alert">
-                <h3>🎉 Submission Successful!</h3>
-                <p>Status: <strong>Pending Payment Verification (1 - 3 business hours)</strong></p>
-                <p>Your Student ID credentials will be dispatched to <strong>{{ studentForm.email }}</strong> upon admin approval.</p>
-                <button type="button" class="btn-submit" (click)="studentStep.set(1)">Register Another Student</button>
+                <div class="no-payment-notice">
+                  🛡️ <strong>No payment is required today.</strong> Payment instructions & receipt upload will be unlocked on your tracking page <strong>only after admin approves teacher availability</strong>.
+                </div>
+                <div class="action-buttons-row">
+                  <button type="button" class="btn-submit" (click)="activeTab.set('login')">🔑 Go to Student Login</button>
+                </div>
               </div>
             }
           </div>
@@ -231,6 +251,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
         <!-- TAB 3: Teacher Candidate Job Application -->
         @if (activeTab() === 'teacher') {
           <div class="public-registration-box">
+            <button type="button" class="btn-back-login-tab" (click)="activeTab.set('login')">← Back to Account Login</button>
             @if (!teacherSubmitted()) {
               <form (ngSubmit)="onSubmitTeacherApp()">
                 <h3>👨‍🏫 Educator Job Application Form</h3>
@@ -406,8 +427,18 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       }
     }
 
+    .btn-back-login-tab { background: none; border: 1.5px solid #cbd5e1; color: #0B3D2E; padding: 0.45rem 0.9rem; border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer; margin-bottom: 1rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .btn-back-login-tab:hover { background: #0B3D2E; color: white; border-color: #0B3D2E; transform: translateX(-3px); }
+
     .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1.5px dashed #10B981; padding: 0.85rem; border-radius: 10px; margin-bottom: 1rem; width: 100%; box-sizing: border-box; }
     .custom-label { color: #059669 !important; font-weight: 700 !important; font-size: 0.85rem !important; }
+
+    .schedule-config-card { background: rgba(59, 130, 246, 0.05); border: 1px solid #93c5fd; padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1rem; h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #1e40af; } .subtitle { font-size: 0.78rem; color: #475569; margin: 0 0 0.75rem 0; } }
+    .days-pill-group { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+    .day-pill { border: 1px solid #cbd5e1; background: #fff; padding: 0.35rem 0.65rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; }
+    .day-pill.selected { background: #10B981; color: white; border-color: #059669; }
+
+    .group-schedule-card { background: rgba(245, 158, 11, 0.08); border: 1px solid #fcd34d; padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1rem; h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #b45309; } p { margin: 0; font-size: 0.82rem; color: #78350f; } }
 
     .password-input-wrapper { position: relative; display: flex; align-items: center; width: 100%; box-sizing: border-box; }
     .password-input-wrapper input { padding-right: 4.5rem; }
@@ -469,6 +500,11 @@ export class LoginComponent implements OnInit {
   submittingReceipt = signal<boolean>(false);
   createdRegId = signal<string>('');
 
+  availableDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  selectedDays: string[] = ['Mon', 'Wed', 'Fri'];
+  wantedTimeFrom: string = '10:00';
+  wantedTimeTo: string = '12:00';
+
   studentForm = {
     firstName: '',
     lastName: '',
@@ -479,6 +515,15 @@ export class LoginComponent implements OnInit {
     desiredServiceType: 1,
     courseId: ''
   };
+
+  toggleDay(day: string): void {
+    const idx = this.selectedDays.indexOf(day);
+    if (idx > -1) {
+      this.selectedDays.splice(idx, 1);
+    } else {
+      this.selectedDays.push(day);
+    }
+  }
 
   receiptForm = {
     paymentChannel: 'CBE Birr',
@@ -552,14 +597,30 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+    if (this.studentForm.desiredServiceType === 1 || this.studentForm.desiredServiceType === 3) {
+      if (this.selectedDays.length === 0 || !this.wantedTimeFrom || !this.wantedTimeTo) {
+        this.toastService.showError('Please select wanted learning days and wanted time window (From - To hr).');
+        return;
+      }
+    }
+
+    let gradeDetails = this.studentForm.gradeLevel.trim();
+
     if (this.customStudentCourseInput && this.customStudentCourseInput.trim().length > 0) {
       const customCourse = this.courses().find(c => c.name.toLowerCase().includes('custom') || c.name.toLowerCase().includes('requested')) || this.courses()[0];
       this.studentForm.courseId = customCourse.id;
-      this.studentForm.gradeLevel = `${this.studentForm.gradeLevel.trim()} (Requested Custom Subject: ${this.customStudentCourseInput.trim()})`;
+      gradeDetails += ` (Requested Custom Subject: ${this.customStudentCourseInput.trim()})`;
     } else {
       this.studentForm.courseId = this.selectedStudentCourseOption;
     }
 
+    if (this.studentForm.desiredServiceType === 1 || this.studentForm.desiredServiceType === 3) {
+      gradeDetails += ` | Wanted Days: ${this.selectedDays.join(', ')} | Wanted Hours: ${this.wantedTimeFrom} to ${this.wantedTimeTo}`;
+    } else {
+      gradeDetails += ` | Group Class Schedule: Mon, Wed, Fri (10:00 AM - 12:00 PM)`;
+    }
+
+    this.studentForm.gradeLevel = gradeDetails;
     this.studentForm.phoneNumber = `${this.studentCountryCode} ${this.studentPhoneInput.trim()}`;
 
     this.submittingStudent.set(true);

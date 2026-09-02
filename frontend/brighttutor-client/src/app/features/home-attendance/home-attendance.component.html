@@ -77,36 +77,42 @@
         </div>
       }
 
-      <div class="form-group">
-        <app-searchable-select
-          label="👥 Select Class Group"
-          placeholder="Choose Class Group..."
-          searchPlaceholder="Type group name to search..."
-          [options]="groupOptions()"
-          [value]="selectedGroupId()"
-          (valueChange)="onGroupSelected($event)"
-        ></app-searchable-select>
-      </div>
+
 
       <div class="form-group">
         <label for="attendanceDate">Visit Date</label>
         <input id="attendanceDate" type="date" formControlName="attendanceDate" class="form-control" />
       </div>
 
-      <div class="form-row-2">
-        <div class="form-group">
-          <label for="checkInLatitude">Latitude</label>
-          <input id="checkInLatitude" type="number" step="any" formControlName="checkInLatitude" class="form-control" />
-        </div>
-        <div class="form-group">
-          <label for="checkInLongitude">Longitude</label>
-          <input id="checkInLongitude" type="number" step="any" formControlName="checkInLongitude" class="form-control" />
-        </div>
+      <div class="form-group">
+        <label for="address" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>🏠 Student Registered Address</span>
+          <span style="font-size: 0.75rem; color: #059669; font-weight: 600;">✓ Pre-filled from Registration</span>
+        </label>
+        <input id="address" formControlName="address" class="form-control" style="background: #f8fafc; font-weight: 500;" readonly />
       </div>
 
-      <div class="form-group">
-        <label for="address">Address</label>
-        <input id="address" formControlName="address" placeholder="e.g. 124 Maple Street" class="form-control" />
+      <div class="gps-capture-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <label style="font-weight: 600; color: #166534; margin: 0; font-size: 0.9rem;">📍 Live GPS Location Cross-Check</label>
+          <button type="button" (click)="autoDetectGps()" class="btn-gps-detect" style="background: #166534; color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+            @if (gpsDetecting()) { ⏳ Detecting Location... } @else { 🔄 Capture My Live GPS }
+          </button>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group" style="margin: 0;">
+            <label for="checkInLatitude" style="font-size: 0.8rem; color: #15803d;">Latitude</label>
+            <input id="checkInLatitude" type="number" step="any" formControlName="checkInLatitude" class="form-control" style="background: white; border-color: #86efac;" readonly />
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label for="checkInLongitude" style="font-size: 0.8rem; color: #15803d;">Longitude</label>
+            <input id="checkInLongitude" type="number" step="any" formControlName="checkInLongitude" class="form-control" style="background: white; border-color: #86efac;" readonly />
+          </div>
+        </div>
+        <p style="font-size: 0.75rem; color: #166534; margin: 0.5rem 0 0 0;">
+          ℹ️ The system cross-checks the teacher's live device location against the student's registered home coordinates for attendance verification.
+        </p>
       </div>
 
       <div class="form-group">
@@ -134,14 +140,23 @@
         ></app-searchable-select>
       </div>
 
-      <div class="form-row-2">
-        <div class="form-group">
-          <label for="checkOutLatitude">Check-Out Latitude</label>
-          <input id="checkOutLatitude" type="number" step="any" formControlName="checkOutLatitude" class="form-control" />
+      <div class="gps-capture-box" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <label style="font-weight: 600; color: #1e40af; margin: 0; font-size: 0.9rem;">📍 Live Check-Out GPS Coordinates</label>
+          <button type="button" (click)="autoDetectGps()" class="btn-gps-detect" style="background: #1e40af; color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+            @if (gpsDetecting()) { ⏳ Detecting... } @else { 🔄 Refresh GPS }
+          </button>
         </div>
-        <div class="form-group">
-          <label for="checkOutLongitude">Check-Out Longitude</label>
-          <input id="checkOutLongitude" type="number" step="any" formControlName="checkOutLongitude" class="form-control" />
+
+        <div class="form-row-2">
+          <div class="form-group" style="margin: 0;">
+            <label for="checkOutLatitude" style="font-size: 0.8rem; color: #1d4ed8;">Latitude</label>
+            <input id="checkOutLatitude" type="number" step="any" formControlName="checkOutLatitude" class="form-control" style="background: white; border-color: #93c5fd;" readonly />
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label for="checkOutLongitude" style="font-size: 0.8rem; color: #1d4ed8;">Longitude</label>
+            <input id="checkOutLongitude" type="number" step="any" formControlName="checkOutLongitude" class="form-control" style="background: white; border-color: #93c5fd;" readonly />
+          </div>
         </div>
       </div>
 

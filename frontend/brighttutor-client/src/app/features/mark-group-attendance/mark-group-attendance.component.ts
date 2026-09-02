@@ -7,6 +7,7 @@ import { AuthService } from "../../services/auth.service";
 import { ToastService } from "../../services/toast.service";
 import { AttendanceStatus, StudentAttendanceEntry } from "../../models/attendance.model";
 import { SearchableSelectComponent, SelectOption } from "../../components/searchable-select/searchable-select.component";
+import { EnrollmentService } from "../../services/enrollment.service";
 import { CommonModule } from "@angular/common";
 
 export interface GroupRosterItem {
@@ -26,6 +27,7 @@ export class MarkGroupAttendanceComponent implements OnInit {
   private api = inject(AttendanceService);
   private userService = inject(UserService);
   private courseService = inject(CourseService);
+  private enrollmentService = inject(EnrollmentService);
   public authService = inject(AuthService);
   private toast = inject(ToastService);
 
@@ -116,17 +118,34 @@ export class MarkGroupAttendanceComponent implements OnInit {
     this.selectedGroupId.set(groupId);
     this.form.patchValue({ classGroupId: groupId });
 
-    this.userService.getUsers(3).subscribe({
-      next: (studentsList) => {
+    this.enrollmentService.getEnrollments(undefined, groupId).subscribe({
+      next: (enrollmentsList) => {
         this.students.clear();
-        studentsList.forEach(s => {
-          this.students.push(this.fb.group({
-            studentId: [s.id, Validators.required],
-            studentName: [`${s.firstName} ${s.lastName}`],
-            status: [null],
-            notes: ['']
-          }));
-        });
+        if (enrollmentsList && enrollmentsList.length > 0) {
+          enrollmentsList.forEach(e => {
+            this.students.push(this.fb.group({
+              studentId: [e.studentId, Validators.required],
+              studentName: [e.studentName || 'Enrolled Student'],
+              status: [null],
+              notes: ['']
+            }));
+          });
+        } else {
+          // Fallback if no specific group enrollment rows exist
+          this.userService.getUsers(3).subscribe({
+            next: (studentsList) => {
+              this.students.clear();
+              studentsList.forEach(s => {
+                this.students.push(this.fb.group({
+                  studentId: [s.id, Validators.required],
+                  studentName: [`${s.firstName} ${s.lastName}`],
+                  status: [null],
+                  notes: ['']
+                }));
+              });
+            }
+          });
+        }
       }
     });
   }

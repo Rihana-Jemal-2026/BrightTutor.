@@ -1,32 +1,39 @@
 <div class="view-attendance-page">
   <div class="page-header">
     <div>
-      <h1>📋 View Group Attendance Records</h1>
-      <p>Filter attendance history by class group and session date.</p>
+      <h1>📋 View Attendance History Records</h1>
+      <p>Comprehensive attendance records across Group Classes, 1-on-1 Online, and Home Tutoring sessions.</p>
     </div>
   </div>
 
-  <div class="filter-card">
-    <div class="filter-col">
-      <app-searchable-select
-        label="👥 Select Class Group"
-        placeholder="Choose Class Group..."
-        searchPlaceholder="Type group name to search..."
-        [options]="groupOptions()"
-        [value]="classGroupId()"
-        (valueChange)="onGroupSelected($event)"
-      ></app-searchable-select>
+  @if (noAssignedClasses()) {
+    <div class="alert alert-warning" style="margin-bottom: 1.5rem; padding: 1.2rem; background: #fffbe6; border: 1.5px solid #ffe58f; border-radius: 10px; color: #873800;">
+      <strong>⚠️ No Assigned Class Groups Found</strong>
+      <p style="margin-top: 0.35rem; margin-bottom: 0;">You currently have no class groups assigned to your educator profile. Please contact Academy Admin to assign your teacher profile to a class group.</p>
     </div>
+  } @else {
+    <div class="filter-card">
+      <div class="filter-col">
+        <app-searchable-select
+          label="🎯 Filter by Class Group / Mode"
+          placeholder="Choose Class Group or All Records..."
+          searchPlaceholder="Type group name to search..."
+          [options]="groupOptions()"
+          [value]="classGroupId()"
+          (valueChange)="onGroupSelected($event)"
+        ></app-searchable-select>
+      </div>
 
-    <div class="filter-col date-col">
-      <label for="attendanceDate">Session Date</label>
-      <input id="attendanceDate" type="date" [(ngModel)]="attendanceDate" name="attendanceDate" class="form-control" />
-    </div>
+      <div class="filter-col date-col">
+        <label for="attendanceDate">Session Date</label>
+        <input id="attendanceDate" type="date" [(ngModel)]="attendanceDate" name="attendanceDate" class="form-control" />
+      </div>
 
-    <div class="filter-col action-col">
-      <button type="button" class="btn-search" (click)="search()">Search Records</button>
+      <div class="filter-col action-col">
+        <button type="button" class="btn-search" (click)="search()">Search Records</button>
+      </div>
     </div>
-  </div>
+  }
 
   @if (recordsResource.isLoading()) {
     <div class="loading-box">Loading attendance records...</div>
@@ -38,9 +45,10 @@
         <thead>
           <tr>
             <th>Student Name</th>
-            <th>Class Group</th>
+            <th>Attendance Mode</th>
+            <th>Class / Session Info</th>
             <th>Teacher</th>
-            <th>Attendance Status</th>
+            <th>Status</th>
             <th>Notes</th>
           </tr>
         </thead>
@@ -48,6 +56,11 @@
           @for (record of recordsResource.value()!; track record.id) {
             <tr>
               <td class="student-name">{{ record.studentName || record.studentId }}</td>
+              <td>
+                <span class="mode-badge" [class]="getTypeClass(record.attendanceType, record.classGroupName)">
+                  {{ getTypeLabel(record.attendanceType, record.classGroupName) }}
+                </span>
+              </td>
               <td>{{ record.classGroupName || '—' }}</td>
               <td>{{ record.teacherName || '—' }}</td>
               <td>
@@ -59,7 +72,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="empty-state">No attendance records found for this class group and date.</td>
+              <td colspan="6" class="empty-state">No attendance records found for the selected filter and date.</td>
             </tr>
           }
         </tbody>

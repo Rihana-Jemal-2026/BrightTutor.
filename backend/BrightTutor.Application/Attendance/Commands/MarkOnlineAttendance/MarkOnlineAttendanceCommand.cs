@@ -10,7 +10,7 @@ public class MarkOnlineAttendanceCommand : IRequest<Guid>
 {
     public Guid StudentId { get; set; }
     public Guid TeacherId { get; set; }
-    public Guid ClassGroupId { get; set; }
+    public Guid? ClassGroupId { get; set; }
     public DateOnly AttendanceDate { get; set; }
     public AttendanceStatus Status { get; set; }
     public string? Notes { get; set; }
@@ -37,9 +37,20 @@ public class MarkOnlineAttendanceHandler : IRequestHandler<MarkOnlineAttendanceC
             .FirstOrDefaultAsync(st => st.Id == request.StudentId || st.UserId == request.StudentId, cancellationToken);
         var actualStudentId = studentEntity?.Id ?? request.StudentId;
 
+        // Resolve optional ClassGroupId or fallback to student's enrolled group
+        var effectiveGroupId = request.ClassGroupId;
+        if (!effectiveGroupId.HasValue || effectiveGroupId.Value == Guid.Empty)
+        {
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.StudentId == actualStudentId, cancellationToken);
+            effectiveGroupId = enrollment?.ClassGroupId;
+        }
+
         // Check if attendance already exists for this student on this date (UPSERT Strategy)
         var existingRecord = await _context.Attendances
-            .FirstOrDefaultAsync(a => a.StudentId == actualStudentId && a.ClassGroupId == request.ClassGroupId && a.AttendanceDate == request.AttendanceDate, cancellationToken);
+            .FirstOrDefaultAsync(a => a.StudentId == actualStudentId 
+                && (a.AttendanceType == AttendanceType.Online || (effectiveGroupId.HasValue && a.ClassGroupId == effectiveGroupId.Value)) 
+                && a.AttendanceDate == request.AttendanceDate, cancellationToken);
 
         Domain.Entities.Attendance attendance;
 
@@ -54,12 +65,12 @@ public class MarkOnlineAttendanceHandler : IRequestHandler<MarkOnlineAttendanceC
         }
         else
         {
-            // Insert new attendance
+            // Insert new 1-on-1 online attendance
             attendance = new Domain.Entities.Attendance
             {
                 StudentId = actualStudentId,
                 TeacherId = actualTeacherId,
-                ClassGroupId = request.ClassGroupId,
+                ClassGroupId = effectiveGroupId ?? Guid.Empty,
                 AttendanceType = AttendanceType.Online,
                 Status = request.Status,
                 AttendanceDate = request.AttendanceDate,

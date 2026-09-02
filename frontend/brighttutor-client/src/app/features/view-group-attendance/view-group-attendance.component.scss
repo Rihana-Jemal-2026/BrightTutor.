@@ -79,4 +79,17 @@
   &.excused { background: var(--status-excused-bg, #F0F9FF); color: var(--status-excused, #0284C7); }
 }
 
+.mode-badge {
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-block;
+
+  &.mode-group { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+  &.mode-online { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  &.mode-home { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+  &.mode-qr { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+}
+
 .loading-box, .empty-state { text-align: center; color: var(--color-muted, #809C8E); padding: 2.5rem; }

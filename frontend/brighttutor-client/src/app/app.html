@@ -234,18 +234,31 @@
         </a>
       </div>
 
-      <!-- Section: Admissions & Public Portals -->
-      <div class="nav-section">
-        <div class="section-label">Admissions & Screening</div>
-        <a routerLink="/student-register" routerLinkActive="active" class="nav-item">
-          <span class="nav-icon">🎓</span>
-          <span class="nav-text">Student Register & Pay</span>
-        </a>
-        <a routerLink="/teacher-apply" routerLinkActive="active" class="nav-item">
-          <span class="nav-icon">👨‍🏫</span>
-          <span class="nav-text">Teacher Job Application</span>
-        </a>
-      </div>
+      <!-- Section: Account & Security (For All Logged-In Users) -->
+      @if (authService.isAuthenticated()) {
+        <div class="nav-section">
+          <div class="section-label">Account Security</div>
+          <button type="button" class="nav-item sidebar-btn-item" (click)="openProfileModal()">
+            <span class="nav-icon">🔒</span>
+            <span class="nav-text">Change Password</span>
+          </button>
+        </div>
+      }
+
+      <!-- Section: Admissions & Screening (Admin & Guest Only) -->
+      @if (!authService.isTeacher() && !authService.isStudent() && !authService.isParent()) {
+        <div class="nav-section">
+          <div class="section-label">Admissions & Screening</div>
+          <a routerLink="/student-register" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">🎓</span>
+            <span class="nav-text">Student Register & Pay</span>
+          </a>
+          <a routerLink="/teacher-apply" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">👨‍🏫</span>
+            <span class="nav-text">Teacher Job Application</span>
+          </a>
+        </div>
+      }
 
       <!-- Section: Administration & System (Admin Only) -->
       @if (authService.hasPermission('settings.manage') && authService.isAdmin()) {
@@ -306,15 +319,30 @@
         <h4>🔒 Change Account Password</h4>
         <div class="form-group">
           <label for="oldPassword">Current Password</label>
-          <input id="oldPassword" type="password" name="oldPassword" [(ngModel)]="passwordForm.oldPassword" placeholder="••••••••" required />
+          <div class="password-toggle-wrapper">
+            <input id="oldPassword" [type]="showOldPassword() ? 'text' : 'password'" name="oldPassword" [(ngModel)]="passwordForm.oldPassword" placeholder="••••••••" required />
+            <button type="button" class="btn-toggle-pw" (click)="showOldPassword.set(!showOldPassword())" title="Toggle password visibility">
+              {{ showOldPassword() ? '🙈 Hide' : '👁️ Show' }}
+            </button>
+          </div>
         </div>
         <div class="form-group">
           <label for="newPassword">New Password</label>
-          <input id="newPassword" type="password" name="newPassword" [(ngModel)]="passwordForm.newPassword" placeholder="••••••••" required />
+          <div class="password-toggle-wrapper">
+            <input id="newPassword" [type]="showNewPassword() ? 'text' : 'password'" name="newPassword" [(ngModel)]="passwordForm.newPassword" placeholder="••••••••" required />
+            <button type="button" class="btn-toggle-pw" (click)="showNewPassword.set(!showNewPassword())" title="Toggle password visibility">
+              {{ showNewPassword() ? '🙈 Hide' : '👁️ Show' }}
+            </button>
+          </div>
         </div>
         <div class="form-group">
           <label for="confirmPassword">Confirm New Password</label>
-          <input id="confirmPassword" type="password" name="confirmPassword" [(ngModel)]="passwordForm.confirmPassword" placeholder="••••••••" required />
+          <div class="password-toggle-wrapper">
+            <input id="confirmPassword" [type]="showConfirmPassword() ? 'text' : 'password'" name="confirmPassword" [(ngModel)]="passwordForm.confirmPassword" placeholder="••••••••" required />
+            <button type="button" class="btn-toggle-pw" (click)="showConfirmPassword.set(!showConfirmPassword())" title="Toggle password visibility">
+              {{ showConfirmPassword() ? '🙈 Hide' : '👁️ Show' }}
+            </button>
+          </div>
         </div>
 
         <div class="modal-footer">

@@ -11,6 +11,7 @@ public class GetClassAttendanceReportQuery : IRequest<GetClassAttendanceReportRe
     public Guid ClassGroupId { get; set; }
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
+    public Guid? TeacherId { get; set; }
 }
 
 public class GetClassAttendanceReportHandler
@@ -26,16 +27,30 @@ public class GetClassAttendanceReportHandler
     public async Task<GetClassAttendanceReportResponse> Handle(
         GetClassAttendanceReportQuery request, CancellationToken cancellationToken)
     {
-        var records = await _context.Attendances
+        var query = _context.Attendances
             .Include(a => a.Student).ThenInclude(st => st.User)
+            .Include(a => a.Teacher).ThenInclude(t => t.User)
             .Include(a => a.ClassGroup)
-            .Where(a => a.ClassGroupId == request.ClassGroupId
-                     && a.AttendanceDate >= request.StartDate
-                     && a.AttendanceDate <= request.EndDate)
-            .ToListAsync(cancellationToken);
+            .Where(a => a.AttendanceDate >= request.StartDate && a.AttendanceDate <= request.EndDate);
 
-        var classGroup = await _context.ClassGroups.FirstOrDefaultAsync(g => g.Id == request.ClassGroupId, cancellationToken);
-        var classGroupName = classGroup?.Name ?? "Class Group";
+        if (request.TeacherId.HasValue && request.TeacherId.Value != Guid.Empty)
+        {
+            query = query.Where(a => a.TeacherId == request.TeacherId.Value || (a.Teacher != null && a.Teacher.UserId == request.TeacherId.Value));
+        }
+
+        if (request.ClassGroupId != Guid.Empty)
+        {
+            query = query.Where(a => a.ClassGroupId == request.ClassGroupId);
+        }
+
+        var records = await query.ToListAsync(cancellationToken);
+
+        string classGroupName = "All Academy Classes & Modes";
+        if (request.ClassGroupId != Guid.Empty)
+        {
+            var classGroup = await _context.ClassGroups.FirstOrDefaultAsync(g => g.Id == request.ClassGroupId, cancellationToken);
+            classGroupName = classGroup?.Name ?? "Class Group";
+        }
 
         var totalSessions = records.Select(a => a.AttendanceDate).Distinct().Count();
         var totalStudentRecords = records.Count;

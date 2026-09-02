@@ -9,6 +9,7 @@ public class GetGroupAttendanceResponse
     public string StudentName { get; set; } = string.Empty;
     public string TeacherName { get; set; } = string.Empty;
     public string ClassGroupName { get; set; } = string.Empty;
+    public AttendanceType AttendanceType { get; set; }
     public AttendanceStatus Status { get; set; }
     public DateOnly AttendanceDate { get; set; }
     public string? Notes { get; set; }

@@ -23,9 +23,18 @@ export interface EligibilityResultDto {
   courseName: string;
   totalSessions: number;
   presentCount: number;
+  daysEnrolled?: number;
   attendancePercentage: number;
   absencePercentage: number;
   maxAllowedAbsenceRule: string;
+  isEligible: boolean;
+  statusMessage: string;
+}
+
+export interface TeacherEligibilityResultDto {
+  teacherName: string;
+  specialization: string;
+  daysInService: number;
   isEligible: boolean;
   statusMessage: string;
 }
@@ -40,6 +49,10 @@ export class CertificateService {
 
   checkStudentEligibility(studentId: string, courseId: string): Observable<EligibilityResultDto> {
     return this.http.get<EligibilityResultDto>(`${this.apiUrl}/student-eligibility?studentId=${studentId}&courseId=${courseId}`);
+  }
+
+  checkTeacherEligibility(teacherId: string): Observable<TeacherEligibilityResultDto> {
+    return this.http.get<TeacherEligibilityResultDto>(`${this.apiUrl}/teacher-eligibility?teacherId=${teacherId}`);
   }
 
   issueStudentCertificate(studentId: string, courseId: string): Observable<CertificateDto> {

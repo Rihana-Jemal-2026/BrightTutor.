@@ -40,12 +40,40 @@ public class StudentRegistrationController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> SubmitRegistration([FromBody] SubmitRegistrationDto dto)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == dto.Email) ||
-            await _context.StudentRegistrations.AnyAsync(r => r.Email == dto.Email && r.Status != RegistrationStatus.Rejected))
+        var emailMatch = dto.Email.Trim().ToLower();
+        var firstNameMatch = dto.FirstName.Trim().ToLower();
+        var lastNameMatch = dto.LastName.Trim().ToLower();
+
+        bool existsInRegistrations = await _context.StudentRegistrations.AnyAsync(r =>
+            r.Status != RegistrationStatus.Rejected &&
+            (r.Email.ToLower() == emailMatch ||
+             (r.FirstName.ToLower() == firstNameMatch && r.LastName.ToLower() == lastNameMatch)));
+
+        if (existsInRegistrations)
         {
-            return BadRequest(new { message = "An account or pending registration with this email already exists." });
+            return BadRequest(new { message = "A pending registration with this Email or Full Name already exists! If you have already registered, please log in to your student dashboard or track your status." });
         }
 
+        // 1. Create User account immediately so student can log in to dashboard right away
+        var tempPassword = "StudentPass123!";
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == emailMatch);
+        if (user == null)
+        {
+            user = new User
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Role = UserRole.Student,
+                Status = UserStatus.Active,
+                PasswordHash = _passwordHasher.HashPassword(tempPassword)
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
+
+        // 2. Create StudentRegistration record linked to CreatedUserId
         var registration = new StudentRegistration
         {
             FirstName = dto.FirstName,
@@ -58,6 +86,7 @@ public class StudentRegistrationController : ControllerBase
             GpsLongitude = dto.GpsLongitude,
             DesiredServiceType = dto.DesiredServiceType,
             CourseId = dto.CourseId,
+            CreatedUserId = user.Id,
             Status = RegistrationStatus.PendingTeacherCheck
         };
 
@@ -66,8 +95,9 @@ public class StudentRegistrationController : ControllerBase
 
         return Ok(new
         {
-            message = "Your registration has been submitted successfully! Status: Pending Teacher Availability Check (Estimated: 3-5 working hours).",
+            message = "Your registration application has been submitted successfully! Default login password: 'StudentPass123!'. You can log in to your dashboard anytime.",
             registrationId = registration.Id,
+            defaultPassword = tempPassword,
             status = "PendingTeacherCheck"
         });
     }
@@ -197,6 +227,17 @@ public class StudentRegistrationController : ControllerBase
         }
         reg.Status = RegistrationStatus.ApprovedPendingPayment;
 
+        // Send automatic in-app notification to the assigned Teacher!
+        var teacherNotif = new Notification
+        {
+            UserId = teacher.User.Id,
+            Title = "👨‍🏫 New Student Match Assigned!",
+            Message = $"You have been assigned as tutor for student '{reg.FirstName} {reg.LastName}'. Delivery Mode/Schedule: {reg.GradeLevel}. Contact: {reg.PhoneNumber} ({reg.Email}).",
+            Type = NotificationType.GeneralAnnouncement,
+            Status = NotificationStatus.Unread
+        };
+        _context.Notifications.Add(teacherNotif);
+
         await _context.SaveChangesAsync();
 
         return Ok(new
@@ -224,20 +265,34 @@ public class StudentRegistrationController : ControllerBase
         var reg = await _context.StudentRegistrations.FindAsync(id);
         if (reg == null) return NotFound();
 
-        // 1. Create User
+        // 1. Get or Create User
         var tempPassword = "StudentPass123!";
-        var user = new User
+        User? user = null;
+        if (reg.CreatedUserId.HasValue)
         {
-            FirstName = reg.FirstName,
-            LastName = reg.LastName,
-            Email = reg.Email,
-            PhoneNumber = reg.PhoneNumber,
-            Role = UserRole.Student,
-            Status = UserStatus.Active,
-            PasswordHash = _passwordHasher.HashPassword(tempPassword)
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+            user = await _context.Users.FindAsync(reg.CreatedUserId.Value);
+        }
+
+        if (user == null)
+        {
+            user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == reg.Email.ToLower());
+        }
+
+        if (user == null)
+        {
+            user = new User
+            {
+                FirstName = reg.FirstName,
+                LastName = reg.LastName,
+                Email = reg.Email,
+                PhoneNumber = reg.PhoneNumber,
+                Role = UserRole.Student,
+                Status = UserStatus.Active,
+                PasswordHash = _passwordHasher.HashPassword(tempPassword)
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
 
         // 2. Create Student Entity & ID
         var studentCount = await _context.Students.CountAsync() + 1;
@@ -291,11 +346,29 @@ public class StudentRegistrationController : ControllerBase
         {
             UserId = user.Id,
             Title = "🎉 Account Approved & Credentials Issued!",
-            Message = $"Welcome to BrightTutor! Your Student ID is {studentCode}. Your default login email is {reg.Email} and password is '{tempPassword}'. Assigned Tutor: {reg.AssignedTeacherName ?? "Assigned Tutor"}. Please log in and change your password.",
+            Message = $"Welcome to BrightTutor! Your Student ID is {studentCode}. Log in using your email ({reg.Email}) or Student ID code ({studentCode}) and your account password. Assigned Tutor: {reg.AssignedTeacherName ?? "Certified Tutor"}.",
             Type = NotificationType.GeneralAnnouncement,
             Status = NotificationStatus.Unread
         };
         _context.Notifications.Add(notif);
+
+        // Also notify the assigned Teacher!
+        if (reg.AssignedTeacherId.HasValue)
+        {
+            var assignedTeacher = await _context.Teachers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == reg.AssignedTeacherId.Value);
+            if (assignedTeacher != null)
+            {
+                var teacherVerifyNotif = new Notification
+                {
+                    UserId = assignedTeacher.User.Id,
+                    Title = "🎉 Student Enrolled & Active!",
+                    Message = $"Payment verified for your student '{reg.FirstName} {reg.LastName}' (ID: {studentCode}). They are now active for tutoring sessions.",
+                    Type = NotificationType.GeneralAnnouncement,
+                    Status = NotificationStatus.Unread
+                };
+                _context.Notifications.Add(teacherVerifyNotif);
+            }
+        }
 
         await _context.SaveChangesAsync();
 

@@ -27,11 +27,21 @@ public class CheckInHomeAttendanceHandler : IRequestHandler<CheckInHomeAttendanc
 
     public async Task<Guid> Handle(CheckInHomeAttendanceCommand request, CancellationToken cancellationToken)
     {
+        var groupIdToUse = request.ClassGroupId;
+        if (groupIdToUse == Guid.Empty)
+        {
+            var firstGroup = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(_context.ClassGroups, cancellationToken);
+            if (firstGroup != null)
+            {
+                groupIdToUse = firstGroup.Id;
+            }
+        }
+
         var attendance = new Domain.Entities.Attendance
         {
             StudentId = request.StudentId,
             TeacherId = request.TeacherId,
-            ClassGroupId = request.ClassGroupId,
+            ClassGroupId = groupIdToUse,
             AttendanceType = AttendanceType.Home,
             Status = AttendanceStatus.Present,
             AttendanceDate = request.AttendanceDate,

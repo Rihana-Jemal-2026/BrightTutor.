@@ -42,6 +42,7 @@ export interface GroupAttendanceRecord {
   studentName?: string;
   teacherName?: string;
   classGroupName?: string;
+  attendanceType?: number;
   attendanceDate?: string;
   status: AttendanceStatus;
   notes?: string;

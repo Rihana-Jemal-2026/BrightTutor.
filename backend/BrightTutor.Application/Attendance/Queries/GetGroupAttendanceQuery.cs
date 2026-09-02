@@ -1,6 +1,7 @@
 using AutoMapper;
 using BrightTutor.Application.Abstractions.Persistence;
 using BrightTutor.Application.Attendance.Dtos;
+using BrightTutor.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ public class GetGroupAttendanceQuery : IRequest<List<GetGroupAttendanceResponse>
 {
     public Guid ClassGroupId { get; set; }
     public DateOnly AttendanceDate { get; set; }
+    public Guid? TeacherId { get; set; }
 }
 
 public class GetGroupAttendanceHandler
@@ -33,6 +35,11 @@ public class GetGroupAttendanceHandler
             .Include(a => a.ClassGroup)
             .AsQueryable();
 
+        if (request.TeacherId.HasValue && request.TeacherId.Value != Guid.Empty)
+        {
+            query = query.Where(a => a.TeacherId == request.TeacherId.Value || (a.Teacher != null && a.Teacher.UserId == request.TeacherId.Value));
+        }
+
         if (request.ClassGroupId != Guid.Empty)
         {
             query = query.Where(a => a.ClassGroupId == request.ClassGroupId);
@@ -51,7 +58,8 @@ public class GetGroupAttendanceHandler
             StudentId = a.StudentId,
             StudentName = a.Student?.User != null ? $"{a.Student.User.FirstName} {a.Student.User.LastName}" : "Student",
             TeacherName = a.Teacher?.User != null ? $"{a.Teacher.User.FirstName} {a.Teacher.User.LastName}" : "Teacher",
-            ClassGroupName = a.ClassGroup?.Name ?? "Class Group",
+            ClassGroupName = a.ClassGroup?.Name ?? (a.AttendanceType == AttendanceType.Home ? "Home Tutoring" : a.AttendanceType == AttendanceType.Online ? "1-on-1 Online" : "General Class"),
+            AttendanceType = a.AttendanceType,
             Status = a.Status,
             AttendanceDate = a.AttendanceDate,
             Notes = a.Notes

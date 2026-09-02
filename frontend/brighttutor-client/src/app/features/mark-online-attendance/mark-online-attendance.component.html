@@ -8,8 +8,8 @@
         </svg>
       </div>
       <div>
-        <h1>Mark Online Attendance</h1>
-        <p class="subtitle">Select an online student and group using searchable dropdowns.</p>
+        <h1>Mark 1-on-1 Online Attendance</h1>
+        <p class="subtitle">Record 1-on-1 private online video tutoring attendance for an assigned student.</p>
       </div>
     </div>
   </div>
@@ -61,18 +61,7 @@
       }
 
       <div class="field-group">
-        <app-searchable-select
-          label="👥 Select Class Group (Optional)"
-          placeholder="Choose Class Group..."
-          searchPlaceholder="Type group name to search..."
-          [options]="groupOptions()"
-          [value]="selectedGroupId()"
-          (valueChange)="onGroupSelected($event)"
-        ></app-searchable-select>
-      </div>
-
-      <div class="field-group">
-        <label for="attendanceDate">Attendance Date</label>
+        <label for="attendanceDate">Session Date *</label>
         <input id="attendanceDate" type="date" formControlName="attendanceDate" class="form-control" />
       </div>
     </div>

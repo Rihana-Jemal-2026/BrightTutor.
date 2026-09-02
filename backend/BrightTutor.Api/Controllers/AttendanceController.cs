@@ -41,12 +41,13 @@ public class AttendanceController : ControllerBase
 
     [HttpGet("group")]
     public async Task<ActionResult<List<GetGroupAttendanceResponse>>> GetGroupAttendance(
-        [FromQuery] Guid classGroupId, [FromQuery] DateOnly attendanceDate)
+        [FromQuery] Guid classGroupId, [FromQuery] DateOnly attendanceDate, [FromQuery] Guid? teacherId = null)
     {
         var result = await _mediator.Send(new GetGroupAttendanceQuery
         {
             ClassGroupId = classGroupId,
-            AttendanceDate = attendanceDate
+            AttendanceDate = attendanceDate,
+            TeacherId = teacherId
         });
         return Ok(result);
     }
@@ -140,13 +141,14 @@ public async Task<IActionResult> VerifyHomeAttendance([FromBody] VerifyHomeAtten
 }
 [HttpGet("class-report")]
 public async Task<ActionResult<GetClassAttendanceReportResponse>> GetClassAttendanceReport(
-    [FromQuery] Guid classGroupId, [FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate)
+    [FromQuery] Guid classGroupId, [FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] Guid? teacherId = null)
 {
     var result = await _mediator.Send(new GetClassAttendanceReportQuery
     {
         ClassGroupId = classGroupId,
         StartDate = startDate,
-        EndDate = endDate
+        EndDate = endDate,
+        TeacherId = teacherId
     });
     return Ok(result);
 }

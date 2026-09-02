@@ -1,6 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TeacherApplicationService } from '../../services/teacher-application.service';
 import { ToastService } from '../../services/toast.service';
 import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
@@ -8,9 +9,13 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 @Component({
   selector: 'app-teacher-apply',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="teacher-apply-page">
+      <div class="header-nav-row">
+        <a routerLink="/login" class="btn-back-login">← Back to Login Page</a>
+      </div>
+
       <div class="page-header">
         <h1>👨‍🏫 Join BrightTutor as a Certified Educator</h1>
         <p>Submit your academic background, specialization, CV, and work credentials for screening.</p>
@@ -227,6 +232,10 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       color: var(--color-success);
       margin-bottom: 0.5rem;
     }
+
+    .header-nav-row { margin-bottom: 1rem; }
+    .btn-back-login { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--color-surface); color: var(--color-primary); border: 1.5px solid var(--color-border); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: var(--shadow-card); transition: all 0.2s; }
+    .btn-back-login:hover { background: var(--color-primary); color: white; border-color: var(--color-primary); transform: translateX(-3px); }
 
     @media (max-width: 768px) {
       .teacher-apply-page { padding: 1rem 0.5rem; }

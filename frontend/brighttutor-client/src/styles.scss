@@ -333,3 +333,46 @@ input[type="date"], input[type="time"], input[type="datetime-local"] {
     font-size: 0.9rem !important;
   }
 }
+
+button.sidebar-btn-item {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.password-toggle-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  input {
+    width: 100%;
+    padding-right: 4.5rem !important;
+  }
+
+  .btn-toggle-pw {
+    position: absolute;
+    right: 8px;
+    background: rgba(11, 61, 46, 0.08);
+    color: #0B3D2E;
+    border: 1px solid rgba(11, 61, 46, 0.2);
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+
+    &:hover {
+      background: #0B3D2E;
+      color: #ffffff;
+    }
+  }
+}

@@ -203,10 +203,11 @@ export class AttendanceService {
     );
   }
 
-  getGroupAttendance(classGroupId: string, attendanceDate: string) {
-    return this.http.get<GroupAttendanceRecord[]>(`${this.baseUrl}/group`, {
-      params: { classGroupId: normalizeId(classGroupId), attendanceDate },
-    }).pipe(
+  getGroupAttendance(classGroupId: string, attendanceDate: string, teacherId?: string) {
+    const params: any = { classGroupId: normalizeId(classGroupId), attendanceDate };
+    if (teacherId) params.teacherId = normalizeId(teacherId);
+
+    return this.http.get<GroupAttendanceRecord[]>(`${this.baseUrl}/group`, { params }).pipe(
       map((records) =>
         records.map((r) => ({
           ...r,
@@ -216,10 +217,11 @@ export class AttendanceService {
     );
   }
 
-  getClassReport(classGroupId: string, startDate: string, endDate: string) {
-    return this.http.get<ClassAttendanceReport>(`${this.baseUrl}/class-report`, {
-      params: { classGroupId: normalizeId(classGroupId), startDate, endDate },
-    }).pipe(
+  getClassReport(classGroupId: string, startDate: string, endDate: string, teacherId?: string) {
+    const params: any = { classGroupId: normalizeId(classGroupId), startDate, endDate };
+    if (teacherId) params.teacherId = normalizeId(teacherId);
+
+    return this.http.get<ClassAttendanceReport>(`${this.baseUrl}/class-report`, { params }).pipe(
       map((report) => ({
         ...report,
         classGroupId: formatDisplayId(report.classGroupId),

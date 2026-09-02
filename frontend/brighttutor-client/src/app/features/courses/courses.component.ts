@@ -241,19 +241,19 @@ import { ToastService } from '../../services/toast.service';
             </div>
             <form (ngSubmit)="onCreateCourse()">
               <div class="form-group">
-                <label for="courseName">Course Title</label>
+                <label for="courseName">Course Title *</label>
                 <input id="courseName" name="courseName" [(ngModel)]="newCourse.name" placeholder="e.g. Advanced Physics" required />
               </div>
               <div class="form-group">
-                <label for="courseDesc">Description</label>
-                <textarea id="courseDesc" name="courseDesc" [(ngModel)]="newCourse.description" placeholder="Course outline..." rows="3"></textarea>
+                <label for="courseDesc">Description & Schedule Notes</label>
+                <textarea id="courseDesc" name="courseDesc" [(ngModel)]="newCourse.description" placeholder="e.g. Days: Mon, Wed, Fri | Hours: 10:00 AM - 12:00 PM | Fee: 2500 ETB/mo" rows="3"></textarea>
               </div>
               <div class="form-group">
-                <label for="serviceType">Delivery Method</label>
+                <label for="serviceType">Delivery Method *</label>
                 <select id="serviceType" name="serviceType" [(ngModel)]="newCourse.serviceType">
-                  <option [ngValue]="1">Online Session (1-on-1)</option>
-                  <option [ngValue]="2">Group Session</option>
-                  <option [ngValue]="3">Home-to-Home Visit Tutoring</option>
+                  <option [ngValue]="1">💻 Online Session (1-on-1 Personal Tutor)</option>
+                  <option [ngValue]="2">👥 Group Session (Academic Center Class)</option>
+                  <option [ngValue]="3">🏠 Home-to-Home Visit Tutoring</option>
                 </select>
               </div>
               <div class="modal-footer">
@@ -275,19 +275,19 @@ import { ToastService } from '../../services/toast.service';
             </div>
             <form (ngSubmit)="onUpdateCourse()">
               <div class="form-group">
-                <label for="editCourseName">Course Title</label>
+                <label for="editCourseName">Course Title *</label>
                 <input id="editCourseName" name="editCourseName" [(ngModel)]="editingCourse.name" required />
               </div>
               <div class="form-group">
-                <label for="editCourseDesc">Description</label>
+                <label for="editCourseDesc">Description & Schedule Notes</label>
                 <textarea id="editCourseDesc" name="editCourseDesc" [(ngModel)]="editingCourse.description" rows="3"></textarea>
               </div>
               <div class="form-group">
-                <label for="editServiceType">Delivery Method</label>
+                <label for="editServiceType">Delivery Method *</label>
                 <select id="editServiceType" name="editServiceType" [(ngModel)]="editingCourse.serviceType">
-                  <option [ngValue]="1">Online Session (1-on-1)</option>
-                  <option [ngValue]="2">Group Session</option>
-                  <option [ngValue]="3">Home-to-Home Visit Tutoring</option>
+                  <option [ngValue]="1">💻 Online Session (1-on-1 Personal Tutor)</option>
+                  <option [ngValue]="2">👥 Group Session (Academic Center Class)</option>
+                  <option [ngValue]="3">🏠 Home-to-Home Visit Tutoring</option>
                 </select>
               </div>
               <div class="modal-footer">
@@ -304,12 +304,12 @@ import { ToastService } from '../../services/toast.service';
         <div class="modal-overlay" (click)="closeGroupModal()">
           <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h3>Create Class Group</h3>
+              <h3>Create Class Group & Set Schedule</h3>
               <button type="button" class="close-btn" (click)="closeGroupModal()">&times;</button>
             </div>
             <form (ngSubmit)="onCreateGroup()">
               <div class="form-group">
-                <label for="assocCourse">Associated Course</label>
+                <label for="assocCourse">Associated Course *</label>
                 <select id="assocCourse" name="assocCourse" [(ngModel)]="newGroup.courseId" required>
                   @for (c of courses(); track c.id) {
                     <option [value]="c.id">{{ c.name }} ({{ getServiceName(c.serviceType) }})</option>
@@ -317,11 +317,11 @@ import { ToastService } from '../../services/toast.service';
                 </select>
               </div>
               <div class="form-group">
-                <label for="groupName">Group Name</label>
-                <input id="groupName" name="groupName" [(ngModel)]="newGroup.name" placeholder="e.g. Group A - Morning" required />
+                <label for="groupName">Group Name & Schedule (Days, Time, Fee) *</label>
+                <input id="groupName" name="groupName" [(ngModel)]="newGroup.name" placeholder="e.g. Group A (Mon,Wed,Fri 10:00-12:00 AM | 2500 ETB/mo)" required />
               </div>
               <div class="form-group">
-                <label for="maxStudents">Max Student Limit</label>
+                <label for="maxStudents">Max Student Capacity Limit *</label>
                 <input id="maxStudents" type="number" name="maxStudents" [(ngModel)]="newGroup.maximumStudents" min="1" required />
               </div>
               <div class="modal-footer">
@@ -338,16 +338,16 @@ import { ToastService } from '../../services/toast.service';
         <div class="modal-overlay" (click)="closeEditGroupModal()">
           <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h3>✏️ Edit Class Group</h3>
+              <h3>✏️ Edit Class Group & Schedule</h3>
               <button type="button" class="close-btn" (click)="closeEditGroupModal()">&times;</button>
             </div>
             <form (ngSubmit)="onUpdateGroup()">
               <div class="form-group">
-                <label for="editGroupName">Group Name</label>
+                <label for="editGroupName">Group Name & Schedule *</label>
                 <input id="editGroupName" name="editGroupName" [(ngModel)]="editingGroup.name" required />
               </div>
               <div class="form-group">
-                <label for="editMaxStudents">Max Student Limit</label>
+                <label for="editMaxStudents">Max Student Limit *</label>
                 <input id="editMaxStudents" type="number" name="editMaxStudents" [(ngModel)]="editingGroup.maximumStudents" min="1" required />
               </div>
               <div class="modal-footer">

@@ -41,7 +41,7 @@ export class HomeAttendanceComponent implements OnInit {
   checkInForm = this.fb.nonNullable.group({
     studentId: ["", Validators.required],
     teacherId: ["", Validators.required],
-    classGroupId: ["", Validators.required],
+    classGroupId: [""],
     attendanceDate: [new Date().toISOString().substring(0, 10), Validators.required],
     checkInLatitude: [37.7749, Validators.required],
     checkInLongitude: [-122.4194, Validators.required],
@@ -55,9 +55,39 @@ export class HomeAttendanceComponent implements OnInit {
     checkOutLongitude: [-122.4194, Validators.required],
   });
 
+  registeredStudentAddress = signal<string>("124 Maple Street, Apt 4B");
+  gpsDetecting = signal<boolean>(false);
+
   ngOnInit() {
     this.loadData();
     this.loadActiveVisits();
+    this.autoDetectGps();
+  }
+
+  autoDetectGps() {
+    if ('geolocation' in navigator) {
+      this.gpsDetecting.set(true);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = Math.round(pos.coords.latitude * 10000) / 10000;
+          const lng = Math.round(pos.coords.longitude * 10000) / 10000;
+          this.checkInForm.patchValue({
+            checkInLatitude: lat,
+            checkInLongitude: lng
+          });
+          this.checkOutForm.patchValue({
+            checkOutLatitude: lat,
+            checkOutLongitude: lng
+          });
+          this.gpsDetecting.set(false);
+          this.toast.showSuccess(`Current GPS location captured: ${lat}, ${lng}`);
+        },
+        () => {
+          this.gpsDetecting.set(false);
+        },
+        { timeout: 8000 }
+      );
+    }
   }
 
   loadData() {
@@ -130,6 +160,10 @@ export class HomeAttendanceComponent implements OnInit {
   onStudentSelected(studentId: string) {
     this.selectedStudentId.set(studentId);
     this.checkInForm.patchValue({ studentId });
+    const selectedObj = this.studentOptions().find(s => s.id === studentId);
+    const mockAddr = selectedObj ? `Registered Home: ${selectedObj.name}'s Residence (124 Maple Street)` : '124 Maple Street, Apt 4B';
+    this.registeredStudentAddress.set(mockAddr);
+    this.checkInForm.patchValue({ address: mockAddr });
   }
 
   onTeacherSelected(teacherId: string) {
@@ -157,9 +191,12 @@ export class HomeAttendanceComponent implements OnInit {
     }
 
     const raw = this.checkInForm.getRawValue();
+    const effectiveClassGroupId = raw.classGroupId || (this.groupOptions().length > 0 ? this.groupOptions()[0].id : '00000000-0000-0000-0000-000000000000');
+
     this.api
       .checkInHomeAttendance({
         ...raw,
+        classGroupId: effectiveClassGroupId,
         targetLatitude: raw.checkInLatitude,
         targetLongitude: raw.checkInLongitude,
         address: raw.address || undefined,

@@ -82,9 +82,15 @@ import { ToastService } from '../../services/toast.service';
                 </button>
                 <button type="button" class="btn-reject" (click)="rejectReg(item.id)">Reject</button>
               }
-              @if (isStatusAwaitingPayment(item.status) || isStatusSubmitted(item.status)) {
+              @if (isStatusAwaitingPayment(item.status)) {
+                <div class="awaiting-payment-info">
+                  🔵 <strong>Tutor Assigned. Awaiting Student Payment Receipt Upload...</strong>
+                </div>
+                <button type="button" class="btn-reject" (click)="rejectReg(item.id)">Reject</button>
+              }
+              @if (isStatusSubmitted(item.status)) {
                 <button type="button" class="btn-verify" (click)="verifyPayment(item.id)">
-                  ✅ Verify Payment & Issue Credentials
+                  ✅ Verify Payment Receipt & Enroll Student
                 </button>
                 <button type="button" class="btn-reject" (click)="rejectReg(item.id)">Reject</button>
               }
@@ -202,6 +208,7 @@ import { ToastService } from '../../services/toast.service';
     .btn-primary { background: var(--color-accent); color: #fff; border: none; padding: 0.55rem 1.1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
     .btn-secondary { background: var(--color-bg); color: var(--color-text); border: 1px solid var(--color-border); padding: 0.55rem 1.1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
     .verified-badge { color: #10b981; font-weight: 600; font-size: 0.9rem; }
+    .awaiting-payment-info { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #2563eb; padding: 0.5rem 0.85rem; border-radius: 6px; font-size: 0.88rem; flex: 1; }
     
     .status-pill { font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 6px; }
     .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }

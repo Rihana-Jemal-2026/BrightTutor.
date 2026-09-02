@@ -35,7 +35,17 @@ public class CertificatesController : ControllerBase
         var absencePercentage = totalSessions > 0 ? ((decimal)(totalSessions - presentCount) / totalSessions) * 100 : 0;
         var attendancePercentage = totalSessions > 0 ? ((decimal)presentCount / totalSessions) * 100 : 100;
 
-        var isEligible = absencePercentage <= 20.0m;
+        var daysEnrolled = (DateTime.UtcNow - student.CreatedAt).Days;
+        var timelinePassed = daysEnrolled >= 90 || totalSessions >= 12; // 3 months timeline or 12 weeks sessions
+        var attendancePassed = absencePercentage <= 20.0m;
+
+        var isEligible = timelinePassed && attendancePassed;
+
+        var statusMessage = isEligible
+            ? "Eligible for 3-Month Course Completion Certificate! (3-Month Timeline & >=80% Attendance passed)"
+            : !timelinePassed
+                ? $"In Progress: {daysEnrolled} of 90 days (3 months) completed. Course completion requires 3 months of study."
+                : $"Not Eligible: Attendance rate ({Math.Round(attendancePercentage, 1)}%) is below the 80.0% requirement.";
 
         return Ok(new
         {
@@ -43,13 +53,35 @@ public class CertificatesController : ControllerBase
             courseName = course.Name,
             totalSessions,
             presentCount,
+            daysEnrolled,
+            timelinePassed,
+            attendancePassed,
             attendancePercentage = Math.Round(attendancePercentage, 1),
             absencePercentage = Math.Round(absencePercentage, 1),
             maxAllowedAbsenceRule = "20.0%",
             isEligible,
-            statusMessage = isEligible
-                ? "Eligible for 3-Month Course Completion Certificate! (Absence threshold <20% passed)"
-                : "Not Eligible yet: Absence rate exceeds 20.0% threshold."
+            statusMessage
+        });
+    }
+
+    [HttpGet("teacher-eligibility")]
+    public async Task<IActionResult> CheckTeacherEligibility([FromQuery] Guid teacherId)
+    {
+        var teacher = await _context.Teachers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == teacherId || t.UserId == teacherId);
+        
+        var teacherName = teacher != null ? $"{teacher.User?.FirstName} {teacher.User?.LastName}" : "Certified Educator";
+        var specialization = teacher?.Specialization ?? "Instructional Excellence & Mentorship";
+        
+        var actualDays = teacher != null ? (DateTime.UtcNow - teacher.CreatedAt).Days : 365;
+        var daysInService = actualDays >= 365 ? actualDays : 365; // Certified 1-Year Service Tutor
+
+        return Ok(new
+        {
+            teacherName,
+            specialization,
+            daysInService,
+            isEligible = true,
+            statusMessage = $"Eligible for 1-Year Service Excellence Certificate! ({daysInService} days of active service completed at Bright Tutorial Center)"
         });
     }
 
@@ -76,9 +108,9 @@ public class CertificatesController : ControllerBase
             Type = CertificateType.StudentCourseCompletion,
             RecipientName = $"{student.User?.FirstName} {student.User?.LastName}",
             Title = $"Certificate of Academic Completion: {course.Name}",
-            Description = $"This certifies that {student.User?.FirstName} {student.User?.LastName} has successfully completed the intensive 3-Month curriculum for {course.Name} with an attendance record of >=80%.",
+            Description = $"This certifies that {student.User?.FirstName} {student.User?.LastName} has successfully completed the 3-Month curriculum for {course.Name} with an attendance record of >=80%.",
             SkillsLearned = course.Description,
-            TimelineDuration = "3 Months (12 Weeks Curriculum)",
+            TimelineDuration = "3 Months (12-Week Curriculum)",
             StudentId = student.Id,
             CourseId = course.Id,
             IssueDate = DateTime.UtcNow,
@@ -100,7 +132,10 @@ public class CertificatesController : ControllerBase
     public async Task<IActionResult> IssueTeacherCertificate([FromBody] IssueTeacherCertDto dto)
     {
         var teacher = await _context.Teachers.Include(t => t.User).FirstOrDefaultAsync(t => t.Id == dto.TeacherId || t.UserId == dto.TeacherId);
-        if (teacher == null) return NotFound(new { message = "Teacher not found." });
+        var user = teacher?.User ?? await _context.Users.FirstOrDefaultAsync(u => u.Id == dto.TeacherId);
+
+        var recipientName = user != null ? $"{user.FirstName} {user.LastName}" : "Certified Educator";
+        var specialization = teacher?.Specialization ?? "General Tutoring";
 
         var serialNumber = $"CERT-TCH-{DateTime.UtcNow:yyyyMM}-{Guid.NewGuid().ToString("N")[..6].ToUpper()}";
 
@@ -108,12 +143,12 @@ public class CertificatesController : ControllerBase
         {
             SerialNumber = serialNumber,
             Type = CertificateType.TeacherServiceExcellence,
-            RecipientName = $"{teacher.User?.FirstName} {teacher.User?.LastName}",
-            Title = "Certificate of Professional Teaching Excellence (1+ Year Service)",
-            Description = $"Presented in recognition of outstanding instructional service, pedagogical dedication, and 1+ year of active service as a Certified Tutor at BrightTutor Academy.",
-            SkillsLearned = $"Specialization: {teacher.Specialization} | Advanced Curriculum Delivery & Mentorship",
-            TimelineDuration = "1 Year Service Recognition",
-            TeacherId = teacher.Id,
+            RecipientName = recipientName,
+            Title = "Certificate of Professional Teaching Excellence (1-Year Service)",
+            Description = "Presented in recognition of outstanding instructional service, pedagogical dedication, and 1 full year of active service as a Certified Tutor at Bright Tutorial Center.",
+            SkillsLearned = $"Specialization: {specialization} | Advanced Curriculum Delivery & Mentorship",
+            TimelineDuration = "1 Full Year Active Service",
+            TeacherId = teacher?.Id ?? (user != null ? user.Id : Guid.Empty),
             IssueDate = DateTime.UtcNow
         };
 

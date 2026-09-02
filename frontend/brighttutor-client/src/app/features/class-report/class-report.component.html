@@ -1,27 +1,34 @@
 <div class="page">
   <h1>Class Attendance Report</h1>
 
-  <div class="search-bar">
-    <div class="field select-field">
-      <app-searchable-select
-        label="👥 Select Class Group"
-        placeholder="Choose Class Group..."
-        searchPlaceholder="Type group name to search..."
-        [options]="groupOptions()"
-        [value]="classGroupId()"
-        (valueChange)="onGroupSelected($event)"
-      ></app-searchable-select>
+  @if (noAssignedClasses()) {
+    <div class="alert alert-warning" style="margin-bottom: 1.5rem; padding: 1.2rem; background: #fffbe6; border: 1.5px solid #ffe58f; border-radius: 10px; color: #873800;">
+      <strong>⚠️ No Assigned Class Groups Found</strong>
+      <p style="margin-top: 0.35rem; margin-bottom: 0;">You currently have no class groups assigned to your educator profile. Please contact Academy Admin to assign your teacher profile to a class group.</p>
     </div>
-    <div class="field">
-      <label for="startDate">Start Date</label>
-      <input id="startDate" type="date" [(ngModel)]="startDate" name="startDate" class="form-control" />
+  } @else {
+    <div class="search-bar">
+      <div class="field select-field">
+        <app-searchable-select
+          label="🎯 Filter by Class Group / All Modes"
+          placeholder="Choose Class Group or All Modes..."
+          searchPlaceholder="Type group name to search..."
+          [options]="groupOptions()"
+          [value]="classGroupId()"
+          (valueChange)="onGroupSelected($event)"
+        ></app-searchable-select>
+      </div>
+      <div class="field">
+        <label for="startDate">Start Date</label>
+        <input id="startDate" type="date" [(ngModel)]="startDate" name="startDate" class="form-control" />
+      </div>
+      <div class="field">
+        <label for="endDate">End Date</label>
+        <input id="endDate" type="date" [(ngModel)]="endDate" name="endDate" class="form-control" />
+      </div>
+      <button type="button" class="btn-search" (click)="search()">Search</button>
     </div>
-    <div class="field">
-      <label for="endDate">End Date</label>
-      <input id="endDate" type="date" [(ngModel)]="endDate" name="endDate" class="form-control" />
-    </div>
-    <button type="button" class="btn-search" (click)="search()">Search</button>
-  </div>
+  }
 
   @if (reportResource.isLoading()) {
     <div class="spinner">Loading report...</div>

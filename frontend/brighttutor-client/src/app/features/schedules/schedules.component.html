@@ -15,7 +15,7 @@
         <p class="subtitle">Plan recurring timetables, organize online video classrooms, and manage home tutoring sessions.</p>
       </div>
     </div>
-    @if (authService.isAdmin() || authService.isTeacher()) {
+    @if (authService.isAdmin()) {
       <button type="button" class="btn-primary-action" (click)="openCreateModal()">
         <span class="btn-icon">+</span> Schedule New Session
       </button>
@@ -86,7 +86,7 @@
             <th>Course & Class Group</th>
             <th>Assigned Teacher / Student</th>
             <th>Status</th>
-            @if (authService.isAdmin() || authService.isTeacher()) {
+            @if (authService.isAdmin()) {
               <th class="text-right">Actions</th>
             }
           </tr>
@@ -134,19 +134,17 @@
                   ● {{ getStatusLabel(item.status) }}
                 </span>
               </td>
-              @if (authService.isAdmin() || authService.isTeacher()) {
+              @if (authService.isAdmin()) {
                 <td class="text-right">
                   <div class="actions-group">
-                    @if (authService.isAdmin()) {
-                      <button
-                        type="button"
-                        class="btn-action-icon btn-edit"
-                        (click)="openEditModal(item)"
-                        title="Edit Schedule Details"
-                      >
-                        ✏️
-                      </button>
-                    }
+                    <button
+                      type="button"
+                      class="btn-action-icon btn-edit"
+                      (click)="openEditModal(item)"
+                      title="Edit Schedule Details"
+                    >
+                      ✏️
+                    </button>
                     @if (isScheduled(item.status)) {
                       <button type="button" class="btn-action-icon btn-complete" (click)="updateStatus(item, ScheduleStatus.Completed)" title="Mark as Completed">✓</button>
                       <button type="button" class="btn-action-icon btn-cancel-status" (click)="updateStatus(item, ScheduleStatus.Cancelled)" title="Cancel Schedule">✕</button>

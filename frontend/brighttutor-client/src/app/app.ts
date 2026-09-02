@@ -27,6 +27,10 @@ export class App implements OnInit {
   changingPassword = signal<boolean>(false);
   isDarkMode = signal<boolean>(false);
 
+  showOldPassword = signal<boolean>(false);
+  showNewPassword = signal<boolean>(false);
+  showConfirmPassword = signal<boolean>(false);
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const notifElem = this.elementRef.nativeElement.querySelector('.notification-wrapper');
@@ -141,6 +145,9 @@ export class App implements OnInit {
 
   openProfileModal(): void {
     this.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
+    this.showOldPassword.set(false);
+    this.showNewPassword.set(false);
+    this.showConfirmPassword.set(false);
     this.isProfileModalOpen.set(true);
   }
 
@@ -172,7 +179,7 @@ export class App implements OnInit {
       next: () => {
         this.changingPassword.set(false);
         this.closeProfileModal();
-        this.toastService.showSuccess('Password updated successfully!');
+        this.toastService.showSuccess('Password updated successfully! Your default password is now deactivated. Please use your new password.');
       },
       error: (err) => {
         this.changingPassword.set(false);

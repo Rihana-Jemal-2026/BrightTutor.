@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { StudentRegistrationService, RegistrationTrackDto } from '../../services/student-registration.service';
 import { CourseService, CourseDto } from '../../services/course.service';
 import { ToastService } from '../../services/toast.service';
@@ -9,9 +10,13 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 @Component({
   selector: 'app-student-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="register-portal-page">
+      <div class="header-nav-row">
+        <a routerLink="/login" class="btn-back-login">← Back to Login Page</a>
+      </div>
+
       <div class="portal-header">
         <h1>🎓 Student Admissions & Tutoring Portal</h1>
         <p>Register for 1-on-1 tutoring, check teacher availability (3-5 hr SLA), and manage payment slips.</p>
@@ -31,6 +36,18 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
         <div class="portal-card">
           @if (currentStep() === 1) {
             <form (ngSubmit)="onSubmitRegistration()">
+              <div class="fee-notice-banner">
+                <div class="notice-icon">📑</div>
+                <div class="notice-body">
+                  <h4>Admission Notice & Transparency Policy</h4>
+                  <ul>
+                    <li><strong>500 ETB One-Time Registration Fee</strong> applies to all new student admissions across all learning modes.</li>
+                    <li><strong>NO PAYMENT IS REQUIRED TODAY.</strong> Your application is placed under <strong>Pending Teacher Availability Check (3-5 working hours)</strong>.</li>
+                    <li>Payment instructions and slip upload are unlocked on your dashboard <strong>only after our admin verifies that a teacher is available</strong> for your schedule.</li>
+                  </ul>
+                </div>
+              </div>
+
               <h3>Student Registration & Tutor Screening Form</h3>
 
               <div class="form-row">
@@ -79,16 +96,16 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               <div class="form-row">
                 <div class="form-group">
                   <label>Service Delivery Method *</label>
-                  <select [(ngModel)]="form.desiredServiceType" name="desiredServiceType" required>
-                    <option [ngValue]="1">💻 Online 1-on-1 Tutoring</option>
+                  <select [(ngModel)]="form.desiredServiceType" name="desiredServiceType" (change)="onServiceTypeChange()" required>
+                    <option [ngValue]="1">💻 Online 1-on-1 Tutoring (Personal Tutor)</option>
                     <option [ngValue]="2">👥 In-Person Group Class (Academic Center)</option>
-                    <option [ngValue]="3">🏠 Home-to-Home Visit (Private Tutor)</option>
+                    <option [ngValue]="3">🏠 Home-to-Home Visit (Private Tutor at Home)</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <label>Select Course Catalog</label>
-                  <select [(ngModel)]="selectedCourseOption" name="selectedCourseOption">
+                  <label>Select Course Catalog *</label>
+                  <select [(ngModel)]="selectedCourseOption" name="selectedCourseOption" (change)="onCourseSelectedChange()">
                     <option value="">-- Choose From Available Course Catalog --</option>
                     @for (course of courses(); track course.id) {
                       <option [value]="course.id">{{ course.name }}</option>
@@ -109,9 +126,73 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 />
               </div>
 
+              <!-- 1-ON-1 SCHEDULE SELECTION FOR ONLINE & HOME TUTORING -->
+              @if (form.desiredServiceType === 1 || form.desiredServiceType === 3) {
+                <div class="schedule-config-card">
+                  <h4>🗓️ 1-on-1 Personal Class Schedule Request</h4>
+                  <p class="subtitle">Select your preferred learning days and time window so our admin can match an available teacher.</p>
+
+                  <div class="form-group">
+                    <label>Select Wanted Learning Days *</label>
+                    <div class="days-pill-group">
+                      @for (day of availableDays; track day) {
+                        <button
+                          type="button"
+                          class="day-pill"
+                          [class.selected]="selectedDays.includes(day)"
+                          (click)="toggleDay(day)"
+                        >
+                          {{ selectedDays.includes(day) ? '✓ ' : '' }}{{ day }}
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Wanted Learning Time (From) *</label>
+                      <input type="time" [(ngModel)]="wantedTimeFrom" name="wantedTimeFrom" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                      <label>Wanted Learning Time (To) *</label>
+                      <input type="time" [(ngModel)]="wantedTimeTo" name="wantedTimeTo" class="form-control" required />
+                    </div>
+                  </div>
+
+                  <div class="rate-summary-box">
+                    <div class="rate-item">
+                      <span class="rate-label">⏱️ Hourly Tuition Rate:</span>
+                      <span class="rate-val">{{ form.desiredServiceType === 3 ? '450 ETB / hour (Home Visit)' : '350 ETB / hour (Online 1-on-1)' }}</span>
+                    </div>
+                    <div class="rate-item">
+                      <span class="rate-label">📑 One-Time Admission Fee:</span>
+                      <span class="rate-val">500 ETB</span>
+                    </div>
+                    <div class="rate-item total">
+                      <span class="rate-label">💳 Payment Policy:</span>
+                      <span class="rate-val text-green">Pay ONLY after Admin approves teacher availability!</span>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- GROUP CLASS FIXED SCHEDULE & PRICING DISPLAY -->
+              @if (form.desiredServiceType === 2) {
+                <div class="group-schedule-card">
+                  <h4>👥 Group Class Schedule & Fixed Pricing</h4>
+                  <div class="group-info-grid">
+                    <div><strong>🗓️ Class Days:</strong> Mon, Wed, Fri</div>
+                    <div><strong>⏰ Class Hours:</strong> 10:00 AM – 12:00 PM (Center Session)</div>
+                    <div><strong>💰 Monthly Tuition:</strong> 2,500 ETB / Month</div>
+                    <div><strong>📑 Admission Fee:</strong> 500 ETB (One-Time)</div>
+                  </div>
+                  <p class="group-note">💡 Payment is made AFTER admin confirms group seat availability.</p>
+                </div>
+              }
+
               <div class="form-actions">
                 <button type="submit" class="btn-primary" [disabled]="submitting()">
-                  @if (submitting()) { Submitting Application... } @else { Submit Application & Initiate Tutor Check }
+                  @if (submitting()) { Submitting Application... } @else { Submit Application & Check Teacher Availability (3-5 hrs SLA) }
                 </button>
               </div>
             </form>
@@ -119,27 +200,36 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
           @if (currentStep() === 2) {
             <div class="complete-step">
-              <div class="sla-banner">
-                <div class="sla-icon">⏳</div>
-                <div class="sla-info">
-                  <h2>Application Received — Pending Teacher Check</h2>
-                  <p>Our academic coordinator is currently checking tutor availability for your requested course and location.</p>
-                  <div class="sla-timer-badge">⏰ Estimated SLA: 3 to 5 Working Hours</div>
+              <div class="success-header-card">
+                <div class="success-icon">🎉</div>
+                <h2>Registration Submitted Successfully!</h2>
+                <div class="pending-status-badge">Status: ⏳ Pending Admin & Teacher Availability Review</div>
+                
+                <div class="company-approval-box">
+                  <p class="main-thank-you">Thank you for registering with BrightTutor Academy!</p>
+                  <p class="approval-note">
+                    Your application is currently in <strong>Pending Review</strong> status. Our academic administration team is checking teacher availability for your requested course and schedule window. 
+                    <strong>The company will review and approve your application within 3 to 5 working hours.</strong>
+                  </p>
+                  <p class="no-payment-guarantee">
+                    🛡️ <strong>No payment is required today.</strong> Payment options & slip upload will be unlocked only after admin confirms teacher availability.
+                  </p>
                 </div>
               </div>
 
               <div class="tracking-summary-card">
-                <h4>Your Tracking Information</h4>
-                <p><strong>Tracking Email:</strong> {{ form.email }}</p>
-                <p><strong>Registration Code:</strong> <code>{{ createdRegistrationId() }}</code></p>
-                <p>You may use your email address or Registration Code to track tutor assignment status and upload payment slip at any time.</p>
+                <h4>🔑 Your Portal Login & Registration Credentials</h4>
+                <p><strong>Registered Email:</strong> {{ form.email }}</p>
+                <p><strong>Default Initial Password:</strong> <code style="background: var(--color-primary); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;">StudentPass123!</code></p>
+                <p><strong>Registration ID:</strong> <code>{{ createdRegistrationId() }}</code></p>
+                <p>Use your email address and default password <code>StudentPass123!</code> to sign in to your Student Dashboard at any time. You can change your password anytime after logging in.</p>
               </div>
 
               <div class="action-buttons">
                 <button type="button" class="btn-secondary" (click)="activeTab.set('track'); searchEmail = form.email; onSearchTrack()">
                   🔍 Track Application Status Now
                 </button>
-                <button type="button" class="btn-primary" (click)="resetForm()">Register Another Student</button>
+                <button type="button" class="btn-primary" (click)="resetForm()">Back to Admission Form</button>
               </div>
             </div>
           }
@@ -150,7 +240,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       @if (activeTab() === 'track') {
         <div class="tracking-card">
           <h3>Look Up Registration & Payment Portal</h3>
-          <p class="subtitle">Enter your Email Address or Registration Code to view tutor assignment and submit payment.</p>
+          <p class="subtitle">Enter your Email Address or Registration Code to check tutor assignment and access payment options.</p>
 
           <div class="search-bar">
             <input type="text" [(ngModel)]="searchEmail" name="searchEmail" placeholder="Enter Email or Reg ID (e.g. samuel@gmail.com)" (keyup.enter)="onSearchTrack()" />
@@ -168,7 +258,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               </div>
 
               <div class="notice-card">
-                <div class="notice-title">📋 Status Notice:</div>
+                <div class="notice-title">📋 Application Notice:</div>
                 <p>{{ trackedResult()!.notice }}</p>
               </div>
 
@@ -182,7 +272,19 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 </div>
               }
 
-              <!-- 1. PAYMENT ALREADY SUBMITTED (UNDER ADMIN REVIEW) -->
+              <!-- CASE 1: APPLICATION PENDING ADMIN REVIEW (NO PAYMENT ALLOWED YET!) -->
+              @if (trackedResult()!.statusCode === 1 || trackedResult()!.status === 'PendingTeacherCheck') {
+                <div class="pending-review-banner">
+                  <div class="banner-icon">⏳</div>
+                  <div class="banner-content">
+                    <h4>Registration Pending Review — No Payment Needed Yet</h4>
+                    <p>Our academic team is currently matching a certified teacher for your requested schedule and location.</p>
+                    <p class="highlight-text">💡 Payment instructions & receipt upload will be unlocked right here on this page within <strong>3 to 5 working hours</strong> once admin approves teacher availability.</p>
+                  </div>
+                </div>
+              }
+
+              <!-- CASE 2: PAYMENT ALREADY SUBMITTED (UNDER ADMIN REVIEW) -->
               @if (trackedResult()!.statusCode === 3 || trackedResult()!.status === 'PaymentSubmitted') {
                 <div class="payment-submitted-card">
                   <div class="submitted-header">
@@ -206,11 +308,11 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 </div>
               }
 
-              <!-- 2. PAYMENT SLIP UPLOAD FORM (WHEN TUTOR ASSIGNED BUT NOT SUBMITTED YET) -->
+              <!-- CASE 3: PAYMENT SLIP UPLOAD FORM (ONLY UNLOCKED WHEN ADMIN APPROVES TEACHER!) -->
               @if (trackedResult()!.statusCode === 2 || trackedResult()!.status === 'ApprovedPendingPayment') {
                 <div class="payment-card">
-                  <h3>💳 Tuition Payment Instructions</h3>
-                  <p>Please send tuition fees to one of the official BrightTutor accounts below:</p>
+                  <h3>💳 Tuition & 500 ETB Admission Fee Payment Instructions</h3>
+                  <p>Teacher matched! Please transfer tuition + 500 ETB registration fee to one of the official BrightTutor accounts below:</p>
 
                   <div class="bank-options">
                     <div class="bank-pill">
@@ -241,7 +343,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                       </div>
                       <div class="form-group">
                         <label>Amount Paid (ETB) *</label>
-                        <input type="number" [(ngModel)]="receiptForm.amountPaid" name="pAmount" placeholder="3500" required />
+                        <input type="number" [(ngModel)]="receiptForm.amountPaid" name="pAmount" placeholder="4000" required />
                       </div>
                     </div>
 
@@ -264,10 +366,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               }
 
               @if (trackedResult()!.issuedStudentCode) {
-                <div class="credentials-card">
-                  <h3>🎉 Registration Complete & Verified</h3>
-                  <p>Your permanent Student ID: <strong>{{ trackedResult()!.issuedStudentCode }}</strong></p>
-                  <p>You can now sign in using your registered email and default password sent to your email.</p>
+                <div class="credentials-issued-card">
+                  <div class="issued-icon">🎉</div>
+                  <h3>ACCOUNT ACTIVATED & STUDENT ID ISSUED!</h3>
+                  <div class="student-id-display">
+                    Issued Student ID Code: <code>{{ trackedResult()!.issuedStudentCode }}</code>
+                  </div>
+                  
+                  <div class="login-credentials-box">
+                    <p><strong>Login Email / ID:</strong> <code>{{ trackedResult()!.issuedStudentCode }}</code> or <code>{{ trackedResult()!.email }}</code></p>
+                    <p><strong>Default Password:</strong> <code>StudentPass123!</code></p>
+                    <p><strong>Assigned Educator:</strong> {{ trackedResult()!.assignedTeacherName || 'Certified Tutor' }}</p>
+                  </div>
+
+                  <a routerLink="/login" [queryParams]="{email: trackedResult()!.issuedStudentCode}" class="btn-direct-login">
+                    🔑 Click Here to Login to Your Student Dashboard →
+                  </a>
                 </div>
               }
             </div>
@@ -284,6 +398,10 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       width: 100%;
       box-sizing: border-box;
     }
+
+    .header-nav-row { margin-bottom: 1rem; }
+    .btn-back-login { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--color-surface); color: var(--color-primary); border: 1.5px solid var(--color-border); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: var(--shadow-card); transition: all 0.2s; }
+    .btn-back-login:hover { background: var(--color-primary); color: white; border-color: var(--color-primary); transform: translateX(-3px); }
 
     .portal-header h1 {
       color: var(--color-primary);
@@ -461,24 +579,171 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       margin-top: 1rem;
     }
 
-    .sla-banner {
-      display: flex;
-      gap: 1rem;
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid #F59E0B;
-      padding: 1.25rem;
-      border-radius: 12px;
+    .success-header-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.08));
+      border: 2px solid #10B981;
+      padding: 1.75rem;
+      border-radius: 14px;
+      text-align: center;
       margin-bottom: 1.5rem;
-      align-items: center;
-    }
 
-    .sla-icon { font-size: 2.5rem; }
-    .sla-info h2 { color: #B45309; margin: 0 0 0.25rem 0; font-size: 1.25rem; }
-    .sla-info p { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #78350F; }
-    .sla-timer-badge { display: inline-block; background: #F59E0B; color: #fff; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
+      .success-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+      h2 { color: #047857; margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 800; }
+
+      .pending-status-badge {
+        display: inline-block;
+        background: #F59E0B;
+        color: #fff;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .company-approval-box {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
+        padding: 1.2rem;
+        text-align: left;
+
+        .main-thank-you {
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: var(--color-accent);
+          margin: 0 0 0.5rem 0;
+        }
+
+        .approval-note {
+          font-size: 0.95rem;
+          color: var(--color-text);
+          line-height: 1.6;
+          margin: 0 0 0.75rem 0;
+        }
+
+        .no-payment-guarantee {
+          font-size: 0.9rem;
+          color: #047857;
+          background: rgba(16, 185, 129, 0.1);
+          padding: 0.65rem 0.85rem;
+          border-radius: 6px;
+          margin: 0;
+        }
+      }
+    }
 
     .tracking-summary-card { background: var(--color-bg); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; }
     .action-buttons { display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap; }
+
+    .fee-notice-banner {
+      display: flex;
+      gap: 1rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1.5px solid #10B981;
+      padding: 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      align-items: flex-start;
+
+      .notice-icon { font-size: 2rem; flex-shrink: 0; }
+      .notice-body h4 { margin: 0 0 0.5rem 0; color: #047857; font-size: 1.05rem; }
+      .notice-body ul { margin: 0; padding-left: 1.25rem; font-size: 0.88rem; color: var(--color-text); line-height: 1.5; }
+      .notice-body li { margin-bottom: 0.35rem; }
+    }
+
+    .schedule-config-card, .group-schedule-card {
+      background: var(--color-bg);
+      border: 1.5px solid var(--color-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+
+      h4 { margin: 0 0 0.35rem 0; color: var(--color-text); font-size: 1.05rem; }
+      .subtitle { margin: 0 0 1rem 0; font-size: 0.85rem; color: var(--color-muted); }
+    }
+
+    .days-pill-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.4rem;
+    }
+
+    .day-pill {
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border);
+      color: var(--color-text);
+      padding: 0.45rem 0.85rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover { border-color: var(--color-accent); }
+      &.selected {
+        background: var(--color-accent);
+        color: #fff;
+        border-color: var(--color-accent);
+      }
+    }
+
+    .rate-summary-box {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      margin-top: 1rem;
+
+      .rate-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.88rem;
+        margin-bottom: 0.4rem;
+
+        &.total {
+          border-top: 1px dashed var(--color-border);
+          padding-top: 0.5rem;
+          margin-top: 0.5rem;
+          font-weight: 700;
+        }
+
+        .rate-label { color: var(--color-muted); }
+        .rate-val { font-weight: 600; color: var(--color-text); }
+        .text-green { color: #059669; }
+      }
+    }
+
+    .group-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      background: var(--color-surface);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      font-size: 0.9rem;
+      margin: 0.75rem 0;
+    }
+
+    .group-note { font-size: 0.85rem; color: var(--color-accent); margin: 0; font-weight: 600; }
+
+    .pending-review-banner {
+      display: flex;
+      gap: 1rem;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1.5px solid #F59E0B;
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-top: 1.25rem;
+      align-items: flex-start;
+
+      .banner-icon { font-size: 2.25rem; flex-shrink: 0; }
+      .banner-content h4 { margin: 0 0 0.35rem 0; color: #B45309; font-size: 1.1rem; }
+      .banner-content p { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #78350F; }
+      .highlight-text { font-weight: 600; color: #92400E !important; }
+    }
 
     .search-bar { display: flex; gap: 0.75rem; margin-top: 1rem; margin-bottom: 1.5rem; }
     .search-bar input { flex: 1; padding: 0.75rem; border-radius: 8px; border: 1.5px solid var(--color-border); background: var(--color-surface); }
@@ -542,12 +807,27 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .bank-pill { background: var(--color-bg); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); font-size: 0.85rem; }
     .preview-box { margin-top: 0.5rem; }
     .preview-box img { max-width: 250px; border-radius: 8px; border: 1px solid var(--color-border); margin-top: 0.5rem; }
-    .credentials-card { background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; padding: 1.25rem; border-radius: 12px; text-align: center; margin-top: 1rem; }
+    .credentials-issued-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.05));
+      border: 2px solid #10B981;
+      padding: 1.5rem;
+      border-radius: 14px;
+      text-align: center;
+      margin-top: 1.5rem;
+      box-shadow: var(--shadow-card);
+
+      .issued-icon { font-size: 3rem; margin-bottom: 0.35rem; }
+      h3 { color: #047857; font-size: 1.35rem; font-weight: 900; margin: 0 0 0.75rem 0; }
+      .student-id-display { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-text); code { background: #10B981; color: white; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 1.2rem; font-weight: 800; } }
+      .login-credentials-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 1rem; text-align: left; margin-bottom: 1.25rem; p { margin: 0.35rem 0; font-size: 0.95rem; } code { background: rgba(59, 130, 246, 0.15); color: #2563eb; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700; } }
+      .btn-direct-login { display: inline-block; background: linear-gradient(135deg, #0B3D2E, #059669); color: white; padding: 0.85rem 1.75rem; border-radius: 10px; font-weight: 800; font-size: 1rem; text-decoration: none; box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25); transition: transform 0.2s; }
+      .btn-direct-login:hover { transform: translateY(-2px); }
+    }
 
     @media (max-width: 768px) {
       .register-portal-page { padding: 1rem 0.5rem; }
       .portal-card, .tracking-card { padding: 1.25rem; }
-      .form-row { grid-template-columns: 1fr; gap: 0.75rem; }
+      .form-row, .group-info-grid { grid-template-columns: 1fr; gap: 0.75rem; }
       .bank-options { grid-template-columns: 1fr; }
       .form-actions button, .btn-primary, .btn-secondary { width: 100%; }
       .search-bar { flex-direction: column; }
@@ -573,6 +853,11 @@ export class StudentRegisterComponent implements OnInit {
   countryList = COUNTRY_PHONE_LIST;
   selectedCountryCode = '+251';
   phoneNumberInput = '';
+
+  availableDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  selectedDays: string[] = ['Mon', 'Wed', 'Fri'];
+  wantedTimeFrom = '14:00';
+  wantedTimeTo = '16:00';
 
   activeTab = signal<'apply' | 'track'>('apply');
   courses = signal<CourseDto[]>([]);
@@ -602,7 +887,7 @@ export class StudentRegisterComponent implements OnInit {
   receiptForm = {
     paymentChannel: 'CBE Birr',
     transactionId: '',
-    amountPaid: 3500,
+    amountPaid: 4000,
     receiptImageBase64: ''
   };
 
@@ -612,6 +897,38 @@ export class StudentRegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.courseService.getCourses().subscribe(res => this.courses.set(res));
+  }
+
+  onServiceTypeChange(): void {
+    if (this.form.desiredServiceType === 3) {
+      this.receiptForm.amountPaid = 4500; // 4000 tuition + 500 admission fee
+    } else if (this.form.desiredServiceType === 1) {
+      this.receiptForm.amountPaid = 4000; // 3500 tuition + 500 admission fee
+    } else {
+      this.receiptForm.amountPaid = 3000; // 2500 group tuition + 500 admission fee
+    }
+  }
+
+  onCourseSelectedChange(): void {
+    if (this.selectedCourseOption && this.selectedCourseOption !== 'OTHER') {
+      const selected = this.courses().find(c => c.id === this.selectedCourseOption);
+      if (selected) {
+        this.form.desiredServiceType = selected.serviceType || 1;
+        this.onServiceTypeChange();
+      }
+    }
+  }
+
+  toggleDay(day: string): void {
+    if (this.selectedDays.includes(day)) {
+      if (this.selectedDays.length > 1) {
+        this.selectedDays = this.selectedDays.filter(d => d !== day);
+      } else {
+        this.toastService.show('Please select at least 1 preferred learning day.', 'info');
+      }
+    } else {
+      this.selectedDays.push(day);
+    }
   }
 
   getSelectedCountryFlagUrl(dialCode: string): string {
@@ -625,18 +942,34 @@ export class StudentRegisterComponent implements OnInit {
       return;
     }
 
+    let finalGradeLevel = this.form.gradeLevel.trim();
+
+    if (this.form.desiredServiceType === 1 || this.form.desiredServiceType === 3) {
+      if (this.selectedDays.length === 0 || !this.wantedTimeFrom || !this.wantedTimeTo) {
+        this.toastService.show('Please select your preferred learning days and time window (From - To).', 'error');
+        return;
+      }
+      finalGradeLevel += ` | Preferred Schedule: ${this.selectedDays.join(', ')} (${this.wantedTimeFrom} to ${this.wantedTimeTo})`;
+    } else {
+      finalGradeLevel += ` | Group Class Schedule: Mon, Wed, Fri (10:00 AM - 12:00 PM)`;
+    }
+
     if (this.customCourseInput && this.customCourseInput.trim().length > 0) {
       const customCourse = this.courses().find(c => c.name.toLowerCase().includes('custom') || c.name.toLowerCase().includes('requested')) || this.courses()[0];
       this.form.courseId = customCourse.id;
-      this.form.gradeLevel = `${this.form.gradeLevel.trim()} (Requested Custom Subject: ${this.customCourseInput.trim()})`;
+      finalGradeLevel += ` (Custom Requested Subject: ${this.customCourseInput.trim()})`;
     } else {
       this.form.courseId = this.selectedCourseOption;
     }
 
-    this.form.phoneNumber = `${this.selectedCountryCode} ${this.phoneNumberInput.trim()}`;
+    const payload = {
+      ...this.form,
+      gradeLevel: finalGradeLevel,
+      phoneNumber: `${this.selectedCountryCode} ${this.phoneNumberInput.trim()}`
+    };
 
     this.submitting.set(true);
-    this.registrationService.submitRegistration(this.form).subscribe({
+    this.registrationService.submitRegistration(payload).subscribe({
       next: (res) => {
         this.submitting.set(false);
         this.createdRegistrationId.set(res.registrationId);
