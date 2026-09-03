@@ -23,8 +23,9 @@ import { jsPDF } from 'jspdf';
         <div class="header-content">
           <div class="header-icon-box">📚</div>
           <div>
-            <h1 class="page-title">Homework, Tests, Gradebook & Certification</h1>
-            <p class="page-subtitle">Multi-assessment management, automated test evaluation, dynamic weighted gradebook & official certificate issuance.</p>
+            <h1 class="page-title">{{ authService.isStudent() ? 'My Course Tasks, Quizzes & Grades' : 'Homework, Tests, Gradebook & Certification' }}</h1>
+            <p class="page-subtitle">{{ authService.isStudent() ? 'Take interactive quizzes, submit homework, and view your academic achievements.' : 'Multi-assessment management, automated test evaluation, dynamic weighted gradebook & official certificate issuance.' }}</p>
+          </div>
         </div>
 
         @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
@@ -40,17 +41,21 @@ import { jsPDF } from 'jspdf';
       <div class="nav-tabs-container">
         <div class="nav-tabs">
           <button class="tab-btn" [class.active]="activeTab() === 'assessments'" (click)="setTab('assessments')">
-            <span class="tab-icon">📑</span> Course Tasks & Tests
+            <span class="tab-icon">📑</span> {{ authService.isStudent() ? 'Available Tasks & Tests' : 'Course Tasks & Tests' }}
             <span class="tab-badge">{{ assessments().length }}</span>
           </button>
-          <button class="tab-btn" [class.active]="activeTab() === 'gradebook'" (click)="setTab('gradebook')">
-            <span class="tab-icon">📊</span> Master Gradebook Matrix
-          </button>
-          <button class="tab-btn" [class.active]="activeTab() === 'final-grading'" (click)="setTab('final-grading')">
-            <span class="tab-icon">🎓</span> Final Course Grading & Certificates
-          </button>
+          
+          @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
+            <button class="tab-btn" [class.active]="activeTab() === 'gradebook'" (click)="setTab('gradebook')">
+              <span class="tab-icon">📊</span> Master Gradebook Matrix
+            </button>
+            <button class="tab-btn" [class.active]="activeTab() === 'final-grading'" (click)="setTab('final-grading')">
+              <span class="tab-icon">🎓</span> Final Course Grading & Certificates
+            </button>
+          }
+
           <button class="tab-btn" [class.active]="activeTab() === 'student-view'" (click)="setTab('student-view')">
-            <span class="tab-icon">👤</span> Student Portal & My Grades
+            <span class="tab-icon">👤</span> {{ authService.isStudent() ? 'My Performance & Grades' : 'Student Portal Preview' }}
           </button>
         </div>
       </div>
@@ -373,52 +378,210 @@ import { jsPDF } from 'jspdf';
       <!-- ========================================== -->
       @if (activeTab() === 'student-view') {
         <div class="tab-pane">
-          <div class="student-portal-header">
-            <div class="portal-student-select">
-              <label>Select Student Persona:</label>
-              <select [(ngModel)]="currentStudentId" (change)="loadStudentPersonaView()" class="form-control">
-                @for (s of students(); track s.id) {
-                  <option [value]="s.id">{{ s.firstName }} {{ s.lastName }} ({{ s.studentCode }})</option>
+          @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
+            <div class="student-portal-header">
+              <div class="portal-student-select">
+                <label>Select Student Persona (Admin/Teacher Preview Mode):</label>
+                <select [(ngModel)]="currentStudentId" (change)="loadStudentPersonaView()" class="form-control">
+                  @for (s of students(); track s.id) {
+                    <option [value]="s.id">{{ s.firstName }} {{ s.lastName }} ({{ s.studentCode }})</option>
+                  }
+                </select>
+              </div>
+            </div>
+          } @else {
+            <div class="student-logged-in-badge">
+              <div class="student-info-left">
+                <div class="student-avatar-pill">👤</div>
+                <div>
+                  <h3 class="student-profile-title">{{ getSelectedStudent()?.firstName || authService.currentUser()?.firstName }} {{ getSelectedStudent()?.lastName || authService.currentUser()?.lastName }}</h3>
+                  <span class="code-sub">Student Code: <strong>{{ getSelectedStudent()?.studentCode || 'STU-ACTIVE' }}</strong></span>
+                </div>
+              </div>
+              <div class="student-badge-right">
+                <span class="role-chip">🎓 Verified Student Account</span>
+              </div>
+            </div>
+          }
+
+          <!-- ==================================================== -->
+          <!-- PERSONAL STUDENT GRADEBOOK SHEET & MULTI-COURSE HUB -->
+          <!-- ==================================================== -->
+          <div class="student-gradebook-sheet">
+            <div class="sheet-top-bar">
+              <div class="course-selector-box">
+                <label for="studentCoursePicker">📖 My Enrolled Course:</label>
+                <select id="studentCoursePicker" [(ngModel)]="studentSelectedCourseId" (change)="onStudentCourseChange()" class="form-control course-dropdown-lg">
+                  @for (c of courses(); track c.id) {
+                    <option [value]="c.id">{{ c.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="sheet-cert-action">
+                @if (studentGradebookRow()?.isFinalized) {
+                  <button type="button" class="btn btn-view-cert" (click)="viewGeneratedCert(studentGradebookRow()?.certificateId, currentStudentId)">
+                    📜 View & Print My Digital Certificate
+                  </button>
+                } @else {
+                  <span class="in-progress-pill">⏳ Academic Term Active (Grading in Progress)</span>
                 }
-              </select>
+              </div>
+            </div>
+
+            <!-- 4 Dynamic Category Metric Cards -->
+            <div class="student-metrics-grid">
+              <div class="metric-card card-hw">
+                <div class="metric-header">
+                  <span class="metric-icon">📝</span>
+                  <span class="metric-weight">30% Weight</span>
+                </div>
+                <div class="metric-body">
+                  <span class="metric-label">Homework Avg</span>
+                  <span class="metric-val">{{ studentGradebookRow()?.hwAverage || 0 }}%</span>
+                </div>
+              </div>
+
+              <div class="metric-card card-quiz">
+                <div class="metric-header">
+                  <span class="metric-icon">⏱️</span>
+                  <span class="metric-weight">30% Weight</span>
+                </div>
+                <div class="metric-body">
+                  <span class="metric-label">Quizzes Avg</span>
+                  <span class="metric-val">{{ studentGradebookRow()?.quizAverage || 0 }}%</span>
+                </div>
+              </div>
+
+              <div class="metric-card card-test">
+                <div class="metric-header">
+                  <span class="metric-icon">📊</span>
+                  <span class="metric-weight">40% Weight</span>
+                </div>
+                <div class="metric-body">
+                  <span class="metric-label">Tests & Exams Avg</span>
+                  <span class="metric-val">{{ studentGradebookRow()?.testAverage || 0 }}%</span>
+                </div>
+              </div>
+
+              <div class="metric-card card-gpa">
+                <div class="metric-header">
+                  <span class="metric-icon">🏆</span>
+                  <span class="metric-weight">Final GPA</span>
+                </div>
+                <div class="metric-body">
+                  <span class="metric-label">Cumulative Score</span>
+                  <span class="metric-val gpa-highlight">
+                    {{ studentGradebookRow()?.cumulativeScore || 0 }}%
+                    <span class="gpa-letter">({{ studentGradebookRow()?.suggestedLetterGrade || 'N/A' }})</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Honors Standing Strip -->
+            <div class="honors-banner">
+              <div class="honors-left">
+                <span class="honors-icon">🎖️</span>
+                <div>
+                  <strong>Academic Standing & Honors Tier:</strong>
+                  <span class="honors-tier-name">{{ studentGradebookRow()?.honorsDistinction || 'Course In Progress' }}</span>
+                </div>
+              </div>
+              <div class="honors-right">
+                <span class="status-indicator" [class.finalized]="studentGradebookRow()?.isFinalized">
+                  {{ studentGradebookRow()?.isFinalized ? '🔒 Official Finalized Grade' : '⚡ Live Dynamic Calculation' }}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div class="student-tasks-container">
-            <h3>📝 My Active Course Tasks & Online Tests</h3>
-            <div class="tasks-list">
-              @for (a of assessments(); track a.id) {
-                <div class="task-row" [class.task-completed]="a.studentSubmission">
-                  <div class="task-info">
-                    <span class="type-tag" [ngClass]="getTypeTagClass(a.type)">{{ a.typeName }}</span>
-                    <div>
-                      <h4>{{ a.title }}</h4>
-                      <p class="course-sub">{{ a.courseName }} | Due: {{ formatDueDate(a.dueDate) }}</p>
-                    </div>
-                  </div>
+          <!-- Detailed Course Assessment Transcript Table -->
+          <div class="transcript-table-card">
+            <div class="transcript-header">
+              <div>
+                <h3>📋 Course Assessment Breakdown & Academic Transcript</h3>
+                <p>Real-time scores, task weighting, and instructor feedback for your active coursework.</p>
+              </div>
+            </div>
 
-                  <div class="task-status-area">
-                    @if (a.studentSubmission) {
-                      <div class="graded-result">
-                        @if (a.studentSubmission.score !== null && a.studentSubmission.score !== undefined) {
-                          <span class="score-tag">{{ a.studentSubmission.score }} / {{ a.maxScore }} pts ({{ a.studentSubmission.letterGrade }})</span>
+            <div class="table-responsive">
+              <table class="transcript-table">
+                <thead>
+                  <tr>
+                    <th>Assessment Task</th>
+                    <th>Category</th>
+                    <th>Weight</th>
+                    <th>Max Points</th>
+                    <th>My Score</th>
+                    <th>Grade</th>
+                    <th>Status</th>
+                    <th>Action / Feedback</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (a of assessments(); track a.id) {
+                    <tr>
+                      <td class="task-title-cell">
+                        <strong>{{ a.title }}</strong>
+                        <span class="due-sub">Due: {{ formatDueDate(a.dueDate) }}</span>
+                      </td>
+                      <td>
+                        <span class="type-tag" [ngClass]="getTypeTagClass(a.type)">{{ a.typeName }}</span>
+                      </td>
+                      <td class="weight-cell">⚖️ {{ a.weightPercentage }}%</td>
+                      <td>{{ a.maxScore }} pts</td>
+                      <td class="score-cell">
+                        @if (a.studentSubmission?.score !== null && a.studentSubmission?.score !== undefined) {
+                          <strong class="score-val">{{ a.studentSubmission?.score }}</strong>
                         } @else {
-                          <span class="submitted-tag">⏳ Submitted (Pending Grading)</span>
+                          <span class="unscored">—</span>
                         }
-                        @if (a.studentSubmission.feedback) {
-                          <p class="feedback-text">💬 Tutor: "{{ a.studentSubmission.feedback }}"</p>
+                      </td>
+                      <td>
+                        @if (a.studentSubmission?.letterGrade) {
+                          <span class="letter-badge" [ngClass]="getLetterGradeClass(a.studentSubmission.letterGrade)">{{ a.studentSubmission.letterGrade }}</span>
+                        } @else {
+                          <span>—</span>
                         }
-                      </div>
-                    } @else {
-                      @if (a.hasQuestions) {
-                        <button class="btn btn-quiz-take btn-sm" (click)="openTakeQuizModal(a)">⏱️ Start Test</button>
-                      } @else {
-                        <button class="btn btn-submit-hw btn-sm" (click)="openSubmitHwModal(a)">📤 Submit Work</button>
-                      }
-                    }
-                  </div>
-                </div>
-              }
+                      </td>
+                      <td>
+                        @if (a.studentSubmission?.status === 2 || a.studentSubmission?.statusName === 'Graded') {
+                          <span class="status-pill pill-graded">✅ Graded</span>
+                        } @else if (a.studentSubmission) {
+                          <span class="status-pill pill-pending">⏳ Under Review</span>
+                        } @else {
+                          <span class="status-pill pill-todo">⚠️ Pending</span>
+                        }
+                      </td>
+                      <td class="action-feedback-cell">
+                        <div class="feedback-action-stack">
+                          @if (a.studentSubmission?.feedback) {
+                            <div class="feedback-bubble">💬 <em>"{{ a.studentSubmission.feedback }}"</em></div>
+                          }
+                          @if (a.hasQuestions && a.studentSubmission) {
+                            <button type="button" class="btn btn-review-answers btn-xs" (click)="openQuizReviewModal(a, a.studentSubmission)">
+                              📋 Review Test Answers
+                            </button>
+                          } @else if (!a.studentSubmission) {
+                            @if (a.hasQuestions || a.type === 2 || a.type === 3) {
+                              <button class="btn btn-quiz-take btn-xs" (click)="openTakeQuizModal(a)">⏱️ Take Test</button>
+                            } @else {
+                              <button class="btn btn-submit-hw btn-xs" (click)="openSubmitHwModal(a)">📤 Submit Work</button>
+                            }
+                          } @else {
+                            <span class="text-muted">Awaiting evaluation</span>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="8" class="text-center py-4 text-muted">No assessments registered for this course yet.</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -473,9 +636,21 @@ import { jsPDF } from 'jspdf';
                   <label>Max Score (Points)</label>
                   <input type="number" [(ngModel)]="newAssessment.maxScore" name="maxScore" min="1" class="form-control" />
                 </div>
-                <div class="form-group">
-                  <label>Grade Weight (%)</label>
-                  <input type="number" [(ngModel)]="newAssessment.weightPercentage" name="weightPercentage" min="1" max="100" class="form-control" />
+                <div class="form-group weight-budget-group">
+                  <div class="weight-label-row">
+                    <label>Grade Weight (%) *</label>
+                    <span class="budget-badge" [class.budget-warning]="isWeightBudgetExceeded()" [class.budget-full]="getRemainingWeightBudget() === 0">
+                      💡 Available: <strong>{{ getRemainingWeightBudget() }}%</strong>
+                    </span>
+                  </div>
+                  <input type="number" [(ngModel)]="newAssessment.weightPercentage" name="weightPercentage" min="1" [max]="getRemainingWeightBudget()" class="form-control" [class.input-error]="isWeightBudgetExceeded()" required />
+                  <div class="weight-progress-bar" title="Course Weight Distribution (Max 100%)">
+                    <div class="weight-fill-existing" [style.width.%]="getCourseAllocatedWeight(newAssessment.courseId, editingAssessmentId)"></div>
+                    <div class="weight-fill-new" [style.width.%]="newAssessment.weightPercentage || 0" [class.fill-exceeded]="isWeightBudgetExceeded()"></div>
+                  </div>
+                  @if (isWeightBudgetExceeded()) {
+                    <p class="budget-err-msg">⚠️ Weight exceeds remaining {{ getRemainingWeightBudget() }}% budget (Course total capped at 100%).</p>
+                  }
                 </div>
                 <div class="form-group" *ngIf="+newAssessment.type === 2 || +newAssessment.type === 3 || +newAssessment.type === 4">
                   <label>⏱️ Time Limit (Minutes)</label>
@@ -682,9 +857,16 @@ import { jsPDF } from 'jspdf';
                         <td><strong>{{ sub.score !== null ? sub.score : '-' }}</strong> / {{ activeAssessmentDetails.maxScore }}</td>
                         <td><span class="letter-badge">{{ sub.letterGrade || '-' }}</span></td>
                         <td>
-                          <button class="btn btn-sm btn-outline" (click)="openGradeDialog(sub)">
-                            ✏️ Grade
-                          </button>
+                          <div class="sub-actions-row">
+                            <button class="btn btn-sm btn-outline" (click)="openGradeDialog(sub)">
+                              ✏️ Grade
+                            </button>
+                            @if (sub.answersJson || activeAssessmentDetails?.hasQuestions) {
+                              <button type="button" class="btn btn-sm btn-review-sub" (click)="openQuizReviewModal(activeAssessmentDetails, sub)">
+                                🔍 Answers
+                              </button>
+                            }
+                          </div>
                         </td>
                       </tr>
                     }
@@ -890,6 +1072,94 @@ import { jsPDF } from 'jspdf';
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ========================================== -->
+      <!-- MODAL: TEST & QUIZ ANSWER REVIEW HISTORY -->
+      <!-- ========================================== -->
+      @if (showQuizReviewModal() && activeReviewAssessment()) {
+        <div class="modal-backdrop" (click)="closeModals()">
+          <div class="modal-content modal-lg review-modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <div>
+                <h2>📋 Test & Quiz Review: Question-by-Question Analysis</h2>
+                <p class="sub-text">{{ activeReviewAssessment()?.title }} — {{ activeReviewAssessment()?.courseName }}</p>
+              </div>
+              <button class="close-btn" (click)="closeModals()">✕</button>
+            </div>
+
+            <!-- Score Summary Card -->
+            <div class="review-score-banner">
+              <div class="score-banner-left">
+                <span class="banner-avatar">👤</span>
+                <div>
+                  <strong class="banner-student-name">{{ activeReviewSubmission()?.studentName || getSelectedStudent()?.firstName || 'Student' }} {{ getSelectedStudent()?.lastName || '' }}</strong>
+                  <span class="banner-sub">Submitted: {{ activeReviewSubmission()?.submittedAt || 'Recent' }}</span>
+                </div>
+              </div>
+
+              <div class="score-banner-right">
+                <div class="score-pill">
+                  <span class="score-pill-val">{{ activeReviewSubmission()?.score || 0 }} / {{ activeReviewAssessment()?.maxScore }} pts</span>
+                  <span class="score-pill-grade">{{ activeReviewSubmission()?.letterGrade || 'A+' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Question Review Cards -->
+            <div class="review-questions-list">
+              @for (q of activeReviewQuestions(); track q.id; let qIdx = $index) {
+                <div class="review-q-card" [class.q-correct]="isAnswerCorrect(q, qIdx)" [class.q-incorrect]="!isAnswerCorrect(q, qIdx)">
+                  <div class="review-q-header">
+                    <div class="q-num-box">
+                      <span class="q-idx">Question {{ qIdx + 1 }}</span>
+                      <span class="q-pts">({{ q.points || 10 }} Points)</span>
+                    </div>
+
+                    <div class="q-result-badge">
+                      @if (isAnswerCorrect(q, qIdx)) {
+                        <span class="badge-correct">✅ Correct (+{{ q.points || 10 }} pts)</span>
+                      } @else {
+                        <span class="badge-wrong">❌ Incorrect (0 pts)</span>
+                      }
+                    </div>
+                  </div>
+
+                  <h3 class="review-q-title">{{ q.question }}</h3>
+
+                  <div class="review-options-grid">
+                    @for (opt of q.options; track $index; let optIdx = $index) {
+                      <div class="review-option-pill"
+                           [class.opt-selected-correct]="getStudentAnswerIndex(q, qIdx) === optIdx && q.correctOption === optIdx"
+                           [class.opt-selected-wrong]="getStudentAnswerIndex(q, qIdx) === optIdx && q.correctOption !== optIdx"
+                           [class.opt-actual-correct]="getStudentAnswerIndex(q, qIdx) !== optIdx && q.correctOption === optIdx">
+                        <div class="opt-prefix">{{ ['A', 'B', 'C', 'D'][optIdx] || (optIdx + 1) }}.</div>
+                        <div class="opt-text">{{ opt }}</div>
+                        <div class="opt-status-tag">
+                          @if (getStudentAnswerIndex(q, qIdx) === optIdx && q.correctOption === optIdx) {
+                            <span class="tag-your-correct">✅ Your Choice (Correct)</span>
+                          } @else if (getStudentAnswerIndex(q, qIdx) === optIdx && q.correctOption !== optIdx) {
+                            <span class="tag-your-wrong">❌ Your Choice (Incorrect)</span>
+                          } @else if (q.correctOption === optIdx) {
+                            <span class="tag-correct-key">⭐ Correct Answer</span>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              } @empty {
+                <div class="empty-state-card">
+                  <p>No questions found in this assessment.</p>
+                </div>
+              }
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" (click)="closeModals()">Close Review</button>
             </div>
           </div>
         </div>
@@ -1525,6 +1795,61 @@ import { jsPDF } from 'jspdf';
     }
 
     /* Student Portal Tasks */
+    .student-logged-in-badge {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+      border: 1.5px solid #86EFAC;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      .student-info-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .student-avatar-pill {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: #10B981;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+        }
+
+        .student-profile-title {
+          margin: 0;
+          font-size: 1.2rem;
+          font-weight: 800;
+          color: #064E3B;
+        }
+
+        .code-sub {
+          font-size: 0.85rem;
+          color: #047857;
+          margin-top: 0.15rem;
+          display: block;
+        }
+      }
+
+      .role-chip {
+        background: #047857;
+        color: white;
+        padding: 0.4rem 0.85rem;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 0.82rem;
+        letter-spacing: 0.5px;
+      }
+    }
+
     .student-portal-header {
       background: white;
       border: 1px solid var(--color-border, #DCE8E1);
@@ -1541,59 +1866,271 @@ import { jsPDF } from 'jspdf';
       }
     }
 
-    .tasks-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
+    /* Student Gradebook Sheet & Multi-Course Hub */
+    .student-gradebook-sheet {
+      background: white;
+      border: 1px solid var(--color-border, #DCE8E1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 
-      .task-row {
-        background: white;
-        border: 1px solid var(--color-border, #DCE8E1);
-        border-radius: 10px;
-        padding: 1rem 1.25rem;
+      .sheet-top-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 1rem;
         flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid #E2E8F0;
 
-        &.task-completed {
-          background: #F8FAFC;
-        }
-
-        .task-info {
+        .course-selector-box {
           display: flex;
           align-items: center;
-          gap: 1rem;
-
-          h4 { margin: 0 0 0.2rem 0; font-size: 1rem; font-weight: 700; color: #0B241B; }
-          .course-sub { margin: 0; font-size: 0.8rem; color: #64748B; }
+          gap: 0.85rem;
+          label { font-weight: 800; color: #0F172A; font-size: 0.95rem; }
+          .course-dropdown-lg {
+            min-width: 280px;
+            font-weight: 700;
+            color: #0B3D2E;
+            border: 1.5px solid #CBD5E1;
+            border-radius: 8px;
+            padding: 0.5rem 0.85rem;
+            background: #F8FAFC;
+          }
         }
 
-        .task-status-area {
-          .score-tag {
+        .sheet-cert-action {
+          .btn-view-cert {
+            background: linear-gradient(135deg, #0B3D2E 0%, #10B981 100%);
+            color: white;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
             font-weight: 800;
-            color: #16A34A;
-            background: #DCFCE7;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s;
+            &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
           }
-
-          .submitted-tag {
+          .in-progress-pill {
+            background: #F1F5F9;
+            color: #64748B;
+            font-size: 0.85rem;
             font-weight: 700;
-            color: #D97706;
-            background: #FEF3C7;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
+            padding: 0.45rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid #E2E8F0;
+          }
+        }
+      }
+
+      .student-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+
+        .metric-card {
+          border-radius: 12px;
+          padding: 1.15rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          border: 1px solid transparent;
+
+          .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .metric-icon { font-size: 1.4rem; }
+            .metric-weight {
+              font-size: 0.75rem;
+              font-weight: 800;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
           }
 
-          .feedback-text {
+          .metric-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            .metric-label { font-size: 0.82rem; font-weight: 700; color: #475569; }
+            .metric-val {
+              font-size: 1.6rem;
+              font-weight: 900;
+              color: #0F172A;
+              &.gpa-highlight { color: #065F46; }
+              .gpa-letter { font-size: 1.1rem; color: #047857; margin-left: 0.25rem; }
+            }
+          }
+
+          &.card-hw {
+            background: linear-gradient(135deg, #F0F7FF 0%, #E0F2FE 100%);
+            border-color: #BAE6FD;
+            .metric-weight { color: #0284C7; }
+          }
+          &.card-quiz {
+            background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%);
+            border-color: #E9D5FF;
+            .metric-weight { color: #9333EA; }
+          }
+          &.card-test {
+            background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+            border-color: #FED7AA;
+            .metric-weight { color: #EA580C; }
+          }
+          &.card-gpa {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border-color: #A7F3D0;
+            .metric-weight { color: #059669; }
+          }
+        }
+      }
+
+      .honors-banner {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        padding: 0.85rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+
+        .honors-left {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          .honors-icon { font-size: 1.3rem; }
+          strong { color: #334155; font-size: 0.9rem; }
+          .honors-tier-name {
+            margin-left: 0.4rem;
+            color: #0B3D2E;
+            font-weight: 800;
+            font-size: 0.95rem;
+          }
+        }
+
+        .status-indicator {
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: #0284C7;
+          background: #E0F2FE;
+          padding: 0.35rem 0.75rem;
+          border-radius: 20px;
+
+          &.finalized {
+            background: #DCFCE7;
+            color: #166534;
+          }
+        }
+      }
+    }
+
+    /* Detailed Transcript Table Card */
+    .transcript-table-card {
+      background: white;
+      border: 1px solid var(--color-border, #DCE8E1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+
+      .transcript-header {
+        margin-bottom: 1.25rem;
+        h3 { margin: 0 0 0.25rem 0; font-size: 1.2rem; font-weight: 800; color: #0B241B; }
+        p { margin: 0; font-size: 0.85rem; color: #64748B; }
+      }
+
+      .transcript-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+
+        th {
+          background: #F8FAFC;
+          color: #475569;
+          font-weight: 800;
+          text-align: left;
+          padding: 0.85rem 1rem;
+          border-bottom: 2px solid #E2E8F0;
+          font-size: 0.82rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        td {
+          padding: 1rem;
+          border-bottom: 1px solid #F1F5F9;
+          color: #1E293B;
+          vertical-align: middle;
+        }
+
+        tr:hover td {
+          background: #FAFDFB;
+        }
+
+        .task-title-cell {
+          strong { display: block; color: #0F172A; font-size: 0.95rem; }
+          .due-sub { display: block; font-size: 0.78rem; color: #64748B; margin-top: 0.15rem; }
+        }
+
+        .weight-cell {
+          font-weight: 700;
+          color: #475569;
+          font-size: 0.85rem;
+        }
+
+        .score-cell {
+          .score-val { font-size: 1.05rem; font-weight: 900; color: #0B3D2E; }
+          .unscored { color: #94A3B8; font-weight: 600; }
+        }
+
+        .letter-badge {
+          display: inline-block;
+          font-weight: 900;
+          font-size: 0.85rem;
+          padding: 0.25rem 0.6rem;
+          border-radius: 6px;
+          &.grade-a { background: #DCFCE7; color: #166534; }
+          &.grade-b { background: #EFF6FF; color: #1D4ED8; }
+          &.grade-c { background: #FEF3C7; color: #B45309; }
+          &.grade-d { background: #FEE2E2; color: #B91C1C; }
+        }
+
+        .status-pill {
+          display: inline-block;
+          font-size: 0.78rem;
+          font-weight: 800;
+          padding: 0.3rem 0.65rem;
+          border-radius: 20px;
+
+          &.pill-graded { background: #DCFCE7; color: #15803D; }
+          &.pill-pending { background: #FEF3C7; color: #D97706; }
+          &.pill-todo { background: #FEE2E2; color: #DC2626; }
+        }
+
+        .action-feedback-cell {
+          .feedback-bubble {
+            background: #F1F5F9;
+            border-left: 3px solid #10B981;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            color: #334155;
+          }
+          .btn-xs {
+            padding: 0.4rem 0.85rem;
             font-size: 0.8rem;
-            color: #475569;
-            margin: 0.35rem 0 0 0;
-            font-style: italic;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            &.btn-quiz-take { background: #4F46E5; color: white; }
+            &.btn-submit-hw { background: #0B3D2E; color: white; }
           }
         }
       }
@@ -2065,6 +2602,302 @@ import { jsPDF } from 'jspdf';
       }
     }
 
+    /* Test & Quiz Review Modal */
+    .review-modal-content {
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .review-score-banner {
+      background: linear-gradient(135deg, #0B3D2E 0%, #10B981 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .score-banner-left {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        .banner-avatar {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.3rem;
+        }
+        .banner-student-name {
+          font-size: 1.15rem;
+          font-weight: 800;
+          display: block;
+        }
+        .banner-sub {
+          font-size: 0.82rem;
+          opacity: 0.85;
+          display: block;
+        }
+      }
+
+      .score-pill {
+        background: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+        .score-pill-val {
+          font-weight: 900;
+          font-size: 1.25rem;
+          color: #0B3D2E;
+        }
+        .score-pill-grade {
+          background: #DCFCE7;
+          color: #166534;
+          font-weight: 800;
+          font-size: 0.85rem;
+          padding: 0.2rem 0.6rem;
+          border-radius: 12px;
+        }
+      }
+    }
+
+    .review-questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      .review-q-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        border: 2px solid #E2E8F0;
+
+        &.q-correct {
+          border-color: #86EFAC;
+          background: #F8FCF9;
+        }
+        &.q-incorrect {
+          border-color: #FCA5A5;
+          background: #FEF8F8;
+        }
+
+        .review-q-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.75rem;
+
+          .q-num-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            .q-idx { font-weight: 800; color: #1E293B; font-size: 0.95rem; }
+            .q-pts { font-size: 0.8rem; color: #64748B; font-weight: 600; }
+          }
+
+          .badge-correct {
+            background: #DCFCE7;
+            color: #166534;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+          }
+          .badge-wrong {
+            background: #FEE2E2;
+            color: #991B1B;
+            font-weight: 800;
+            font-size: 0.82rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+          }
+        }
+
+        .review-q-title {
+          font-size: 1.05rem;
+          font-weight: 700;
+          color: #0F172A;
+          margin: 0 0 1rem 0;
+          line-height: 1.4;
+        }
+
+        .review-options-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+
+          .review-option-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: white;
+            border: 1.5px solid #E2E8F0;
+            transition: all 0.2s;
+
+            .opt-prefix {
+              font-weight: 800;
+              color: #64748B;
+              font-size: 0.85rem;
+              min-width: 22px;
+            }
+
+            .opt-text {
+              flex: 1;
+              font-size: 0.92rem;
+              color: #1E293B;
+            }
+
+            .opt-status-tag {
+              font-size: 0.78rem;
+              font-weight: 800;
+
+              .tag-your-correct {
+                background: #16A34A;
+                color: white;
+                padding: 0.25rem 0.65rem;
+                border-radius: 6px;
+              }
+              .tag-your-wrong {
+                background: #DC2626;
+                color: white;
+                padding: 0.25rem 0.65rem;
+                border-radius: 6px;
+              }
+              .tag-correct-key {
+                background: #0B3D2E;
+                color: #FDE047;
+                padding: 0.25rem 0.65rem;
+                border-radius: 6px;
+                border: 1px solid #D4AF37;
+              }
+            }
+
+            &.opt-selected-correct {
+              background: #DCFCE7;
+              border-color: #16A34A;
+              .opt-prefix, .opt-text { color: #14532D; font-weight: 700; }
+            }
+
+            &.opt-selected-wrong {
+              background: #FEE2E2;
+              border-color: #DC2626;
+              .opt-prefix, .opt-text { color: #7F1D1D; font-weight: 700; }
+            }
+
+            &.opt-actual-correct {
+              background: #ECFDF5;
+              border-color: #10B981;
+              border-style: dashed;
+              .opt-prefix, .opt-text { color: #065F46; font-weight: 700; }
+            }
+          }
+        }
+      }
+    }
+
+    .btn-review-answers, .btn-review-sub {
+      background: linear-gradient(135deg, #4338CA 0%, #6366F1 100%);
+      color: white;
+      border: none;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+      &:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4); }
+    }
+
+    .feedback-action-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: flex-start;
+    }
+
+    .weight-budget-group {
+      .weight-label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.35rem;
+
+        label { margin-bottom: 0; font-weight: 700; font-size: 0.88rem; }
+
+        .budget-badge {
+          background: #EFF6FF;
+          color: #1D4ED8;
+          border: 1px solid #BFDBFE;
+          padding: 0.15rem 0.55rem;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 700;
+
+          &.budget-warning {
+            background: #FEE2E2;
+            color: #DC2626;
+            border-color: #FECACA;
+          }
+          &.budget-full {
+            background: #FEF3C7;
+            color: #D97706;
+            border-color: #FDE68A;
+          }
+        }
+      }
+
+      .weight-progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #E2E8F0;
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+        margin-top: 0.4rem;
+
+        .weight-fill-existing {
+          background: #64748B;
+          height: 100%;
+        }
+
+        .weight-fill-new {
+          background: #10B981;
+          height: 100%;
+          transition: width 0.2s ease;
+
+          &.fill-exceeded {
+            background: #EF4444;
+          }
+        }
+      }
+
+      .input-error {
+        border-color: #EF4444 !important;
+        background: #FEF2F2 !important;
+        &:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important; }
+      }
+
+      .budget-err-msg {
+        font-size: 0.78rem;
+        color: #DC2626;
+        margin: 0.35rem 0 0 0;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+    }
+
     @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
@@ -2101,7 +2934,10 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
   filterType: number | null = null;
   selectedGradebookCourseId = '';
   selectedFinalGradingCourseId = '';
+  studentSelectedCourseId = '';
   currentStudentId = '';
+  studentGradebookRow = signal<MasterGradebookRow | null>(null);
+  studentGradebookLoading = signal<boolean>(false);
 
   // Loading flags
   loading = signal<boolean>(false);
@@ -2120,6 +2956,13 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
   showFinalizeModal = signal<boolean>(false);
   showCertModal = signal<boolean>(false);
   activeCertificate = signal<CertificateDto | null>(null);
+
+  // Test Review Modal State
+  showQuizReviewModal = signal<boolean>(false);
+  activeReviewAssessment = signal<any | null>(null);
+  activeReviewSubmission = signal<any | null>(null);
+  activeReviewQuestions = signal<QuizQuestion[]>([]);
+  activeReviewAnswers = signal<{ [key: string]: number }>({});
 
   // Create Assessment Form
   newAssessment = {
@@ -2166,6 +3009,9 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
   }
 
   setTab(tab: 'assessments' | 'gradebook' | 'final-grading' | 'student-view'): void {
+    if (this.authService.isStudent() && (tab === 'gradebook' || tab === 'final-grading')) {
+      tab = 'student-view';
+    }
     this.activeTab.set(tab);
     if (tab === 'gradebook') {
       if (!this.selectedGradebookCourseId && this.courses().length > 0) {
@@ -2177,6 +3023,11 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
         this.selectedFinalGradingCourseId = this.courses()[0].id;
       }
       this.onFinalGradingCourseChange();
+    } else if (tab === 'student-view') {
+      if (!this.studentSelectedCourseId && this.courses().length > 0) {
+        this.studentSelectedCourseId = this.courses()[0].id;
+      }
+      this.loadStudentGradebookData();
     }
   }
 
@@ -2192,8 +3043,40 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
             this.selectedFinalGradingCourseId = res[0].id;
             this.onFinalGradingCourseChange();
           }
+          if (!this.studentSelectedCourseId) {
+            this.studentSelectedCourseId = res[0].id;
+            this.loadStudentGradebookData();
+          }
           this.newAssessment.courseId = res[0].id;
         }
+      }
+    });
+  }
+
+  onStudentCourseChange(): void {
+    this.loadStudentGradebookData();
+  }
+
+  loadStudentGradebookData(): void {
+    if (!this.studentSelectedCourseId) {
+      if (this.courses().length > 0) {
+        this.studentSelectedCourseId = this.courses()[0].id;
+      } else {
+        return;
+      }
+    }
+    this.studentGradebookLoading.set(true);
+    this.assessmentService.getMasterGradebook(this.studentSelectedCourseId).subscribe({
+      next: (res) => {
+        this.studentGradebookLoading.set(false);
+        const user = this.authService.currentUser();
+        const student = this.students().find(s => s.id === this.currentStudentId || (user && (s.userId === user.userId || s.id === user.userId || (s.email && s.email.toLowerCase() === user.email?.toLowerCase()))));
+        const targetStudentId = student ? student.id : this.currentStudentId;
+        const row = res.students?.find(s => s.studentId === targetStudentId);
+        this.studentGradebookRow.set(row || null);
+      },
+      error: () => {
+        this.studentGradebookLoading.set(false);
       }
     });
   }
@@ -2225,11 +3108,24 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.students.set(res);
         if (res.length > 0) {
-          this.currentStudentId = res[0].id;
-          this.hwSubmissionStudentId = res[0].id;
+          const user = this.authService.currentUser();
+          if (this.authService.isStudent() && user) {
+            const myStudent = res.find(s => s.userId === user.userId || s.id === user.userId || (s.email && s.email.toLowerCase() === user.email?.toLowerCase()));
+            this.currentStudentId = myStudent ? myStudent.id : res[0].id;
+            this.hwSubmissionStudentId = this.currentStudentId;
+          } else {
+            this.currentStudentId = res[0].id;
+            this.hwSubmissionStudentId = res[0].id;
+          }
+          this.loadAssessments();
         }
       }
     });
+  }
+
+  getSelectedStudent(): StudentDto | undefined {
+    const user = this.authService.currentUser();
+    return this.students().find(s => s.id === this.currentStudentId || (user && s.userId === user.userId));
   }
 
   loadAssessments(): void {
@@ -2269,17 +3165,41 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
     this.loadAssessments();
   }
 
+  getCourseAllocatedWeight(courseId: string, excludeAssessmentId?: string | null): number {
+    if (!courseId) return 0;
+    return this.assessments()
+      .filter(a => a.courseId === courseId && (!excludeAssessmentId || a.id !== excludeAssessmentId))
+      .reduce((sum, a) => sum + (Number(a.weightPercentage) || 0), 0);
+  }
+
+  getRemainingWeightBudget(): number {
+    const courseId = this.newAssessment.courseId;
+    if (!courseId) return 100;
+    const allocated = this.getCourseAllocatedWeight(courseId, this.editingAssessmentId);
+    return Math.max(0, 100 - allocated);
+  }
+
+  isWeightBudgetExceeded(): boolean {
+    const remaining = this.getRemainingWeightBudget();
+    const currentInput = Number(this.newAssessment.weightPercentage) || 0;
+    return currentInput > remaining;
+  }
+
   // Modals & Handlers
   openCreateModal(): void {
     this.isEditMode.set(false);
     this.editingAssessmentId = null;
+    const courseId = this.courses().length > 0 ? this.courses()[0].id : '';
+    const budget = Math.max(0, 100 - this.getCourseAllocatedWeight(courseId));
+    const suggestedWeight = budget > 0 ? Math.min(25, budget) : 0;
+
     this.newAssessment = {
-      courseId: this.courses().length > 0 ? this.courses()[0].id : '',
+      courseId,
       type: 2,
       title: '',
       description: '',
       maxScore: 100,
-      weightPercentage: 30,
+      weightPercentage: suggestedWeight,
       durationMinutes: 15,
       teacherId: this.authService.currentUser()?.userId || ''
     };
@@ -2337,6 +3257,11 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
   submitCreateAssessment(): void {
     if (!this.newAssessment.title || !this.newAssessment.courseId) {
       this.toastService.show('Please fill in title and course.', 'error');
+      return;
+    }
+
+    if (this.isWeightBudgetExceeded()) {
+      this.toastService.show(`Weight (${this.newAssessment.weightPercentage}%) exceeds remaining budget of ${this.getRemainingWeightBudget()}%. Total course weight cannot exceed 100%.`, 'error');
       return;
     }
 
@@ -2439,6 +3364,10 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const takenAssessment = this.activeQuizAssessment;
+    const studentAnswers = { ...this.studentQuizAnswers };
+    const student = this.getSelectedStudent();
+
     const payload = {
       studentId,
       answersJson: JSON.stringify(this.studentQuizAnswers)
@@ -2451,6 +3380,19 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
         this.toastService.show(res.message || `Test graded! Score: ${res.score} (${res.letterGrade})`, 'success');
         this.closeModals();
         this.loadAssessments();
+        this.loadStudentGradebookData();
+
+        // Immediately open Review Modal for instant feedback & learning
+        if (takenAssessment) {
+          this.openQuizReviewModal(takenAssessment, {
+            studentName: student ? `${student.firstName} ${student.lastName}` : 'Student',
+            score: res.score,
+            letterGrade: res.letterGrade,
+            feedback: res.message,
+            submittedAt: new Date().toLocaleTimeString(),
+            answersJson: JSON.stringify(studentAnswers)
+          });
+        }
       },
       error: (err) => {
         this.submitting.set(false);
@@ -2719,6 +3661,53 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
     this.showGradeDialog.set(false);
     this.showFinalizeModal.set(false);
     this.showCertModal.set(false);
+    this.showQuizReviewModal.set(false);
+  }
+
+  openQuizReviewModal(assessment: any, submission: any): void {
+    this.activeReviewAssessment.set(assessment);
+    this.activeReviewSubmission.set(submission);
+
+    // Parse questions
+    let questions: QuizQuestion[] = [];
+    if (assessment?.questionsJson) {
+      try {
+        questions = typeof assessment.questionsJson === 'string' ? JSON.parse(assessment.questionsJson) : assessment.questionsJson;
+      } catch {
+        questions = [];
+      }
+    }
+    if (questions.length === 0 && this.activeQuizQuestions.length > 0) {
+      questions = this.activeQuizQuestions;
+    }
+    this.activeReviewQuestions.set(questions);
+
+    // Parse student answers
+    let answers: { [key: string]: number } = {};
+    if (submission?.answersJson) {
+      try {
+        answers = typeof submission.answersJson === 'string' ? JSON.parse(submission.answersJson) : submission.answersJson;
+      } catch {
+        answers = {};
+      }
+    } else if (Object.keys(this.studentQuizAnswers).length > 0) {
+      answers = this.studentQuizAnswers;
+    }
+    this.activeReviewAnswers.set(answers);
+    this.showQuizReviewModal.set(true);
+  }
+
+  getStudentAnswerIndex(q: QuizQuestion, qIdx: number): number | null {
+    const answers = this.activeReviewAnswers();
+    if (answers[q.id.toString()] !== undefined) return answers[q.id.toString()];
+    if (answers[(qIdx + 1).toString()] !== undefined) return answers[(qIdx + 1).toString()];
+    if (answers[qIdx.toString()] !== undefined) return answers[qIdx.toString()];
+    return null;
+  }
+
+  isAnswerCorrect(q: QuizQuestion, qIdx: number): boolean {
+    const selected = this.getStudentAnswerIndex(q, qIdx);
+    return selected !== null && selected === q.correctOption;
   }
 
   ngOnDestroy(): void {

@@ -88,6 +88,7 @@ public class AssessmentsController : ControllerBase
                     id = studentSubmission.Id,
                     submissionText = studentSubmission.SubmissionText,
                     attachmentUrl = studentSubmission.AttachmentUrl,
+                    answersJson = studentSubmission.AnswersJson,
                     submittedAt = studentSubmission.SubmittedAt.ToString("g"),
                     score = studentSubmission.Score,
                     letterGrade = studentSubmission.LetterGrade,

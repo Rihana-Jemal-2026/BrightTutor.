@@ -23,6 +23,10 @@ export class ToastService {
     this.addToast("info", message, durationMs);
   }
 
+  showWarning(message: string, durationMs = 3000) {
+    this.addToast("info", message, durationMs);
+  }
+
   show(message: string, type: "success" | "error" | "info" = "info", durationMs = 2500) {
     this.addToast(type, message, durationMs);
   }

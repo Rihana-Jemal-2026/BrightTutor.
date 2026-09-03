@@ -9,28 +9,48 @@
         </svg>
       </div>
       <div>
-        <h1>Campus Announcements & Notifications</h1>
-        <p class="subtitle">Official school notices, public academic bulletins, and direct student/teacher push alerts.</p>
+        @if (authService.isAdmin()) {
+          <h1>Campus Announcements & Notifications</h1>
+          <p class="subtitle">Official school notices, public academic bulletins, and direct user push alerts.</p>
+        } @else if (authService.isTeacher()) {
+          <h1>Class Notices & Student Inquiries</h1>
+          <p class="subtitle">Broadcast updates to your enrolled students, manage messaging availability, and reply to student questions.</p>
+        } @else {
+          <h1>Campus Bulletins & Contact My Tutor</h1>
+          <p class="subtitle">View official school notices and send direct inquiries to your assigned course teachers.</p>
+        }
       </div>
     </div>
-    @if (authService.isAdmin() && activeTab() === 'bulletin') {
-      <button type="button" class="btn-primary-action" (click)="openCreateModal()">
-        <span class="btn-icon">+</span> Post Announcement
-      </button>
-    }
+
+    <div class="header-actions">
+      <!-- Teacher Availability Toggle -->
+      @if (authService.isTeacher()) {
+        <button type="button" class="btn-toggle-availability" [class.avail-open]="isTeacherMessagingEnabled()" [class.avail-closed]="!isTeacherMessagingEnabled()" (click)="toggleTeacherMessagingAvailability()" title="Toggle whether students can send you direct messages">
+          <span class="toggle-dot"></span>
+          <span>{{ isTeacherMessagingEnabled() ? '🟢 Student Messages: ON' : '🔴 Student Messages: OFF' }}</span>
+        </button>
+      }
+
+      @if ((authService.isAdmin() || authService.isTeacher()) && activeTab() === 'bulletin') {
+        <button type="button" class="btn-primary-action" (click)="openCreateModal()">
+          <span class="btn-icon">+</span> {{ authService.isTeacher() ? 'Post Class Notice' : 'Post Announcement' }}
+        </button>
+      }
+    </div>
   </div>
 
-  <!-- Admin Tab Bar -->
-  @if (authService.isAdmin()) {
-    <div class="portal-tab-bar">
-      <button
-        type="button"
-        class="tab-btn"
-        [class.active]="activeTab() === 'bulletin'"
-        (click)="activeTab.set('bulletin')"
-      >
-        📢 Campus Bulletin Board ({{ announcements().length }})
-      </button>
+  <!-- Role-Based Navigation Tab Bar -->
+  <div class="portal-tab-bar">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'bulletin'"
+      (click)="activeTab.set('bulletin')"
+    >
+      📢 {{ authService.isTeacher() ? 'Campus & Class Notices' : 'Campus Bulletins' }} ({{ announcements().length }})
+    </button>
+
+    @if (authService.isAdmin()) {
       <button
         type="button"
         class="tab-btn"
@@ -39,10 +59,28 @@
       >
         🔔 Direct User Push Dispatcher
       </button>
-    </div>
-  }
+    } @else if (authService.isTeacher()) {
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'inquiries'"
+        (click)="activeTab.set('inquiries')"
+      >
+        💬 Student Inquiries & Messages ({{ teacherInquiries().length }})
+      </button>
+    } @else if (authService.isStudent()) {
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'contact-tutor'"
+        (click)="activeTab.set('contact-tutor')"
+      >
+        👨‍🏫 Message My Teachers ({{ assignedTeachers().length }})
+      </button>
+    }
+  </div>
 
-  <!-- TAB 1: Campus Announcements Bulletin Board -->
+  <!-- TAB 1: Campus & Course Announcements Bulletin Board -->
   @if (activeTab() === 'bulletin') {
     <!-- Filter Audience Bar (Admin Only) -->
     @if (authService.isAdmin()) {
@@ -87,7 +125,7 @@
             <div class="card-footer">
               <div class="author-meta">
                 <span class="author-avatar">{{ item.createdByName?.charAt(0) || 'A' }}</span>
-                <span class="author-name">Posted by {{ item.createdByName || 'Administrator' }}</span>
+                <span class="author-name">Posted by {{ item.createdByName || 'Academic Staff' }}</span>
               </div>
             </div>
           </div>
@@ -101,8 +139,8 @@
     }
   }
 
-  <!-- TAB 2: Direct User Push Dispatcher -->
-  @if (activeTab() === 'direct') {
+  <!-- TAB 2 (Admin): Direct User Push Dispatcher -->
+  @if (activeTab() === 'direct' && authService.isAdmin()) {
     <div class="direct-dispatcher-container">
       <div class="dispatcher-card">
         <div class="dispatcher-header">
@@ -165,37 +203,166 @@
       </div>
     </div>
   }
+
+  <!-- TAB 2 (Teacher): Student Inquiries & Direct Messaging -->
+  @if (activeTab() === 'inquiries' && authService.isTeacher()) {
+    <div class="teacher-inquiries-container">
+      <div class="inquiries-header-card">
+        <div class="inq-info">
+          <h3>💬 Student Inquiries Inbox</h3>
+          <p>Questions and messages sent by students enrolled in your active courses.</p>
+        </div>
+        <div class="inq-status-badge" [class.badge-open]="isTeacherMessagingEnabled()" [class.badge-closed]="!isTeacherMessagingEnabled()">
+          {{ isTeacherMessagingEnabled() ? '🟢 Direct Inquiries Enabled' : '🔴 Direct Inquiries Closed' }}
+        </div>
+      </div>
+
+      <div class="inquiries-list">
+        @for (inq of teacherInquiries(); track inq.id) {
+          <div class="inquiry-card" [class.card-replied]="inq.status === 'replied'">
+            <div class="inq-card-header">
+              <div class="student-meta">
+                <span class="student-avatar">{{ inq.studentName.charAt(0) }}</span>
+                <div>
+                  <strong>{{ inq.studentName }}</strong>
+                  <span class="student-course">{{ inq.courseName }} | {{ inq.studentEmail }}</span>
+                </div>
+              </div>
+
+              <div class="inq-time-badge">
+                <span class="status-pill" [class.pill-replied]="inq.status === 'replied'" [class.pill-pending]="inq.status === 'pending'">
+                  {{ inq.status === 'replied' ? '✅ Replied' : '⏳ Pending Response' }}
+                </span>
+                <span class="time-text">{{ inq.sentAt | date:'short' }}</span>
+              </div>
+            </div>
+
+            <h4 class="inq-subject">{{ inq.subject }}</h4>
+            <p class="inq-body">{{ inq.message }}</p>
+
+            @if (inq.replyText) {
+              <div class="reply-bubble">
+                <div class="reply-header">
+                  <strong>👨‍🏫 Your Reply:</strong>
+                </div>
+                <p>{{ inq.replyText }}</p>
+              </div>
+            }
+
+            <div class="inq-card-actions">
+              <button type="button" class="btn btn-sm btn-reply" (click)="openReplyModal(inq)">
+                ✏️ {{ inq.status === 'replied' ? 'Send Another Reply' : 'Reply to Student' }}
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state-full">
+            <span class="empty-icon">💬</span>
+            <p>No student inquiries received yet.</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- TAB 2 (Student): Message My Teachers -->
+  @if (activeTab() === 'contact-tutor' && authService.isStudent()) {
+    <div class="student-contact-container">
+      <div class="student-contact-header">
+        <div>
+          <h3>👨‍🏫 My Assigned Course Teachers</h3>
+          <p>Send questions, schedule clarifications, or homework inquiries directly to your instructors.</p>
+        </div>
+      </div>
+
+      <!-- Teachers List Grid -->
+      <div class="teachers-grid">
+        @for (t of assignedTeachers(); track t.teacherId) {
+          <div class="teacher-card">
+            <div class="teacher-avatar-box">
+              <span class="t-avatar">{{ t.name.charAt(0) }}</span>
+            </div>
+
+            <div class="teacher-info">
+              <h4>{{ t.name }}</h4>
+              <span class="t-course">📚 {{ t.courseName }}</span>
+              <span class="t-email">✉️ {{ t.email }}</span>
+            </div>
+
+            <div class="teacher-avail-tag" [class.tag-open]="t.isAcceptingMessages" [class.tag-closed]="!t.isAcceptingMessages">
+              {{ t.isAcceptingMessages ? '🟢 Available for Messages' : '🔴 Direct Messaging Closed' }}
+            </div>
+
+            <button
+              type="button"
+              class="btn-contact-teacher"
+              [disabled]="!t.isAcceptingMessages"
+              (click)="openContactTeacherModal(t)"
+            >
+              ✉️ Send Inquiry
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Sent Inquiries Section -->
+      @if (sentInquiries().length > 0) {
+        <div class="sent-inquiries-section">
+          <h3>📤 My Sent Inquiries ({{ sentInquiries().length }})</h3>
+          <div class="sent-list">
+            @for (sent of sentInquiries(); track sent.id) {
+              <div class="sent-item-card">
+                <div class="sent-header">
+                  <strong>{{ sent.subject }}</strong>
+                  <span class="sent-to">To: {{ selectedTeacherToContact()?.name || 'Course Tutor' }} ({{ sent.courseName }})</span>
+                </div>
+                <p class="sent-text">{{ sent.message }}</p>
+                <div class="sent-footer">
+                  <span class="sent-date">{{ sent.sentAt | date:'medium' }}</span>
+                  <span class="sent-status">✅ Delivered to Tutor</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>
 
-<!-- Post Announcement Modal (Admin Only) -->
+<!-- ========================================== -->
+<!-- MODAL: POST ANNOUNCEMENT / CLASS NOTICE -->
+<!-- ========================================== -->
 @if (isCreateModalOpen()) {
   <div class="modal-overlay" (click)="closeCreateModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>📢 Post New Campus Announcement</h3>
+        <h3>📢 {{ authService.isTeacher() ? 'Post Class Notice' : 'Post Campus Announcement' }}</h3>
         <button type="button" class="close-btn" (click)="closeCreateModal()">&times;</button>
       </div>
 
       <form (ngSubmit)="submitAnnouncement()" class="modal-form">
         <div class="form-group">
-          <label class="form-label">Announcement Title</label>
-          <input type="text" class="form-input" [(ngModel)]="announcementForm.title" name="title" placeholder="e.g. Mid-Term Examination Schedule & Holidays" required />
+          <label class="form-label">Notice Title *</label>
+          <input type="text" class="form-input" [(ngModel)]="announcementForm.title" name="title" placeholder="e.g. Mid-Term Examination Schedule & Preparation" required />
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Target Audience</label>
-          <select class="form-select" [(ngModel)]="announcementForm.targetRole" name="targetRole">
-            <option [ngValue]="null">🌐 All Users (Public Notice)</option>
-            <option [ngValue]="2">👨‍🏫 Teachers Only</option>
-            <option [ngValue]="3">🎓 Students Only</option>
-            <option [ngValue]="4">👨‍👩‍👧 Parents Only</option>
-            <option [ngValue]="1">👑 Administrators Only</option>
-          </select>
-        </div>
+        @if (authService.isAdmin()) {
+          <div class="form-group">
+            <label class="form-label">Target Audience</label>
+            <select class="form-select" [(ngModel)]="announcementForm.targetRole" name="targetRole">
+              <option [ngValue]="null">🌐 All Users (Public Notice)</option>
+              <option [ngValue]="2">👨‍🏫 Teachers Only</option>
+              <option [ngValue]="3">🎓 Students Only</option>
+              <option [ngValue]="4">👨‍👩‍👧 Parents Only</option>
+              <option [ngValue]="1">👑 Administrators Only</option>
+            </select>
+          </div>
+        }
 
         <div class="form-group">
-          <label class="form-label">Notice Message Content</label>
-          <textarea class="form-textarea" rows="5" [(ngModel)]="announcementForm.content" name="content" placeholder="Type the full announcement details, instructions, or notice here..." required></textarea>
+          <label class="form-label">Notice Message Content *</label>
+          <textarea class="form-textarea" rows="5" [(ngModel)]="announcementForm.content" name="content" placeholder="Type the announcement details, instructions, or notice here..." required></textarea>
         </div>
 
         @if (modalError()) {
@@ -215,3 +382,72 @@
     </div>
   </div>
 }
+
+<!-- ========================================== -->
+<!-- MODAL: TEACHER REPLY TO STUDENT INQUIRY -->
+<!-- ========================================== -->
+@if (isReplyModalOpen() && activeInquiryToReply()) {
+  <div class="modal-overlay" (click)="closeReplyModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>✏️ Reply to {{ activeInquiryToReply()?.studentName }}</h3>
+        <button type="button" class="close-btn" (click)="closeReplyModal()">&times;</button>
+      </div>
+
+      <div class="inquiry-context-box">
+        <strong>Subject: {{ activeInquiryToReply()?.subject }}</strong>
+        <p><em>"{{ activeInquiryToReply()?.message }}"</em></p>
+      </div>
+
+      <form (ngSubmit)="submitTeacherReply()" class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Your Reply Message *</label>
+          <textarea class="form-textarea" rows="5" [(ngModel)]="replyMessageText" name="replyMessage" placeholder="Type your reply or explanation for the student..." required></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeReplyModal()">Cancel</button>
+          <button type="submit" class="btn-save">
+            🚀 Send Reply to Student
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ========================================== -->
+<!-- MODAL: STUDENT CONTACT TEACHER -->
+<!-- ========================================== -->
+@if (isContactModalOpen() && selectedTeacherToContact()) {
+  <div class="modal-overlay" (click)="closeContactTeacherModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>✉️ Message Instructor: {{ selectedTeacherToContact()?.name }}</h3>
+        <button type="button" class="close-btn" (click)="closeContactTeacherModal()">&times;</button>
+      </div>
+
+      <p class="modal-subtext">Course: <strong>{{ selectedTeacherToContact()?.courseName }}</strong> ({{ selectedTeacherToContact()?.email }})</p>
+
+      <form (ngSubmit)="submitStudentMessage()" class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Subject / Topic *</label>
+          <input type="text" class="form-input" [(ngModel)]="studentMessageSubject" name="subject" placeholder="e.g. Homework #2 Clarification, Office Hours" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Message *</label>
+          <textarea class="form-textarea" rows="5" [(ngModel)]="studentMessageContent" name="content" placeholder="Ask your question or describe your inquiry in detail..." required></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeContactTeacherModal()">Cancel</button>
+          <button type="submit" class="btn-save" [disabled]="sendingStudentMessage()">
+            @if (sendingStudentMessage()) { Sending... } @else { 🚀 Send to Instructor }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+

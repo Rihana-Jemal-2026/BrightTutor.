@@ -152,12 +152,10 @@
             <span class="nav-text">Class Schedules</span>
           </a>
         }
-        @if (authService.hasPermission('notifications.send') && authService.isAdmin()) {
-          <a routerLink="/announcements" routerLinkActive="active" class="nav-item">
-            <span class="nav-icon">📢</span>
-            <span class="nav-text">Announcements</span>
-          </a>
-        }
+        <a routerLink="/announcements" routerLinkActive="active" class="nav-item">
+          <span class="nav-icon">📢</span>
+          <span class="nav-text">{{ authService.isStudent() ? 'Bulletins & Contact Tutor' : authService.isTeacher() ? 'Class Notices & Messaging' : 'Announcements & Notifications' }}</span>
+        </a>
       </div>
 
       <!-- Section: Attendance Marking (Staff & Admin) -->

@@ -20,7 +20,7 @@ public class AnnouncementsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<ActionResult<CreateAnnouncementResponse>> CreateAnnouncement([FromBody] CreateAnnouncementCommand command)
     {
         var result = await _mediator.Send(command);
