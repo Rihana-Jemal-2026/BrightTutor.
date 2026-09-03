@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><title>BrightTutor Enterprise</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;min-height:100%;margin:0;padding:0;background-color:#f8f9ff;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'surface-container-high': '#dce9ff', 'on-primary-container': '#9ffdd3', 'secondary-container': '#6cf8bb', 'surface-bright': '#f8f9ff', 'surface': '#f8f9ff', 'on-primary-fixed': '#002115', 'tertiary-container': '#616980', 'tertiary-fixed': '#dae2fd', 'on-surface-variant': '#3e4943', 'error': '#ba1a1a', 'on-tertiary-fixed': '#131b2e', 'on-surface': '#0b1c30', 'on-error': '#ffffff', 'secondary': '#006c49', 'on-error-container': '#93000a', 'on-primary-fixed-variant': '#00513a', 'on-secondary': '#ffffff', 'on-tertiary-fixed-variant': '#3f465c', 'surface-variant': '#d3e4fe', 'on-tertiary': '#ffffff', 'surface-tint': '#006c4e', 'secondary-fixed': '#6ffbbe', 'surface-container-lowest': '#ffffff', 'inverse-on-surface': '#eaf1ff', 'inverse-surface': '#213145', 'inverse-primary': '#7bd8b1', 'outline': '#6e7a73', 'primary-container': '#047857', 'error-container': '#ffdad6', 'surface-container-highest': '#d3e4fe', 'tertiary-fixed-dim': '#bec6e0', 'on-background': '#0b1c30', 'secondary-fixed-dim': '#4edea3', 'primary-fixed': '#97f5cc', 'on-secondary-fixed-variant': '#005236', 'on-secondary-fixed': '#002113', 'surface-container-low': '#eff4ff', 'on-primary': '#ffffff', 'on-secondary-container': '#00714d', 'primary-fixed-dim': '#7bd8b1', 'surface-container': '#e5eeff', 'background': '#f8f9ff', 'primary': '#005d42', 'outline-variant': '#bdc9c1', 'tertiary': '#495167', 'on-tertiary-container': '#e4e9ff', 'surface-dim': '#cbdbf5' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter-mobile': '1rem', 'space-lg': '1.25rem', 'space-base': '1rem', 'space-md': '0.75rem', 'space-xxs': '0.125rem', 'space-2xl': '2rem', 'space-sm': '0.5rem', 'space-3xl': '2.5rem', 'sidebar-expanded': '16.25rem', 'sidebar-collapsed': '4.5rem', 'space-4xl': '3rem', 'gutter-tablet': '1.5rem', 'space-xs': '0.25rem', 'space-xl': '1.5rem', 'gutter-desktop': '2rem' }, fontFamily: { 'display-lg-mobile': ['Plus Jakarta Sans'], 'headline-md': ['Plus Jakarta Sans'], 'display-lg': ['Plus Jakarta Sans'], 'label-sm': ['Inter'], 'code-sm': ['JetBrains Mono'], 'headline-sm': ['Plus Jakarta Sans'], 'body-sm': ['Inter'], 'body-md': ['Inter'], 'headline-lg': ['Plus Jakarta Sans'], 'body-lg': ['Inter'], 'label-md': ['Inter'], 'title-sm': ['Inter'], 'title-md': ['Inter'] }, fontSize: { 'display-lg-mobile': ['28px', { lineHeight: '36px', letterSpacing: '-0.02em', fontWeight: '700' }], 'headline-md': ['22px', { lineHeight: '30px', letterSpacing: '-0.02em', fontWeight: '600' }], 'display-lg': ['36px', { lineHeight: '44px', letterSpacing: '-0.03em', fontWeight: '700' }], 'label-sm': ['11px', { lineHeight: '16px', letterSpacing: '0.04em', fontWeight: '600' }], 'code-sm': ['12px', { lineHeight: '18px', letterSpacing: '-0.01em', fontWeight: '500' }], 'headline-sm': ['18px', { lineHeight: '26px', letterSpacing: '-0.015em', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '18px', letterSpacing: '0.005em', fontWeight: '400' }], 'body-md': ['14px', { lineHeight: '20px', letterSpacing: '0em', fontWeight: '400' }], 'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.025em', fontWeight: '600' }], 'body-lg': ['16px', { lineHeight: '24px', letterSpacing: '0em', fontWeight: '400' }], 'label-md': ['13px', { lineHeight: '18px', letterSpacing: '0.01em', fontWeight: '500' }], 'title-sm': ['14px', { lineHeight: '20px', letterSpacing: '-0.005em', fontWeight: '600' }], 'title-md': ['16px', { lineHeight: '24px', letterSpacing: '-0.01em', fontWeight: '600' }] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen flex flex-col antialiased selection:bg-primary/20 selection:text-primary"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,28,48,0.05)] pt-safe"><div class="h-16 px-gutter-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-label="Open Drawer" class="w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="document.getElementById('mobile-drawer')?.classList.toggle('-translate-x-full');document.getElementById('drawer-backdrop')?.classList.toggle('hidden');" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex items-center gap-space-xs min-w-0"><img alt="BrightTutor Emblem" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1VLeyvYr9a08FBKtwGUddYl9Zb9wy-wYCYIvY7UDmSUbk9vq-TVfkgaIm_bw18PUmTpzb5p_XSIkefGlOGeKAxD1NhraD4Bbb3xu8WOeXYpQUKu7KpawiKOG9xhtyDLTwCWMvY0hyZXJGHjxMEiiT3z_vYOa-6Ci4DTF0cNa2zrswWdfX0l36ZHoc0HMsYtAoKkt0ljS5AjZrgjC0dt6DkAISC1jeYYTrpXTYqfgOZImOQybeJEoDyeGsGx"/><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate hidden xs:inline">BrightTutor</span></div><span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm uppercase tracking-wider hidden sm:inline-flex items-center">Admin / Faculty</span></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Quick Search" class="h-11 px-2.5 flex items-center gap-1.5 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[18px]">search</span><span class="font-code-sm text-code-sm opacity-60 hidden md:inline">⌘K</span></button><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><button aria-label="User Profile" class="w-11 h-11 flex items-center justify-center pl-1 rounded-full overflow-hidden hover:opacity-90 transition-opacity" type="button"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_0_0_1px_rgba(0,93,66,0.2)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARfZRFKXOS_BOXdZtDHi_V9YS53Jv1I2cjxwSr_y9CxGIlCY2G6T5JChL5LSNT9FoTxavkBi7cMDaJResYBFv8NglzT75BvOK0zTs81zyvRTWs0FjTghc-7fUMWywjgH5k_jhi40nSvoeEdFuDZRaEHL_ye-FTU9igLAfTsN9X5dvdxTUpjuWI4sEhTi19uGFkbx2rHDrTk6-_vgEvOGUx44QSnfE_RHJQleBHNJ8XEWQYSAt_kuNACA"/></button></div></div></header><div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-50 hidden transition-opacity" id="drawer-backdrop" onclick="document.getElementById('mobile-drawer')?.classList.add('-translate-x-full');this.classList.add('hidden');"></div><aside class="fixed top-0 bottom-0 left-0 w-sidebar-expanded max-w-[80vw] bg-surface-container-lowest z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-[0_10px_25px_rgba(0,0,0,0.1)] flex flex-col pt-safe pb-safe" id="mobile-drawer"><div class="h-16 px-gutter-mobile flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="BrightTutor Emblem" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VLeyvYr9a08FBKtwGUddYl9Zb9wy-wYCYIvY7UDmSUbk9vq-TVfkgaIm_bw18PUmTpzb5p_XSIkefGlOGeKAxD1NhraD4Bbb3xu8WOeXYpQUKu7KpawiKOG9xhtyDLTwCWMvY0hyZXJGHjxMEiiT3z_vYOa-6Ci4DTF0cNa2zrswWdfX0l36ZHoc0HMsYtAoKkt0ljS5AjZrgjC0dt6DkAISC1jeYYTrpXTYqfgOZImOQybeJEoDyeGsGx"/><span class="font-headline-sm text-headline-sm text-on-surface">BrightTutor</span></div><button aria-label="Close Drawer" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:bg-surface-container rounded-lg" onclick="document.getElementById('mobile-drawer')?.classList.add('-translate-x-full');document.getElementById('drawer-backdrop')?.classList.add('hidden');" type="button"><span class="material-symbols-outlined text-[20px]">close</span></button></div><div class="px-gutter-mobile py-space-sm"><div class="px-space-sm py-2 rounded-lg bg-surface-container-low flex items-center justify-between"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Workspace Role</span><span class="font-label-sm text-label-sm text-primary font-bold">Admin / Faculty</span></div></div><nav class="flex-1 px-space-sm py-space-md space-y-1 overflow-y-auto"><a class="flex items-center gap-3 px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-title-sm text-title-sm" data-path="dashboard" href="#" onclick="document.getElementById('mobile-drawer')?.classList.add('-translate-x-full');document.getElementById('drawer-backdrop')?.classList.add('hidden');"><span class="material-symbols-outlined text-[20px]">dashboard</span>Executive Hub</a><a class="flex items-center gap-3 px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-title-sm text-title-sm" data-path="gradebook-tests" href="#" onclick="document.getElementById('mobile-drawer')?.classList.add('-translate-x-full');document.getElementById('drawer-backdrop')?.classList.add('hidden');"><span class="material-symbols-outlined text-[20px]">analytics</span>Gradebook &amp; Studio</a><a class="flex items-center gap-3 px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-title-sm text-title-sm" data-path="assessment-builder" href="#" onclick="document.getElementById('mobile-drawer')?.classList.add('-translate-x-full');document.getElementById('drawer-backdrop')?.classList.add('hidden');"><span class="material-symbols-outlined text-[20px]">assignment</span>Assessments</a><a class="flex items-center gap-3 px-space-md py-3 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-title-sm text-title-sm" data-path="student-directory" href="#" onclick="document.getElementById('mobile-drawer')?.classList.add('-translate-x-full');document.getElementById('drawer-backdrop')?.classList.add('hidden');"><span class="material-symbols-outlined text-[20px]">school</span>Student Portal</a></nav><div class="p-gutter-mobile bg-surface-container-low flex items-center gap-3"><img alt="Profile" class="w-9 h-9 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARfZRFKXOS_BOXdZtDHi_V9YS53Jv1I2cjxwSr_y9CxGIlCY2G6T5JChL5LSNT9FoTxavkBi7cMDaJResYBFv8NglzT75BvOK0zTs81zyvRTWs0FjTghc-7fUMWywjgH5k_jhi40nSvoeEdFuDZRaEHL_ye-FTU9igLAfTsN9X5dvdxTUpjuWI4sEhTi19uGFkbx2rHDrTk6-_vgEvOGUx44QSnfE_RHJQleBHNJ8XEWQYSAt_kuNACA"/><div class="min-w-0 flex-1"><p class="font-title-sm text-title-sm text-on-surface truncate">Dr. Alistair Vance</p><p class="font-label-sm text-label-sm text-on-surface-variant truncate">Faculty Director</p></div></div></aside><main class="flex flex-col relative w-full px-gutter-mobile pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full space-y-space-xl">
+<!-- Student Academic Standing Card -->
+<section class="w-full bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-start justify-between gap-space-sm mb-space-md">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close-up headshot of a cheerful high school female student wearing a navy knit sweater in a sunlit university library setting, realistic photographic style with soft bokeh and green accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1wo5MhPCNK7SLSxR7fXjfLj8liJQRk4lfySlFB2d9KIJXmQLi5nRu1Rx_Uhyh3f88FQ7aa5PbmSWTraZvcHadYozIWABN0MK2VArSOCPw1xPZ9w8W-Whf0y1Y4MpsRY6teG2-Aagyp4uX29IEBZRrMMmKm6VJQTuZYewZDgEFZR5zSyF0bZnkilm11EtBDomGJG_sepEFTk5cPD6EvoVM8-w4jmbF2akJSW9Sv_Td9A2AJ3arBA-44w"/>
+<span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="min-w-0">
+<h2 class="font-headline-sm text-headline-sm text-on-surface truncate">Julianna Mercer</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Grade 11 Honors • STEM Academy</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm uppercase tracking-wider shrink-0">
+        Term 2 Active
+      </span>
+</div>
+<!-- Quick Academic Vitals Grid -->
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col justify-between">
+<div class="flex items-center justify-between gap-1 mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Cumulative GPA</span>
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-1">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">3.92</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/ 4.0</span>
+</div>
+<div class="self-start px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+          Top 5% of Cohort
+        </div>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col justify-between">
+<div class="flex items-center justify-between gap-1 mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Attendance</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+</div>
+<div class="flex items-baseline gap-1.5 mb-1">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">98.5%</span>
+<span class="font-body-sm text-body-sm text-secondary font-medium">Excellent</span>
+</div>
+<div class="self-start px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium">
+          68 of 69 Sessions
+        </div>
+</div>
+</div>
+</section>
+<!-- Interactive Exam Taking Container -->
+<section class="w-full bg-surface-container-lowest rounded-xl p-space-lg shadow-md relative overflow-hidden" id="quiz-workspace">
+<!-- Live Exam Indicator Bar -->
+<div class="flex flex-col gap-space-sm mb-space-md">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-pulse shrink-0"></span>
+<span class="font-title-sm text-title-sm text-on-surface truncate">AP Physics Midterm Test</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-error-container text-on-error-container font-code-sm text-code-sm font-semibold shrink-0" id="countdown-pill">
+<span class="material-symbols-outlined text-[15px] animate-spin" style="animation-duration: 4s;">timelapse</span>
+<span id="timer-display">24:18 Remaining</span>
+</div>
+</div>
+<!-- Quick Question Palette -->
+<div class="pt-space-xs">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Question Matrix</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">12 of 20 Completed</span>
+</div>
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-space-xs px-space-xs scrollbar-none" id="question-strip">
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">1</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">2</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">3</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">4</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">5</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">6</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">7</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">8</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">9</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">10</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">11</button>
+<button class="w-7 h-7 rounded-lg bg-primary text-on-primary font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm" type="button">12</button>
+<button class="w-7 h-7 rounded-lg bg-inverse-surface text-inverse-on-surface font-code-sm text-code-sm font-bold flex items-center justify-center shrink-0 shadow-sm scale-110" type="button">13</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm flex items-center justify-center shrink-0" type="button">14</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm flex items-center justify-center shrink-0" type="button">15</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm flex items-center justify-center shrink-0" type="button">16</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm flex items-center justify-center shrink-0" type="button">17</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm flex items-center justify-center shrink-0" type="button">18</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm flex items-center justify-center shrink-0" type="button">19</button>
+<button class="w-7 h-7 rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm flex items-center justify-center shrink-0" type="button">20</button>
+</div>
+</div>
+</div>
+<!-- Active Question Card Content -->
+<div class="bg-surface-container-low rounded-xl p-space-md mb-space-lg">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">Physics • Section B</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Points: 2.0</span>
+</div>
+<p class="font-title-md text-title-md text-on-surface leading-snug mb-space-md">
+<span class="font-bold">Question 13 of 20:</span> A particle of mass <i>m</i> and electric charge <i>q</i> enters a uniform magnetic field <b>B</b> perpendicular to its velocity <b>v</b>. What is the radius <i>r</i> of the resulting circular trajectory?
+      </p>
+<!-- Radios / Options -->
+<div class="space-y-space-sm" id="mcq-options">
+<!-- Option A (Active Selected) -->
+<label class="flex items-center justify-between p-space-md rounded-lg bg-surface-container-lowest shadow-sm cursor-pointer transition-all hover:bg-surface-bright" onclick="selectOption(this)">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-on-primary shrink-0 option-indicator">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<div class="min-w-0">
+<span class="font-code-sm text-code-sm text-on-surface font-semibold">r = mv / (qB)</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold px-2 py-0.5 rounded bg-primary-fixed">Selected</span>
+</label>
+<!-- Option B -->
+<label class="flex items-center justify-between p-space-md rounded-lg bg-surface-container shadow-none cursor-pointer transition-all hover:bg-surface-container-high" onclick="selectOption(this)">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0 option-indicator">
+<span class="font-label-sm text-label-sm">B</span>
+</div>
+<div class="min-w-0">
+<span class="font-code-sm text-code-sm text-on-surface">r = qB / (mv)</span>
+</div>
+</div>
+</label>
+<!-- Option C -->
+<label class="flex items-center justify-between p-space-md rounded-lg bg-surface-container shadow-none cursor-pointer transition-all hover:bg-surface-container-high" onclick="selectOption(this)">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0 option-indicator">
+<span class="font-label-sm text-label-sm">C</span>
+</div>
+<div class="min-w-0">
+<span class="font-code-sm text-code-sm text-on-surface">r = m / (qvB)</span>
+</div>
+</div>
+</label>
+<!-- Option D -->
+<label class="flex items-center justify-between p-space-md rounded-lg bg-surface-container shadow-none cursor-pointer transition-all hover:bg-surface-container-high" onclick="selectOption(this)">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0 option-indicator">
+<span class="font-label-sm text-label-sm">D</span>
+</div>
+<div class="min-w-0">
+<span class="font-code-sm text-code-sm text-on-surface">r = 2mv / (qB²)</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+<!-- Navigation & Review Actions -->
+<div class="flex items-center justify-between gap-space-sm pt-space-xs">
+<button class="h-10 px-3.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-md text-label-md flex items-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Prev</span>
+</button>
+<button class="h-10 px-3 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-error hover:bg-error-container font-label-md text-label-md flex items-center gap-1 transition-colors" id="flag-btn" onclick="toggleFlag()" type="button">
+<span class="material-symbols-outlined text-[18px]" id="flag-icon">flag</span>
+<span class="hidden xs:inline">Flag</span>
+</button>
+<button class="h-10 px-4 rounded-lg bg-primary-container text-on-primary hover:bg-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 shadow-sm transition-all active:scale-95" type="button">
+<span>Next Question</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Active Enrolled Courses Progress -->
+<section class="w-full space-y-space-sm">
+<div class="flex items-center justify-between px-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Enrolled Courses</h3>
+<a class="font-label-md text-label-md text-primary font-semibold hover:underline" href="#">Full Syllabus</a>
+</div>
+<div class="flex flex-col gap-space-sm">
+<!-- Course 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-2">
+<div class="min-w-0">
+<h4 class="font-title-sm text-title-sm text-on-surface truncate">AP Physics C: Mechanics</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px] text-primary">event_upcoming</span>
+              Next: Electromagnetism Quiz in 2 days
+            </p>
+</div>
+<div class="text-right shrink-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">94.2%</span>
+<div class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+              Grade A
+            </div>
+</div>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full transition-all" style="width: 94.2%"></div>
+</div>
+</div>
+<!-- Course 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-2">
+<div class="min-w-0">
+<h4 class="font-title-sm text-title-sm text-on-surface truncate">Multivariable Calculus</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px] text-error">notification_important</span>
+              Next: Problem Set 6 due tomorrow
+            </p>
+</div>
+<div class="text-right shrink-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">89.8%</span>
+<div class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">
+              Grade B+
+            </div>
+</div>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary-container h-2 rounded-full transition-all" style="width: 89.8%"></div>
+</div>
+</div>
+<!-- Course 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-2">
+<div class="min-w-0">
+<h4 class="font-title-sm text-title-sm text-on-surface truncate">English Literature Honors</h4>
+<p class="font-body-sm text-body-sm text-secondary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+              All assignments clear
+            </p>
+</div>
+<div class="text-right shrink-0">
+<span class="font-title-sm text-title-sm text-on-surface font-bold">96.0%</span>
+<div class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+              Grade A
+            </div>
+</div>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-2 rounded-full transition-all" style="width: 96.0%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Assigned Instructors Roster -->
+<section class="w-full space-y-space-sm">
+<div class="flex items-center justify-between px-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Assigned Faculty Mentors</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Office Hours</span>
+</div>
+<div class="grid grid-cols-1 gap-space-sm">
+<!-- Instructor 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="relative w-11 h-11 rounded-full overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional portrait of Dr. Sarah Sterling, an experienced female physics professor with glasses and elegant silver hair wearing a dark emerald blazer, in an academic classroom background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDtlc3Z7M72Jo65PAcsnDryQBbGLkBrUxPWyMmcE33NnMSlK0iJXuqKosN6DOT2rwcRgiFhfbi8umSJ0WxawA_n7XTZtUMpIFn8tvsz2he80Ele8HULHQgzoPZ8x0wS5281ormZSPaL0YVv2RPFhiIevvGVvaiLG9aWF0tzsjgIz1vOhMLnTILROV5O8M6ooaIZE2s9NmDse48w62YMxtZHWh4WRYs_hGqIAuJExvzVbO34ctzOhfMBw"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="min-w-0">
+<h4 class="font-title-sm text-title-sm text-on-surface truncate">Dr. Sarah Sterling</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Physics Lead • <span class="text-secondary font-medium">Available</span></p>
+</div>
+</div>
+<button class="h-9 px-3 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-sm text-label-sm font-semibold shrink-0 shadow-sm transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+<span>Ask</span>
+</button>
+</div>
+<!-- Instructor 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="relative w-11 h-11 rounded-full overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Distinguished mature male mathematics professor Alan Turing with thoughtful expression, tweed jacket, in front of a chalkboard covered in multivariable equations, warm studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLpx2STFvgILSPhptmvHk2owIOF5ZW4sl6nrt3rNjFm48xBozze04duDQbIRMIaDXs9mactMeRXpWn166atPt2LZqZJidsp7HS1xHy3tqWktmRAdRx64QV3QsStId9dbGKh6HWe8TEtmJrlZpAiHygmP5S-tJlsXG4vwj2axGNAUCQlZQVTaEI3sPl9Rf-AHB8KhDPtB-Vs3l6i5gcduC0zVOyaFoZDEVCPu2Js-D47jMUxPFevMCnkg"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-outline ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="min-w-0">
+<h4 class="font-title-sm text-title-sm text-on-surface truncate">Prof. Alan Turing</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Calculus • <span class="text-on-surface-variant">Ended 14:00</span></p>
+</div>
+</div>
+<button class="h-9 px-3 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high font-label-sm text-label-sm font-medium shrink-0 transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">mail</span>
+<span>Note</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Campus Bulletin Announcement Card -->
+<section class="w-full bg-gradient-to-r from-surface-container to-surface-container-high rounded-xl p-space-md shadow-sm flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-surface-container-lowest text-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[22px]">campaign</span>
+</div>
+<div class="min-w-0 flex-1">
+<div class="flex items-center justify-between gap-2 mb-0.5">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">Campus Bulletin</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Deadline Approaching</span>
+</div>
+<p class="font-title-sm text-title-sm text-on-surface font-semibold">
+        Regional Science Fair Registration open until Friday 5:00 PM.
+      </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+        STEM laboratory grants up to $1,500 for shortlisted independent research proposals.
+      </p>
+<div class="mt-2">
+<a class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary font-bold hover:underline" href="#">
+          Download Submission Guidelines
+          <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+</div>
+</section>
+</div>
+<script>
+  function selectOption(targetLabel) {
+    const container = document.getElementById('mcq-options');
+    if (!container) return;
+    const allLabels = container.querySelectorAll('label');
+    allLabels.forEach(label => {
+      label.className = "flex items-center justify-between p-space-md rounded-lg bg-surface-container shadow-none cursor-pointer transition-all hover:bg-surface-container-high";
+      const indicator = label.querySelector('.option-indicator');
+      const pill = label.querySelector('.px-2');
+      if (pill) pill.remove();
+      if (indicator) {
+        indicator.className = "w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0 option-indicator";
+        indicator.innerHTML = '<span class="font-label-sm text-label-sm">' + (label === allLabels[0] ? 'A' : label === allLabels[1] ? 'B' : label === allLabels[2] ? 'C' : 'D') + '</span>';
+      }
+    });
+
+    targetLabel.className = "flex items-center justify-between p-space-md rounded-lg bg-surface-container-lowest shadow-sm cursor-pointer transition-all hover:bg-surface-bright";
+    const activeIndicator = targetLabel.querySelector('.option-indicator');
+    if (activeIndicator) {
+      activeIndicator.className = "w-5 h-5 rounded-full bg-primary flex items-center justify-center text-on-primary shrink-0 option-indicator";
+      activeIndicator.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span>';
+    }
+    const badge = document.createElement('span');
+    badge.className = "font-label-sm text-label-sm text-primary font-bold px-2 py-0.5 rounded bg-primary-fixed";
+    badge.textContent = "Selected";
+    targetLabel.appendChild(badge);
+  }
+
+  function toggleFlag() {
+    const btn = document.getElementById('flag-btn');
+    const icon = document.getElementById('flag-icon');
+    if (!btn || !icon) return;
+    const isFlagged = btn.classList.contains('bg-error-container');
+    if (isFlagged) {
+      btn.className = "h-10 px-3 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-error hover:bg-error-container font-label-md text-label-md flex items-center gap-1 transition-colors";
+      icon.style.fontVariationSettings = "'FILL' 0";
+    } else {
+      btn.className = "h-10 px-3 rounded-lg bg-error-container text-on-error-container font-label-md text-label-md flex items-center gap-1 transition-colors shadow-sm";
+      icon.style.fontVariationSettings = "'FILL' 1";
+    }
+  }
+
+  // Simple ambient timer countdown simulation
+  (function initTimer() {
+    let totalSeconds = 24 * 60 + 18;
+    const display = document.getElementById('timer-display');
+    if (!display) return;
+    setInterval(() => {
+      if (totalSeconds > 0) {
+        totalSeconds--;
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} Remaining`;
+      }
+    }, 1000);
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_12px_rgba(11,28,48,0.06)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-lg transition-colors text-primary font-bold" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm tracking-tight">Dashboard</span></a><a class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="courses-schedule" href="#"><span class="material-symbols-outlined text-[22px]">calendar_month</span><span class="font-label-sm text-label-sm tracking-tight">Courses</span></a><a class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="gradebook-tests" href="#"><span class="material-symbols-outlined text-[22px]">fact_check</span><span class="font-label-sm text-label-sm tracking-tight">Gradebook</span></a><a class="flex flex-col items-center justify-center gap-1 w-16 h-14 rounded-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="notices-inbox" href="#"><span class="material-symbols-outlined text-[22px]">mail</span><span class="font-label-sm text-label-sm tracking-tight">Notices</span></a></div></nav></body></html>

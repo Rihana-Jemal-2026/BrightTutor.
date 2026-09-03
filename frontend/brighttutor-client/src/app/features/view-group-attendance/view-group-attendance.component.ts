@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
+import { Component, inject, computed, signal, OnInit } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { of, map } from "rxjs";
@@ -28,9 +28,14 @@ export class ViewGroupAttendanceComponent implements OnInit {
   attendanceDate = signal(new Date().toISOString().slice(0, 10));
   noAssignedClasses = signal(false);
 
-  recordsResource = rxResource<GroupAttendanceRecord[], unknown>({
-    stream: () => {
-      const id = this.classGroupId();
+  filtersTouched = signal(false);
+  optionsError = signal('');
+  canSearch = computed(() => !!this.attendanceDate() && !this.noAssignedClasses() && (!this.authService.isTeacher() || !!this.classGroupId()) && !this.optionsError());
+
+  recordsResource = rxResource({
+    params: () => this.filtersTouched() && this.canSearch() ? { classGroupId: this.classGroupId(), attendanceDate: this.attendanceDate() } : undefined,
+    stream: ({ params }) => {
+      const id = params.classGroupId;
       const currentUser = this.authService.currentUser();
       const teacherId = this.authService.isTeacher() && currentUser ? currentUser.userId : undefined;
 
@@ -38,7 +43,7 @@ export class ViewGroupAttendanceComponent implements OnInit {
         return of([]);
       }
 
-      return this.api.getGroupAttendance(id, this.attendanceDate(), teacherId).pipe(
+      return this.api.getGroupAttendance(id, params.attendanceDate, teacherId).pipe(
         map(records => {
           if (this.authService.isStudent() || this.authService.isParent()) {
             if (!currentUser) return records;
@@ -75,26 +80,21 @@ export class ViewGroupAttendanceComponent implements OnInit {
           if (assignedOpts.length > 0) {
             this.noAssignedClasses.set(false);
             this.groupOptions.set(assignedOpts);
-            this.classGroupId.set(assignedOpts[0].id);
+            this.classGroupId.set('');
           } else {
             this.noAssignedClasses.set(true);
             this.groupOptions.set([]);
             this.classGroupId.set('');
           }
-          this.search();
         },
-        error: () => {
-          this.noAssignedClasses.set(true);
-          this.groupOptions.set([]);
-          this.classGroupId.set('');
-        }
+        error: () => { this.optionsError.set('Could not load class choices. Refresh the page to try again.'); }
       });
     } else {
       // Admin / SuperAdmin: See all classes and all modes
       this.courseService.getClassGroups().subscribe({
         next: (groups) => {
           const opts: SelectOption[] = [
-            { id: '', name: '🌟 All Attendance Records (Group, Online & Home)', subtext: 'View all session modes' },
+            { id: '', name: ' All Attendance Records (Group, Online & Home)', subtext: 'View all session modes' },
             ...groups.map(g => ({
               id: g.id,
               name: g.name,
@@ -103,27 +103,29 @@ export class ViewGroupAttendanceComponent implements OnInit {
           ];
           this.groupOptions.set(opts);
           this.classGroupId.set('');
-          this.search();
-        }
+        },
+        error: () => this.optionsError.set('Could not load filter choices. Refresh the page to try again.')
       });
     }
   }
 
   onGroupSelected(groupId: string) {
     this.classGroupId.set(groupId);
-    this.search();
+    this.filtersTouched.set(true);
   }
 
   search() {
-    this.recordsResource.reload();
+    if (!this.canSearch()) return;
+    if (this.filtersTouched()) this.recordsResource.reload();
+    else this.filtersTouched.set(true);
   }
 
   getTypeLabel(type?: number, groupName?: string): string {
     const name = groupName || '';
-    if (type === 2 || name.toLowerCase().includes('online')) return '💻 1-on-1 Online';
-    if (type === 3 || name.toLowerCase().includes('home')) return '🏠 Home Tutoring';
-    if (type === 4) return '📱 Center QR Scan';
-    return '👥 Group Class';
+    if (type === 2 || name.toLowerCase().includes('online')) return ' 1-on-1 Online';
+    if (type === 3 || name.toLowerCase().includes('home')) return ' Home Tutoring';
+    if (type === 4) return ' Center QR Scan';
+    return ' Group Class';
   }
 
   getTypeClass(type?: number, groupName?: string): string {

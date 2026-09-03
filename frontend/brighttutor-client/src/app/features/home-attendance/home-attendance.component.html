@@ -23,7 +23,7 @@
 
   @if (checkInError()) {
     <div class="alert alert-danger">
-      <span class="icon">⚠</span>
+      <span class="icon"></span>
       <span>{{ checkInError() }}</span>
     </div>
   }
@@ -37,7 +37,7 @@
 
   @if (checkOutError()) {
     <div class="alert alert-danger">
-      <span class="icon">⚠</span>
+      <span class="icon"></span>
       <span>{{ checkOutError() }}</span>
     </div>
   }
@@ -50,7 +50,7 @@
 
       <div class="form-group">
         <app-searchable-select
-          label="🏠 Select Home Student"
+          label=" Select Home Student"
           placeholder="Choose Student..."
           searchPlaceholder="Type student name to search..."
           [options]="studentOptions()"
@@ -62,7 +62,7 @@
       @if (!authService.isTeacher()) {
         <div class="form-group">
           <app-searchable-select
-            label="👨‍🏫 Select Teacher"
+            label=" Select Teacher"
             placeholder="Choose Teacher..."
             searchPlaceholder="Type teacher name to search..."
             [options]="teacherOptions()"
@@ -72,8 +72,8 @@
         </div>
       } @else {
         <div class="form-group">
-          <label style="font-weight: 600; color: #1e293b; display: block; margin-bottom: 0.35rem;">👨‍🏫 Assigned Teacher</label>
-          <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: #f8fafc; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px;" readonly disabled />
+          <label style="font-weight: 600; color: var(--color-text); display: block; margin-bottom: 0.35rem;"> Assigned Teacher</label>
+          <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: var(--color-bg); padding: 0.65rem; border: 1px solid var(--color-border); border-radius: 8px;" readonly disabled />
         </div>
       }
 
@@ -86,17 +86,17 @@
 
       <div class="form-group">
         <label for="address" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>🏠 Student Registered Address</span>
-          <span style="font-size: 0.75rem; color: #059669; font-weight: 600;">✓ Pre-filled from Registration</span>
+          <span> Student Registered Address</span>
+          <span style="font-size: 0.75rem; color: var(--color-accent); font-weight: 600;">✓ Pre-filled from Registration</span>
         </label>
-        <input id="address" formControlName="address" class="form-control" style="background: #f8fafc; font-weight: 500;" readonly />
+        <input id="address" formControlName="address" class="form-control" style="background: var(--color-bg); font-weight: 500;" readonly />
       </div>
 
       <div class="gps-capture-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <label style="font-weight: 600; color: #166534; margin: 0; font-size: 0.9rem;">📍 Live GPS Location Cross-Check</label>
+          <label style="font-weight: 600; color: #166534; margin: 0; font-size: 0.9rem;"> Live GPS Location Cross-Check</label>
           <button type="button" (click)="autoDetectGps()" class="btn-gps-detect" style="background: #166534; color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
-            @if (gpsDetecting()) { ⏳ Detecting Location... } @else { 🔄 Capture My Live GPS }
+            @if (gpsDetecting()) {  Detecting Location... } @else {  Capture My Live GPS }
           </button>
         </div>
 
@@ -111,7 +111,7 @@
           </div>
         </div>
         <p style="font-size: 0.75rem; color: #166534; margin: 0.5rem 0 0 0;">
-          ℹ️ The system cross-checks the teacher's live device location against the student's registered home coordinates for attendance verification.
+           The system cross-checks the teacher's live device location against the student's registered home coordinates for attendance verification.
         </p>
       </div>
 
@@ -131,7 +131,7 @@
 
       <div class="form-group">
         <app-searchable-select
-          label="📌 Select Active Visit Session for Check-Out"
+          label=" Select Active Visit Session for Check-Out"
           placeholder="Choose Active Session..."
           searchPlaceholder="Type to search active sessions..."
           [options]="activeVisitOptions()"
@@ -140,11 +140,11 @@
         ></app-searchable-select>
       </div>
 
-      <div class="gps-capture-box" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
+      <div class="gps-capture-box" style="background: var(--color-info-bg); border: 1px solid #bfdbfe; padding: 0.85rem; border-radius: 8px; margin-bottom: 1rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <label style="font-weight: 600; color: #1e40af; margin: 0; font-size: 0.9rem;">📍 Live Check-Out GPS Coordinates</label>
+          <label style="font-weight: 600; color: #1e40af; margin: 0; font-size: 0.9rem;"> Live Check-Out GPS Coordinates</label>
           <button type="button" (click)="autoDetectGps()" class="btn-gps-detect" style="background: #1e40af; color: white; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
-            @if (gpsDetecting()) { ⏳ Detecting... } @else { 🔄 Refresh GPS }
+            @if (gpsDetecting()) {  Detecting... } @else {  Refresh GPS }
           </button>
         </div>
 

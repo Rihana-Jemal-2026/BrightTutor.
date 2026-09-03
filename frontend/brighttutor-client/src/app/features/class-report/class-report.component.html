@@ -3,14 +3,14 @@
 
   @if (noAssignedClasses()) {
     <div class="alert alert-warning" style="margin-bottom: 1.5rem; padding: 1.2rem; background: #fffbe6; border: 1.5px solid #ffe58f; border-radius: 10px; color: #873800;">
-      <strong>⚠️ No Assigned Class Groups Found</strong>
+      <strong> No Assigned Class Groups Found</strong>
       <p style="margin-top: 0.35rem; margin-bottom: 0;">You currently have no class groups assigned to your educator profile. Please contact Academy Admin to assign your teacher profile to a class group.</p>
     </div>
   } @else {
     <div class="search-bar">
       <div class="field select-field">
         <app-searchable-select
-          label="🎯 Filter by Class Group / All Modes"
+          label=" Filter by Class Group / All Modes"
           placeholder="Choose Class Group or All Modes..."
           searchPlaceholder="Type group name to search..."
           [options]="groupOptions()"
@@ -20,20 +20,25 @@
       </div>
       <div class="field">
         <label for="startDate">Start Date</label>
-        <input id="startDate" type="date" [(ngModel)]="startDate" name="startDate" class="form-control" />
+        <input id="startDate" type="date" [(ngModel)]="startDate" (ngModelChange)="filtersTouched.set(true)" name="startDate" class="form-control" />
       </div>
       <div class="field">
         <label for="endDate">End Date</label>
-        <input id="endDate" type="date" [(ngModel)]="endDate" name="endDate" class="form-control" />
+        <input id="endDate" type="date" [(ngModel)]="endDate" (ngModelChange)="filtersTouched.set(true)" name="endDate" class="form-control" />
       </div>
-      <button type="button" class="btn-search" (click)="search()">Search</button>
     </div>
   }
 
-  @if (reportResource.isLoading()) {
+  @if (startDate() && endDate() && startDate() > endDate()) { <p class="report-filter-error" role="alert">End date must be on or after start date.</p> }
+  @if (optionsError()) { <p class="report-filter-error" role="alert">{{ optionsError() }}</p> }
+  @if ((!filtersTouched() || !canSearch()) && !noAssignedClasses() && !optionsError()) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>Choose a class and date range</h2><p>Choose a class group, or keep All Classes to include every attendance mode. The report appears automatically when you choose a class or change the date range.</p></section>
+  } @else if (reportResource.isLoading()) {
     <div class="spinner">Loading report...</div>
   } @else if (reportResource.error()) {
-    <div class="error">Could not load the report. Make sure the backend is running.</div>
+    <div class="error">We couldn’t load this report. Try again or change your filters. If the problem continues, contact your administrator. <button type="button" class="btn-secondary" (click)="search()">Try again</button></div>
+  } @else if (reportResource.hasValue() && reportResource.value()?.totalRecords === 0) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>No attendance records found</h2><p>There are no attendance records for these filters. Choose another date or selection to update the report automatically.</p></section>
   } @else if (reportResource.value(); as report) {
 
     <div class="summary-cards">

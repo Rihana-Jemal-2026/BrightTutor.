@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
+import { Component, inject, computed, signal, OnInit } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -29,8 +29,13 @@ export class ClassReportComponent implements OnInit {
   endDate = signal(new Date().toISOString().slice(0, 10));
   noAssignedClasses = signal(false);
 
-  reportResource = rxResource<ClassAttendanceReport, unknown>({
-    stream: () => {
+  filtersTouched = signal(false);
+  optionsError = signal('');
+  canSearch = computed(() => !!this.startDate() && !!this.endDate() && this.startDate() <= this.endDate() && !this.noAssignedClasses() && (!this.authService.isTeacher() || !!this.classGroupId()) && !this.optionsError());
+
+  reportResource = rxResource({
+    params: () => this.filtersTouched() && this.canSearch() ? { classGroupId: this.classGroupId(), startDate: this.startDate(), endDate: this.endDate() } : undefined,
+    stream: ({ params }) => {
       const user = this.authService.currentUser();
       const teacherId = this.authService.isTeacher() && user ? user.userId : undefined;
 
@@ -38,8 +43,8 @@ export class ClassReportComponent implements OnInit {
         return of({
           classGroupId: '',
           classGroupName: 'No Assigned Classes',
-          startDate: this.startDate(),
-          endDate: this.endDate(),
+          startDate: params.startDate,
+          endDate: params.endDate,
           totalSessions: 0,
           totalRecords: 0,
           presentCount: 0,
@@ -51,7 +56,7 @@ export class ClassReportComponent implements OnInit {
         });
       }
 
-      return this.api.getClassReport(this.classGroupId(), this.startDate(), this.endDate(), teacherId);
+      return this.api.getClassReport(params.classGroupId, params.startDate, params.endDate, teacherId);
     },
   });
 
@@ -77,26 +82,21 @@ export class ClassReportComponent implements OnInit {
           if (assignedOpts.length > 0) {
             this.noAssignedClasses.set(false);
             this.groupOptions.set(assignedOpts);
-            this.classGroupId.set(assignedOpts[0].id);
+            this.classGroupId.set('');
           } else {
             this.noAssignedClasses.set(true);
             this.groupOptions.set([]);
             this.classGroupId.set('');
           }
-          this.search();
         },
-        error: () => {
-          this.noAssignedClasses.set(true);
-          this.groupOptions.set([]);
-          this.classGroupId.set('');
-        }
+        error: () => { this.optionsError.set('Could not load class choices. Refresh the page to try again.'); }
       });
     } else {
       // Admin / SuperAdmin: See all classes and all modes
       this.courseService.getClassGroups().subscribe({
         next: (groups) => {
           const opts: SelectOption[] = [
-            { id: '', name: '🌟 All Classes & Attendance Modes (Group, Online & Home)', subtext: 'Comprehensive report' },
+            { id: '', name: ' All Classes & Attendance Modes (Group, Online & Home)', subtext: 'Comprehensive report' },
             ...groups.map(g => ({
               id: g.id,
               name: g.name,
@@ -105,18 +105,20 @@ export class ClassReportComponent implements OnInit {
           ];
           this.groupOptions.set(opts);
           this.classGroupId.set('');
-          this.search();
-        }
+        },
+        error: () => this.optionsError.set('Could not load filter choices. Refresh the page to try again.')
       });
     }
   }
 
   onGroupSelected(groupId: string): void {
     this.classGroupId.set(groupId);
-    this.search();
+    this.filtersTouched.set(true);
   }
 
   search(): void {
-    this.reportResource.reload();
+    if (!this.canSearch()) return;
+    if (this.filtersTouched()) this.reportResource.reload();
+    else this.filtersTouched.set(true);
   }
 }

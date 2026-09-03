@@ -26,7 +26,7 @@
   <div class="filter-card">
     <div class="filter-col">
       <app-searchable-select
-        label="📚 Filter by Course"
+        label=" Filter by Course"
         placeholder="Select Course..."
         searchPlaceholder="Type course name..."
         [options]="filterCourseOptions()"
@@ -37,7 +37,7 @@
 
     <div class="filter-col">
       <app-searchable-select
-        label="👥 Filter by Class Group"
+        label=" Filter by Class Group"
         placeholder="Select Group..."
         searchPlaceholder="Type group name..."
         [options]="filterGroupOptions()"
@@ -49,7 +49,7 @@
     @if (authService.isAdmin()) {
       <div class="filter-col">
         <app-searchable-select
-          label="👨‍🏫 Filter by Teacher"
+          label=" Filter by Teacher"
           placeholder="Select Teacher..."
           searchPlaceholder="Type teacher name..."
           [options]="filterTeacherOptions()"
@@ -60,7 +60,7 @@
     }
 
     <div class="filter-col">
-      <label class="filter-label">📌 Filter Status</label>
+      <label class="filter-label"> Filter Status</label>
       <select class="form-select" [ngModel]="selectedFilterStatus()" (ngModelChange)="onFilterStatusChange($event)">
         <option value="">All Statuses</option>
         <option value="1">Scheduled</option>
@@ -106,26 +106,26 @@
                     {{ getServiceTypeLabel(item.serviceType) }}
                   </span>
                   @if (item.meetingLink) {
-                    <a [href]="item.meetingLink" target="_blank" class="link-chip" title="Open Meeting Link">🔗 Video Room</a>
+                    <a [href]="item.meetingLink" target="_blank" class="link-chip" title="Open Meeting Link"> Video Room</a>
                   }
                   @if (item.locationAddress) {
-                    <span class="location-text" title="Physical Address">📍 {{ item.locationAddress }}</span>
+                    <span class="location-text" title="Physical Address"> {{ item.locationAddress }}</span>
                   }
                 </div>
               </td>
               <td>
                 <div class="course-group-cell">
-                  <div class="course-title">📚 {{ item.courseName }}</div>
+                  <div class="course-title"> {{ item.courseName }}</div>
                   @if (item.classGroupName) {
-                    <div class="group-subtitle">👥 {{ item.classGroupName }}</div>
+                    <div class="group-subtitle"> {{ item.classGroupName }}</div>
                   }
                 </div>
               </td>
               <td>
                 <div class="people-cell">
-                  <div class="teacher-text">👨‍🏫 {{ item.teacherName || 'Assigned Teacher' }}</div>
+                  <div class="teacher-text"> {{ item.teacherName || 'Assigned Teacher' }}</div>
                   @if (!isGroupService(item.serviceType) && item.studentName) {
-                    <div class="student-text">🎓 {{ item.studentName }}</div>
+                    <div class="student-text"> {{ item.studentName }}</div>
                   }
                 </div>
               </td>
@@ -143,17 +143,17 @@
                       (click)="openEditModal(item)"
                       title="Edit Schedule Details"
                     >
-                      ✏️
+                      <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg>
                     </button>
                     @if (isScheduled(item.status)) {
                       <button type="button" class="btn-action-icon btn-complete" (click)="updateStatus(item, ScheduleStatus.Completed)" title="Mark as Completed">✓</button>
                       <button type="button" class="btn-action-icon btn-cancel-status" (click)="updateStatus(item, ScheduleStatus.Cancelled)" title="Cancel Schedule">✕</button>
                     }
                     @if (isCancelled(item.status)) {
-                      <button type="button" class="btn-action-icon btn-reschedule" (click)="updateStatus(item, ScheduleStatus.Scheduled)" title="Re-Open Schedule">🔄</button>
+                      <button type="button" class="btn-action-icon btn-reschedule" (click)="updateStatus(item, ScheduleStatus.Scheduled)" title="Re-Open Schedule"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 1 8M3 4v6h6"/></svg></button>
                     }
                     @if (isCompleted(item.status)) {
-                      <button type="button" class="btn-action-icon btn-reschedule" (click)="updateStatus(item, ScheduleStatus.Scheduled)" title="Re-Open Schedule">🔄</button>
+                      <button type="button" class="btn-action-icon btn-reschedule" (click)="updateStatus(item, ScheduleStatus.Scheduled)" title="Re-Open Schedule"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10a9 9 0 1 1 1 8M3 4v6h6"/></svg></button>
                     }
                   </div>
                 </td>
@@ -163,7 +163,7 @@
             <tr>
               <td colspan="6" class="empty-cell">
                 <div class="empty-state">
-                  <span class="empty-icon">📅</span>
+                  <span class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18m-13 4h2m4 0h2m-8 3h2"/></svg></span>
                   <p>No scheduled class sessions found for the selected criteria.</p>
                 </div>
               </td>
@@ -182,9 +182,9 @@
       <div class="modal-header">
         <h3>
           @if (isEditMode()) {
-            ✏️ Edit Class Schedule & Timetable
+            <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Edit Class Schedule & Timetable
           } @else {
-            📅 Schedule New Session / Timetable
+             Schedule New Session / Timetable
           }
         </h3>
         <button type="button" class="close-btn" (click)="closeCreateModal()">&times;</button>
@@ -195,15 +195,15 @@
         <div class="form-group z-4">
           <label class="form-label">Service Type</label>
           <div class="type-selector-tabs">
-            <button type="button" class="type-tab" [class.active]="scheduleForm.serviceType === ServiceType.Group" (click)="onServiceTypeChanged(ServiceType.Group)">👥 Group Class</button>
-            <button type="button" class="type-tab" [class.active]="scheduleForm.serviceType === ServiceType.Online" (click)="onServiceTypeChanged(ServiceType.Online)">💻 Online 1-on-1</button>
-            <button type="button" class="type-tab" [class.active]="scheduleForm.serviceType === ServiceType.Home" (click)="onServiceTypeChanged(ServiceType.Home)">🏠 Home Tutoring</button>
+            <button type="button" class="type-tab" [class.active]="scheduleForm.serviceType === ServiceType.Group" (click)="onServiceTypeChanged(ServiceType.Group)"> Group Class</button>
+            <button type="button" class="type-tab" [class.active]="scheduleForm.serviceType === ServiceType.Online" (click)="onServiceTypeChanged(ServiceType.Online)"> Online 1-on-1</button>
+            <button type="button" class="type-tab" [class.active]="scheduleForm.serviceType === ServiceType.Home" (click)="onServiceTypeChanged(ServiceType.Home)"> Home Tutoring</button>
           </div>
         </div>
 
         <div class="form-group z-3">
           <app-searchable-select
-            label="📚 Select Course"
+            label=" Select Course"
             placeholder="Choose Course..."
             searchPlaceholder="Type course name..."
             [options]="modalCourseOptions()"
@@ -215,7 +215,7 @@
         @if (scheduleForm.serviceType === ServiceType.Group) {
           <div class="form-group z-2">
             <app-searchable-select
-              label="👥 Select Class Group"
+              label=" Select Class Group"
               placeholder="Choose Class Group..."
               searchPlaceholder="Type class group..."
               [options]="modalGroupOptions()"
@@ -228,7 +228,7 @@
         @if (authService.isAdmin()) {
           <div class="form-group z-2">
             <app-searchable-select
-              label="👨‍🏫 Assigned Teacher"
+              label=" Assigned Teacher"
               placeholder="Choose Teacher..."
               searchPlaceholder="Type teacher name..."
               [options]="modalTeacherOptions()"
@@ -241,7 +241,7 @@
         @if (scheduleForm.serviceType !== ServiceType.Group) {
           <div class="form-group z-1">
             <app-searchable-select
-              label="🎓 Enrolled Student"
+              label=" Enrolled Student"
               placeholder="Choose Student..."
               searchPlaceholder="Type student name..."
               [options]="modalStudentOptions()"
@@ -278,7 +278,7 @@
 
         @if (modalError()) {
           <div class="alert alert-danger mt-3">
-            <span class="icon">⚠</span>
+            <span class="icon"></span>
             <span>{{ modalError() }}</span>
           </div>
         }

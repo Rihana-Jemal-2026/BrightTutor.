@@ -19,7 +19,7 @@
     @if (!authService.isTeacher()) {
       <div class="search-select-col">
         <app-searchable-select
-          label="👨‍🏫 Select Assigned Teacher"
+          label=" Select Assigned Teacher"
           placeholder="Choose Teacher..."
           searchPlaceholder="Type teacher name to search..."
           [options]="teacherOptions()"
@@ -29,14 +29,14 @@
       </div>
     } @else {
       <div class="search-select-col">
-        <label style="font-weight: 600; color: #1e293b; display: block; margin-bottom: 0.35rem;">👨‍🏫 Assigned Teacher</label>
-        <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: #f8fafc; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px;" readonly disabled />
+        <label style="font-weight: 600; color: var(--color-text); display: block; margin-bottom: 0.35rem;"> Assigned Teacher</label>
+        <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: var(--color-bg); padding: 0.65rem; border: 1px solid var(--color-border); border-radius: 8px;" readonly disabled />
       </div>
     }
 
     <div class="search-select-col">
       <app-searchable-select
-        label="👥 Select Class Group"
+        label=" Select Class Group"
         placeholder="Choose Class Group..."
         searchPlaceholder="Type class group name to search..."
         [options]="groupOptions()"
@@ -130,7 +130,7 @@
               (click)="setStatus($index, AttendanceStatus.Late)"
               title="Tick Late"
             >
-              <span class="tick-icon">⏱</span>
+              <span class="tick-icon"></span>
               <span class="tick-text">Late</span>
             </button>
 
@@ -141,7 +141,7 @@
               (click)="setStatus($index, AttendanceStatus.Excused)"
               title="Tick Excused"
             >
-              <span class="tick-icon">✉</span>
+              <span class="tick-icon"></span>
               <span class="tick-text">Excused</span>
             </button>
           </div>
@@ -168,7 +168,7 @@
 
     @if (errorMessage()) {
       <div class="alert alert-danger mt-3">
-        <span class="icon">⚠</span>
+        <span class="icon"></span>
         <span>{{ errorMessage() }}</span>
       </div>
     }

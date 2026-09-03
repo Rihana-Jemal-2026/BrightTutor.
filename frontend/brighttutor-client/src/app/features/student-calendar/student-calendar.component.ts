@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
+import { Component, inject, computed, signal, OnInit } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { CommonModule, DatePipe } from "@angular/common";
@@ -27,8 +27,13 @@ export class StudentCalendarComponent implements OnInit {
   statusLabels: Record<number, string> = { 0: "Present", 1: "Absent", 2: "Late", 3: "Excused" };
   typeLabels: Record<number, string> = { 0: "Online", 1: "Group", 2: "Home" };
 
-  calendarResource = rxResource<any[], unknown>({
-    stream: () => this.api.getStudentCalendar(this.studentId(), this.year(), this.month()),
+  filtersTouched = signal(false);
+  optionsError = signal('');
+  canSearch = computed(() => Number.isInteger(this.year()) && this.year() >= 1 && this.year() <= 9999 && Number.isInteger(this.month()) && this.month() >= 1 && this.month() <= 12 && !!this.studentId() && !this.optionsError());
+
+  calendarResource = rxResource({
+    params: () => this.filtersTouched() && this.canSearch() ? { studentId: this.studentId(), year: this.year(), month: this.month() } : undefined,
+    stream: ({ params }) => this.api.getStudentCalendar(params.studentId, params.year, params.month),
   });
 
   ngOnInit(): void {
@@ -49,17 +54,16 @@ export class StudentCalendarComponent implements OnInit {
             subtext: s.email
           }));
           this.studentOptions.set(opts);
-          if (opts.length > 0) {
-            this.studentId.set(opts[0].id);
-          }
-        }
+        },
+        error: () => this.optionsError.set('Could not load filter choices. Refresh the page to try again.')
       });
     }
   }
 
   onStudentSelected(id: string): void {
     this.studentId.set(id);
-    this.search();
+    this.filtersTouched.set(true);
+
   }
 
   getTypeLabel(type: number): string {
@@ -79,6 +83,8 @@ export class StudentCalendarComponent implements OnInit {
   }
 
   search(): void {
-    this.calendarResource.reload();
+    if (!this.canSearch()) return;
+    if (this.filtersTouched()) this.calendarResource.reload();
+    else this.filtersTouched.set(true);
   }
 }

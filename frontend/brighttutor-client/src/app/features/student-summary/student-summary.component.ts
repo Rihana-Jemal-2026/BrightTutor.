@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
+import { Component, inject, computed, signal, OnInit } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { of } from "rxjs";
@@ -26,11 +26,16 @@ export class StudentSummaryComponent implements OnInit {
   startDate = signal("2026-08-01");
   endDate = signal(new Date().toISOString().slice(0, 10));
 
-  summaryResource = rxResource<StudentAttendanceSummary | null, unknown>({
-    stream: () => {
-      const id = this.studentId();
+  filtersTouched = signal(false);
+  optionsError = signal('');
+  canSearch = computed(() => !!this.startDate() && !!this.endDate() && this.startDate() <= this.endDate() && !!this.studentId() && !this.optionsError());
+
+  summaryResource = rxResource({
+    params: () => this.filtersTouched() && this.canSearch() ? { studentId: this.studentId(), startDate: this.startDate(), endDate: this.endDate() } : undefined,
+    stream: ({ params }) => {
+      const id = params.studentId;
       if (!id) return of(null);
-      return this.api.getStudentSummary(id, this.startDate(), this.endDate());
+      return this.api.getStudentSummary(id, params.startDate, params.endDate);
     },
   });
 
@@ -44,7 +49,7 @@ export class StudentSummaryComponent implements OnInit {
         name: `${user.firstName} ${user.lastName}`,
         subtext: user.email
       }]);
-      this.search();
+
     } else {
       this.userService.getUsers(3).subscribe({
         next: (students) => {
@@ -54,21 +59,21 @@ export class StudentSummaryComponent implements OnInit {
             subtext: s.email
           }));
           this.studentOptions.set(opts);
-          if (opts.length > 0) {
-            this.studentId.set(opts[0].id);
-            this.search();
-          }
-        }
+        },
+        error: () => this.optionsError.set('Could not load filter choices. Refresh the page to try again.')
       });
     }
   }
 
   onStudentSelected(studentId: string) {
     this.studentId.set(studentId);
-    this.search();
+    this.filtersTouched.set(true);
+
   }
 
   search() {
-    this.summaryResource.reload();
+    if (!this.canSearch()) return;
+    if (this.filtersTouched()) this.summaryResource.reload();
+    else this.filtersTouched.set(true);
   }
 }

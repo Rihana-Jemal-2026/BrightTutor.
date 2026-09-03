@@ -23,7 +23,7 @@
 
   @if (errorMessage()) {
     <div class="alert alert-danger">
-      <span class="icon">⚠</span>
+      <span class="icon"></span>
       <span>{{ errorMessage() }}</span>
     </div>
   }
@@ -33,7 +33,7 @@
     <div class="form-grid">
       <div class="field-group">
         <app-searchable-select
-          label="🎓 Select Online Student"
+          label=" Select Online Student"
           placeholder="Choose Student..."
           searchPlaceholder="Type student name to search..."
           [options]="studentOptions()"
@@ -45,7 +45,7 @@
       @if (!authService.isTeacher()) {
         <div class="field-group">
           <app-searchable-select
-            label="👨‍🏫 Select Teacher"
+            label=" Select Teacher"
             placeholder="Choose Teacher..."
             searchPlaceholder="Type teacher name to search..."
             [options]="teacherOptions()"
@@ -55,8 +55,8 @@
         </div>
       } @else {
         <div class="field-group">
-          <label style="font-weight: 600; color: #1e293b; display: block; margin-bottom: 0.35rem;">👨‍🏫 Assigned Teacher</label>
-          <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: #f8fafc; padding: 0.65rem; border: 1px solid #cbd5e1; border-radius: 8px;" readonly disabled />
+          <label style="font-weight: 600; color: var(--color-text); display: block; margin-bottom: 0.35rem;"> Assigned Teacher</label>
+          <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" style="background: var(--color-bg); padding: 0.65rem; border: 1px solid var(--color-border); border-radius: 8px;" readonly disabled />
         </div>
       }
 
@@ -91,7 +91,7 @@
           [class.active]="form.controls.status.value === AttendanceStatus.Late"
           (click)="setStatus(AttendanceStatus.Late)"
         >
-          ⏱ Late
+           Late
         </button>
         <button
           type="button"
@@ -99,7 +99,7 @@
           [class.active]="form.controls.status.value === AttendanceStatus.Excused"
           (click)="setStatus(AttendanceStatus.Excused)"
         >
-          ✉ Excused
+           Excused
         </button>
       </div>
     </div>

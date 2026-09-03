@@ -378,10 +378,10 @@ export class SchedulesComponent implements OnInit {
   }
 
   getServiceTypeLabel(type: any): string {
-    if (type === 'Group' || type === 2 || type === '2' || type === ServiceType.Group) return '👥 Group Class';
-    if (type === 'Online' || type === 1 || type === '1' || type === ServiceType.Online) return '💻 Online 1-on-1';
-    if (type === 'Home' || type === 'HomeToHome' || type === 3 || type === '3' || type === ServiceType.Home) return '🏠 Home Tutoring';
-    return '👥 ' + String(type || 'Class Session');
+    if (type === 'Group' || type === 2 || type === '2' || type === ServiceType.Group) return ' Group Class';
+    if (type === 'Online' || type === 1 || type === '1' || type === ServiceType.Online) return ' Online 1-on-1';
+    if (type === 'Home' || type === 'HomeToHome' || type === 3 || type === '3' || type === ServiceType.Home) return ' Home Tutoring';
+    return ' ' + String(type || 'Class Session');
   }
 
   getServiceTypeClass(type: any): string {

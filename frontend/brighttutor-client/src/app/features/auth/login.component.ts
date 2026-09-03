@@ -30,13 +30,13 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
         <!-- Mode Switcher Tabs -->
         <div class="login-tabs">
           <button type="button" class="tab-btn" [class.active]="activeTab() === 'login'" (click)="activeTab.set('login')">
-            🔒 Account Login
+             Account Login
           </button>
           <button type="button" class="tab-btn" [class.active]="activeTab() === 'student'" (click)="activeTab.set('student')">
-            🎓 Student Admissions & Pay
+             Student Admissions & Pay
           </button>
           <button type="button" class="tab-btn" [class.active]="activeTab() === 'teacher'" (click)="activeTab.set('teacher')">
-            👨‍🏫 Apply as Educator
+             Apply as Educator
           </button>
         </div>
 
@@ -45,7 +45,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           <form (ngSubmit)="onLogin()" class="login-form">
             @if (errorMessage()) {
               <div class="alert-error">
-                <span class="alert-icon">⚠️</span>
+                <span class="alert-icon"></span>
                 <span>{{ errorMessage() }}</span>
               </div>
             }
@@ -79,7 +79,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   (click)="toggleShowPassword()"
                   title="Toggle Password Visibility"
                 >
-                  {{ showPassword() ? '🙈 Hide' : '👁️ Show' }}
+                  {{ showPassword() ? ' Hide' : ' Show' }}
                 </button>
               </div>
             </div>
@@ -96,7 +96,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
             <button type="button" class="btn-back-login-tab" (click)="activeTab.set('login')">← Back to Account Login</button>
             @if (studentStep() === 1) {
               <form (ngSubmit)="onSubmitStudentReg()">
-                <h3>🎓 Student Course Enrollment Form</h3>
+                <h3>Student Course Enrollment Form</h3>
 
                 <div class="form-row">
                   <div class="form-group">
@@ -145,9 +145,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   <div class="form-group">
                     <label>Service Delivery Method *</label>
                     <select [(ngModel)]="studentForm.desiredServiceType" name="sServiceType" required>
-                      <option [ngValue]="1">💻 Online 1-on-1 Tutoring</option>
-                      <option [ngValue]="2">👥 In-Person Group Class (Center)</option>
-                      <option [ngValue]="3">🏠 Home-to-Home Visit (Personal Tutor)</option>
+                      <option [ngValue]="1"> Online 1-on-1 Tutoring</option>
+                      <option [ngValue]="2"> In-Person Group Class (Center)</option>
+                      <option [ngValue]="3"> Home-to-Home Visit (Personal Tutor)</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -157,14 +157,14 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                       @for (c of courses(); track c.id) {
                         <option [value]="c.id">{{ c.name }}</option>
                       }
-                      <option value="OTHER">➕ Other / Request Custom Course (Not Listed)</option>
+                      <option value="OTHER"> Other / Request Custom Course (Not Listed)</option>
                     </select>
                   </div>
                 </div>
 
                 <!-- DEDICATED PERMANENT PLACE FOR CUSTOM REQUESTED COURSE -->
                 <div class="form-group custom-course-box">
-                  <label class="custom-label">✏️ Can't find your course above? Insert your requested course or subject here:</label>
+                  <label class="custom-label"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Can't find your course above? Insert your requested course or subject here:</label>
                   <input
                     type="text"
                     [(ngModel)]="customStudentCourseInput"
@@ -176,7 +176,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <!-- 1-ON-1 SCHEDULE SELECTION FOR ONLINE & HOME TUTORING -->
                 @if (studentForm.desiredServiceType === 1 || studentForm.desiredServiceType === 3) {
                   <div class="schedule-config-card">
-                    <h4>🗓️ Select Wanted Learning Days & Hours Request</h4>
+                    <h4> Select Wanted Learning Days & Hours Request</h4>
                     <p class="subtitle">Select your preferred learning days and time window so our admin can match an available teacher.</p>
 
                     <div class="form-group">
@@ -211,8 +211,8 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <!-- GROUP CLASS FIXED SCHEDULE & PRICING DISPLAY -->
                 @if (studentForm.desiredServiceType === 2) {
                   <div class="group-schedule-card">
-                    <h4>👥 Group Class Schedule (Company Fixed)</h4>
-                    <p>🗓️ <strong>Days:</strong> Mon, Wed, Fri | ⏰ <strong>Time:</strong> 10:00 AM – 12:00 PM (Center Session)</p>
+                    <h4> Group Class Schedule (Company Fixed)</h4>
+                    <p> <strong>Days:</strong> Mon, Wed, Fri |  <strong>Time:</strong> 10:00 AM – 12:00 PM (Center Session)</p>
                   </div>
                 }
 
@@ -224,24 +224,24 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
             @if (studentStep() === 2) {
               <div class="pending-step-box">
-                <div class="success-icon">🎉</div>
+                <div class="success-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/></svg></div>
                 <h3>Registration Application Submitted!</h3>
-                <div class="pending-badge">Status: ⏳ Pending Admin & Teacher Availability Review (3-5 Hours)</div>
+                <div class="pending-badge">Status:  Pending Admin & Teacher Availability Review (3-5 Hours)</div>
                 <p>Thank you for applying to BrightTutor Academy!</p>
                 <p>Our academic coordinator is currently checking tutor availability for your requested course and schedule window.</p>
 
-                <div class="credentials-info-box" style="background: rgba(11, 61, 46, 0.08); border: 1.5px solid #0B3D2E; border-radius: 10px; padding: 1rem; margin: 1rem 0; text-align: left;">
-                  <h4 style="margin: 0 0 0.5rem 0; color: #0B3D2E; font-weight: 700; font-size: 0.95rem;">🔑 Your Student Portal Login Credentials</h4>
+                <div class="credentials-info-box" style="background: rgba(var(--color-accent-rgb), 0.08); border: 1.5px solid var(--color-primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; text-align: left;">
+                  <h4 style="margin: 0 0 0.5rem 0; color: var(--color-primary); font-weight: 700; font-size: 0.95rem;"> Your Student Portal Login Credentials</h4>
                   <p style="margin: 0 0 0.25rem 0; font-size: 0.88rem;"><strong>Login Email:</strong> <code>{{ studentForm.email }}</code></p>
-                  <p style="margin: 0 0 0.4rem 0; font-size: 0.88rem;"><strong>Default Initial Password:</strong> <code style="background: #0B3D2E; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;">StudentPass123!</code></p>
+                  <p style="margin: 0 0 0.4rem 0; font-size: 0.88rem;"><strong>Default Initial Password:</strong> <code style="background: var(--color-action); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;">StudentPass123!</code></p>
                   <p style="margin: 0; font-size: 0.8rem; color: #4b5563;">Use your email address and default password <code>StudentPass123!</code> to sign in to your dashboard at any time. You can change your password anytime after logging in.</p>
                 </div>
 
                 <div class="no-payment-notice">
-                  🛡️ <strong>No payment is required today.</strong> Payment instructions & receipt upload will be unlocked on your tracking page <strong>only after admin approves teacher availability</strong>.
+                   <strong>No payment is required today.</strong> Payment instructions & receipt upload will be unlocked on your tracking page <strong>only after admin approves teacher availability</strong>.
                 </div>
                 <div class="action-buttons-row">
-                  <button type="button" class="btn-submit" (click)="activeTab.set('login')">🔑 Go to Student Login</button>
+                  <button type="button" class="btn-submit" (click)="activeTab.set('login')"> Go to Student Login</button>
                 </div>
               </div>
             }
@@ -254,7 +254,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
             <button type="button" class="btn-back-login-tab" (click)="activeTab.set('login')">← Back to Account Login</button>
             @if (!teacherSubmitted()) {
               <form (ngSubmit)="onSubmitTeacherApp()">
-                <h3>👨‍🏫 Educator Job Application Form</h3>
+                <h3>Educator Job Application Form</h3>
 
                 <div class="form-row">
                   <div class="form-group">
@@ -315,7 +315,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               </form>
             } @else {
               <div class="success-alert">
-                <h3>🎉 Application Submitted!</h3>
+                <h3>Application Submitted!</h3>
                 <p>Status: <strong>Pending CV Document Screening</strong></p>
                 <p>Our academic board will review your credentials and send credentials to <strong>{{ teacherForm.email }}</strong>.</p>
                 <button type="button" class="btn-submit" (click)="teacherSubmitted.set(false)">Submit Another Application</button>
@@ -337,7 +337,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0B3D2E 0%, #071712 50%, #0B3D2E 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, #071712 50%, var(--color-primary) 100%);
       padding: 1.5rem;
       overflow-y: auto;
     }
@@ -348,7 +348,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       padding: 2.25rem 2rem;
       width: 100%;
       max-width: 440px;
-      box-shadow: 0 25px 50px -12px rgba(11, 61, 46, 0.5);
+      box-shadow: var(--shadow-card);
       border: 1px solid rgba(255, 255, 255, 0.2);
       transition: max-width 0.3s ease;
     }
@@ -358,29 +358,29 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .logo {
       width: 50px;
       height: 50px;
-      background: linear-gradient(135deg, #0B3D2E, #10B981);
+      background: var(--color-action);
       color: white;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 0.75rem;
-      box-shadow: 0 4px 14px rgba(11, 61, 46, 0.35);
+      box-shadow: var(--shadow-card);
       svg { width: 28px; height: 28px; }
     }
-    .login-header h2 { font-size: 1.6rem; color: #0B3D2E; margin: 0 0 0.25rem 0; font-weight: 800; }
-    .login-header p { color: #5C786A; font-size: 0.85rem; margin: 0; }
+    .login-header h2 { font-size: 1.6rem; color: var(--color-primary); margin: 0 0 0.25rem 0; font-weight: 800; }
+    .login-header p { color: var(--color-muted); font-size: 0.85rem; margin: 0; }
 
-    .login-tabs { display: flex; gap: 0.4rem; background: #e2e8f0; padding: 0.3rem; border-radius: 10px; margin-bottom: 1.5rem; }
-    .tab-btn { flex: 1; border: none; background: none; padding: 0.55rem 0.4rem; font-size: 0.78rem; font-weight: 700; color: #64748b; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-    .tab-btn.active { background: #fff; color: #0B3D2E; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .login-tabs { display: flex; gap: 0.4rem; background: var(--color-border); padding: 0.3rem; border-radius: 10px; margin-bottom: 1.5rem; }
+    .tab-btn { flex: 1; border: none; background: none; padding: 0.55rem 0.4rem; font-size: 0.78rem; font-weight: 700; color: var(--color-muted); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+    .tab-btn.active { background: var(--color-surface); color: var(--color-primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
-    .alert-error { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+    .alert-error { background: var(--color-error-bg); border: 1px solid #fca5a5; color: var(--color-error); padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
     .form-group { margin-bottom: 1rem; flex: 1; width: 100%; box-sizing: border-box; }
-    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #0B241B; margin-bottom: 0.35rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.35rem; }
     .form-group input, .form-group select, .form-group textarea {
-      width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid #DCE8E1; font-size: 0.9rem; background: #fff; color: #0f172a;
-      &:focus { outline: none; border-color: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+      width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); font-size: 0.9rem; background: var(--color-surface); color: var(--color-text);
+      &:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.2); }
     }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; width: 100%; box-sizing: border-box; }
 
@@ -396,8 +396,8 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #fff;
-        border: 1px solid #DCE8E1;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
         border-radius: 8px;
         padding: 0.35rem 0.5rem;
         height: 38px;
@@ -427,35 +427,35 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       }
     }
 
-    .btn-back-login-tab { background: none; border: 1.5px solid #cbd5e1; color: #0B3D2E; padding: 0.45rem 0.9rem; border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer; margin-bottom: 1rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.35rem; }
-    .btn-back-login-tab:hover { background: #0B3D2E; color: white; border-color: #0B3D2E; transform: translateX(-3px); }
+    .btn-back-login-tab { background: none; border: 1.5px solid var(--color-border); color: var(--color-primary); padding: 0.45rem 0.9rem; border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer; margin-bottom: 1rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.35rem; }
+    .btn-back-login-tab:hover { background: var(--color-action); color: white; border-color: var(--color-primary); transform: translateX(-3px); }
 
-    .custom-course-box { background: rgba(16, 185, 129, 0.08); border: 1.5px dashed #10B981; padding: 0.85rem; border-radius: 10px; margin-bottom: 1rem; width: 100%; box-sizing: border-box; }
-    .custom-label { color: #059669 !important; font-weight: 700 !important; font-size: 0.85rem !important; }
+    .custom-course-box { background: rgba(var(--color-accent-rgb), 0.08); border: 1.5px dashed var(--color-accent); padding: 0.85rem; border-radius: 10px; margin-bottom: 1rem; width: 100%; box-sizing: border-box; }
+    .custom-label { color: var(--color-accent) !important; font-weight: 700 !important; font-size: 0.85rem !important; }
 
-    .schedule-config-card { background: rgba(59, 130, 246, 0.05); border: 1px solid #93c5fd; padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1rem; h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #1e40af; } .subtitle { font-size: 0.78rem; color: #475569; margin: 0 0 0.75rem 0; } }
+    .schedule-config-card { background: rgba(59, 130, 246, 0.05); border: 1px solid #93c5fd; padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1rem; h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #1e40af; } .subtitle { font-size: 0.78rem; color: var(--color-muted); margin: 0 0 0.75rem 0; } }
     .days-pill-group { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
-    .day-pill { border: 1px solid #cbd5e1; background: #fff; padding: 0.35rem 0.65rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; }
-    .day-pill.selected { background: #10B981; color: white; border-color: #059669; }
+    .day-pill { border: 1px solid var(--color-border); background: var(--color-surface); padding: 0.35rem 0.65rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; color: var(--color-muted); cursor: pointer; transition: all 0.2s; }
+    .day-pill.selected { background: var(--color-action); color: white; border-color: var(--color-accent); }
 
-    .group-schedule-card { background: rgba(245, 158, 11, 0.08); border: 1px solid #fcd34d; padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1rem; h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #b45309; } p { margin: 0; font-size: 0.82rem; color: #78350f; } }
+    .group-schedule-card { background: rgba(245, 158, 11, 0.08); border: 1px solid #fcd34d; padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1rem; h4 { margin: 0 0 0.25rem 0; font-size: 0.95rem; color: var(--color-warning); } p { margin: 0; font-size: 0.82rem; color: #78350f; } }
 
     .password-input-wrapper { position: relative; display: flex; align-items: center; width: 100%; box-sizing: border-box; }
     .password-input-wrapper input { padding-right: 4.5rem; }
-    .btn-toggle-password { position: absolute; right: 8px; background: none; border: none; color: #059669; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    .btn-toggle-password { position: absolute; right: 8px; background: none; border: none; color: var(--color-accent); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 
-    .btn-submit { width: 100%; padding: 0.85rem; background: linear-gradient(135deg, #0B3D2E, #059669); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 0.5rem; }
-    .btn-submit:hover { background: linear-gradient(135deg, #14523F, #10B981); }
+    .btn-submit { width: 100%; padding: 0.85rem; background: var(--color-action); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; margin-top: 0.5rem; }
+    .btn-submit:hover { background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent)); }
 
     .public-registration-box { width: 100%; box-sizing: border-box; }
-    .public-registration-box h3 { margin: 0 0 1rem 0; font-size: 1.1rem; color: #0B3D2E; }
-    .bank-accounts { background: #f1f5f9; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.82rem; color: #334155; }
+    .public-registration-box h3 { margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--color-primary); }
+    .bank-accounts { background: var(--color-surface-low); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.82rem; color: #334155; }
     .bank-accounts p { margin: 0.2rem 0; }
     .success-alert { text-align: center; padding: 1.5rem; color: #065f46; }
 
     @media (max-width: 768px) {
       .login-fullscreen { padding: 0.75rem; }
-      .glass-card { padding: 1.5rem 1.25rem; border-radius: 14px; max-width: 100%; }
+      .glass-card { padding: 1.5rem 1.25rem; border-radius: var(--radius-lg); max-width: 100%; }
       .form-row { grid-template-columns: 1fr; gap: 0.5rem; }
       .login-tabs { flex-direction: column; gap: 0.25rem; }
     }

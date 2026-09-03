@@ -10,7 +10,7 @@ import { ToastService } from '../../services/toast.service';
   template: `
     <div class="screening-page">
       <div class="page-header">
-        <h1>👨‍🏫 Teacher Applicants & CV Screening</h1>
+        <h1>Teacher Applicants & CV Screening</h1>
         <p>Admin board to review applicant CV documents, approve credentials, or reject with custom feedback reasons.</p>
       </div>
 
@@ -30,7 +30,7 @@ import { ToastService } from '../../services/toast.service';
             <div class="meta-grid">
               <div><strong>Email:</strong> {{ item.email }}</div>
               <div><strong>Phone:</strong> {{ item.phoneNumber }}</div>
-              <div><strong>SLA Agreement:</strong> {{ item.hasAcceptedContractSla ? 'Accepted ✅' : 'Pending Acceptance ⏳' }}</div>
+              <div><strong>SLA Agreement:</strong> {{ item.hasAcceptedContractSla ? 'Accepted ' : 'Pending Acceptance ' }}</div>
               <div><strong>Submitted Date:</strong> {{ item.createdAt | date:'mediumDate' }}</div>
             </div>
 
@@ -41,10 +41,10 @@ import { ToastService } from '../../services/toast.service';
 
             <div class="docs-row">
               @if (item.cvDocumentUrl) {
-                <a [href]="item.cvDocumentUrl" target="_blank" class="doc-link">📄 View CV / Resume Document</a>
+                <a [href]="item.cvDocumentUrl" target="_blank" class="doc-link"> View CV / Resume Document</a>
               }
               @if (item.backgroundDocUrl) {
-                <a [href]="item.backgroundDocUrl" target="_blank" class="doc-link">🎓 View Background Degree Certificate</a>
+                <a [href]="item.backgroundDocUrl" target="_blank" class="doc-link"> View Background Degree Certificate</a>
               }
             </div>
 
@@ -60,7 +60,7 @@ import { ToastService } from '../../services/toast.service';
                 <button type="button" class="btn-reject" (click)="rejectTeacher(item.id)">Reject Application</button>
               }
               @if (isStatusApproved(item.status)) {
-                <span class="approved-text">✅ Approved Educator (Active for Class Assignment)</span>
+                <span class="approved-text"> Approved Educator (Active for Class Assignment)</span>
               }
             </div>
           </div>
@@ -75,7 +75,7 @@ import { ToastService } from '../../services/toast.service';
     .page-header h1 { color: var(--color-primary); margin-bottom: 0.25rem; font-size: 1.75rem; }
     .page-header p { color: var(--color-muted); margin-bottom: 1.5rem; }
     .applications-list { display: flex; flex-direction: column; gap: 1.25rem; }
-    .app-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow-card); }
+    .app-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem; box-shadow: var(--shadow-card); }
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
     .card-header h3 { margin: 0 0 0.2rem 0; color: var(--color-text); font-size: 1.15rem; }
     .sub-text { font-size: 0.8rem; color: var(--color-muted); }
@@ -94,7 +94,7 @@ import { ToastService } from '../../services/toast.service';
     .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
     .status-approved { background: var(--color-success-bg); color: var(--color-success); }
     .status-rejected { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-    .empty-state { text-align: center; padding: 3rem; color: var(--color-muted); background: var(--color-surface); border-radius: 12px; border: 1px solid var(--color-border); }
+    .empty-state { text-align: center; padding: 3rem; color: var(--color-muted); background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border); }
   `]
 })
 export class TeacherScreeningComponent implements OnInit {

@@ -19,16 +19,16 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       </div>
 
       <div class="portal-header">
-        <h1>🎓 Student Admissions & Tutoring Portal</h1>
+        <h1>Student Admissions & Tutoring Portal</h1>
         <p>Register for 1-on-1 tutoring, check teacher availability (3-5 hr SLA), and manage payment slips.</p>
       </div>
 
       <div class="portal-tabs">
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'apply'" (click)="activeTab.set('apply')">
-          📝 Submit New Admission Request
+           Submit New Admission Request
         </button>
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'track'" (click)="activeTab.set('track')">
-          🔍 Track Admission Status & Pay
+           Track Admission Status & Pay
         </button>
       </div>
 
@@ -38,7 +38,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           @if (currentStep() === 1) {
             <form (ngSubmit)="onSubmitRegistration()">
               <div class="fee-notice-banner">
-                <div class="notice-icon">📑</div>
+                <div class="notice-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="m8 14 3 3 5-6"/></svg></div>
                 <div class="notice-body">
                   <h4>Admission Notice & Transparency Policy</h4>
                   <ul>
@@ -98,9 +98,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <div class="form-group">
                   <label>Service Delivery Method *</label>
                   <select [(ngModel)]="form.desiredServiceType" name="desiredServiceType" (change)="onServiceTypeChange()" required>
-                    <option [ngValue]="1">💻 Online 1-on-1 Tutoring (Personal Tutor)</option>
-                    <option [ngValue]="2">👥 In-Person Group Class (Academic Center)</option>
-                    <option [ngValue]="3">🏠 Home-to-Home Visit (Private Tutor at Home)</option>
+                    <option [ngValue]="1"> Online 1-on-1 Tutoring (Personal Tutor)</option>
+                    <option [ngValue]="2"> In-Person Group Class (Academic Center)</option>
+                    <option [ngValue]="3"> Home-to-Home Visit (Private Tutor at Home)</option>
                   </select>
                 </div>
 
@@ -111,14 +111,14 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                     @for (course of courses(); track course.id) {
                       <option [value]="course.id">{{ course.name }}</option>
                     }
-                    <option value="OTHER">➕ Other / Request Custom Course (Not Listed)</option>
+                    <option value="OTHER"> Other / Request Custom Course (Not Listed)</option>
                   </select>
                 </div>
               </div>
 
               <!-- DEDICATED PERMANENT PLACE FOR CUSTOM REQUESTED COURSE -->
               <div class="form-group custom-course-box">
-                <label class="custom-label">✏️ Can't find your course above? Insert your requested course or subject here:</label>
+                <label class="custom-label"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Can't find your course above? Insert your requested course or subject here:</label>
                 <input
                   type="text"
                   [(ngModel)]="customCourseInput"
@@ -130,7 +130,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               <!-- 1-ON-1 SCHEDULE SELECTION FOR ONLINE & HOME TUTORING -->
               @if (form.desiredServiceType === 1 || form.desiredServiceType === 3) {
                 <div class="schedule-config-card">
-                  <h4>🗓️ 1-on-1 Personal Class Schedule Request</h4>
+                  <h4> 1-on-1 Personal Class Schedule Request</h4>
                   <p class="subtitle">Select your preferred learning days and time window so our admin can match an available teacher.</p>
 
                   <div class="form-group">
@@ -162,15 +162,15 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
                   <div class="rate-summary-box">
                     <div class="rate-item">
-                      <span class="rate-label">⏱️ Hourly Tuition Rate:</span>
+                      <span class="rate-label"> Hourly Tuition Rate:</span>
                       <span class="rate-val">{{ form.desiredServiceType === 3 ? '450 ETB / hour (Home Visit)' : '350 ETB / hour (Online 1-on-1)' }}</span>
                     </div>
                     <div class="rate-item">
-                      <span class="rate-label">📑 One-Time Admission Fee:</span>
+                      <span class="rate-label"> One-Time Admission Fee:</span>
                       <span class="rate-val">500 ETB</span>
                     </div>
                     <div class="rate-item total">
-                      <span class="rate-label">💳 Payment Policy:</span>
+                      <span class="rate-label"> Payment Policy:</span>
                       <span class="rate-val text-green">Pay ONLY after Admin approves teacher availability!</span>
                     </div>
                   </div>
@@ -180,20 +180,20 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               <!-- GROUP CLASS FIXED SCHEDULE & PRICING DISPLAY -->
               @if (form.desiredServiceType === 2) {
                 <div class="group-schedule-card">
-                  <h4>👥 Group Class Schedule & Fixed Pricing</h4>
+                  <h4> Group Class Schedule & Fixed Pricing</h4>
                   <div class="group-info-grid">
-                    <div><strong>🗓️ Class Days:</strong> Mon, Wed, Fri</div>
-                    <div><strong>⏰ Class Hours:</strong> 10:00 AM – 12:00 PM (Center Session)</div>
-                    <div><strong>💰 Monthly Tuition:</strong> 2,500 ETB / Month</div>
-                    <div><strong>📑 Admission Fee:</strong> 500 ETB (One-Time)</div>
+                    <div><strong> Class Days:</strong> Mon, Wed, Fri</div>
+                    <div><strong> Class Hours:</strong> 10:00 AM – 12:00 PM (Center Session)</div>
+                    <div><strong> Monthly Tuition:</strong> 2,500 ETB / Month</div>
+                    <div><strong> Admission Fee:</strong> 500 ETB (One-Time)</div>
                   </div>
-                  <p class="group-note">💡 Payment is made AFTER admin confirms group seat availability.</p>
+                  <p class="group-note"> Payment is made AFTER admin confirms group seat availability.</p>
                 </div>
               }
 
               <!-- OFFICIAL BIOMETRIC FACE ID PROFILE ENROLLMENT (OPTIONAL / RECOMMENDED) -->
               <div class="face-enrollment-card">
-                <h4>📸 Official Student Face ID Biometric Profile (Optional)</h4>
+                <h4> Official Student Face ID Biometric Profile (Optional)</h4>
                 <p class="subtitle">Capture or upload your reference face photo now to enable instant 1-second biometric attendance check-in during classes.</p>
 
                 <div class="face-capture-container">
@@ -201,19 +201,19 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                     <div class="enrolled-preview-box">
                       <img [src]="referenceFacePhoto()" alt="Enrolled Face ID" class="enrolled-photo-img" />
                       <div class="enrolled-badge">
-                        <span class="badge-icon">✅</span>
+                        <span class="badge-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span>
                         <span>Biometric Profile Enrolled (128-D Vector Ready)</span>
                       </div>
-                      <button type="button" class="btn-retake" (click)="retakeReferencePhoto()">🔄 Retake / Change Photo</button>
+                      <button type="button" class="btn-retake" (click)="retakeReferencePhoto()"> Retake / Change Photo</button>
                     </div>
                   } @else {
                     <div class="capture-actions-box">
                       <div class="capture-options-row">
                         <button type="button" class="btn-camera-snap" (click)="toggleEnrollCamera()">
-                          {{ enrollCameraActive() ? '📷 Close Camera' : '🎥 Open Live Camera to Snap Photo' }}
+                          {{ enrollCameraActive() ? ' Close Camera' : ' Open Live Camera to Snap Photo' }}
                         </button>
                         <label class="btn-file-upload">
-                          📁 Upload Reference Photo
+                           Upload Reference Photo
                           <input type="file" accept="image/*" (change)="onUploadFacePhoto($event)" style="display: none;" />
                         </label>
                       </div>
@@ -221,7 +221,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                       @if (enrollCameraActive()) {
                         <div class="enroll-camera-viewport">
                           <video #enrollVideo autoplay playsinline muted class="enroll-video-feed"></video>
-                          <button type="button" class="btn-snap-now" (click)="snapEnrollPhoto()">📸 Capture This Frame</button>
+                          <button type="button" class="btn-snap-now" (click)="snapEnrollPhoto()"> Capture This Frame</button>
                         </div>
                       }
                     </div>
@@ -240,9 +240,9 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           @if (currentStep() === 2) {
             <div class="complete-step">
               <div class="success-header-card">
-                <div class="success-icon">🎉</div>
+                <div class="success-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/></svg></div>
                 <h2>Registration Submitted Successfully!</h2>
-                <div class="pending-status-badge">Status: ⏳ Pending Admin & Teacher Availability Review</div>
+                <div class="pending-status-badge">Status:  Pending Admin & Teacher Availability Review</div>
                 
                 <div class="company-approval-box">
                   <p class="main-thank-you">Thank you for registering with BrightTutor Academy!</p>
@@ -251,22 +251,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                     <strong>The company will review and approve your application within 3 to 5 working hours.</strong>
                   </p>
                   <p class="no-payment-guarantee">
-                    🛡️ <strong>No payment is required today.</strong> Payment options & slip upload will be unlocked only after admin confirms teacher availability.
+                     <strong>No payment is required today.</strong> Payment options & slip upload will be unlocked only after admin confirms teacher availability.
                   </p>
                 </div>
               </div>
 
               <div class="tracking-summary-card">
-                <h4>🔑 Your Portal Login & Registration Credentials</h4>
+                <h4> Your Portal Login & Registration Credentials</h4>
                 <p><strong>Registered Email:</strong> {{ form.email }}</p>
-                <p><strong>Default Initial Password:</strong> <code style="background: var(--color-primary); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;">StudentPass123!</code></p>
+                <p><strong>Default Initial Password:</strong> <code style="background: var(--color-action); color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold;">StudentPass123!</code></p>
                 <p><strong>Registration ID:</strong> <code>{{ createdRegistrationId() }}</code></p>
                 <p>Use your email address and default password <code>StudentPass123!</code> to sign in to your Student Dashboard at any time. You can change your password anytime after logging in.</p>
               </div>
 
               <div class="action-buttons">
                 <button type="button" class="btn-secondary" (click)="activeTab.set('track'); searchEmail = form.email; onSearchTrack()">
-                  🔍 Track Application Status Now
+                   Track Application Status Now
                 </button>
                 <button type="button" class="btn-primary" (click)="resetForm()">Back to Admission Form</button>
               </div>
@@ -297,13 +297,13 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               </div>
 
               <div class="notice-card">
-                <div class="notice-title">📋 Application Notice:</div>
+                <div class="notice-title"> Application Notice:</div>
                 <p>{{ trackedResult()!.notice }}</p>
               </div>
 
               @if (trackedResult()!.assignedTeacherName) {
                 <div class="teacher-card">
-                  <div class="teacher-icon">👨‍🏫</div>
+                  <div class="teacher-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg></div>
                   <div>
                     <h4>Assigned Certified Educator</h4>
                     <p class="teacher-name">{{ trackedResult()!.assignedTeacherName }}</p>
@@ -314,11 +314,11 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               <!-- CASE 1: APPLICATION PENDING ADMIN REVIEW (NO PAYMENT ALLOWED YET!) -->
               @if (trackedResult()!.statusCode === 1 || trackedResult()!.status === 'PendingTeacherCheck') {
                 <div class="pending-review-banner">
-                  <div class="banner-icon">⏳</div>
+                  <div class="banner-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
                   <div class="banner-content">
                     <h4>Registration Pending Review — No Payment Needed Yet</h4>
                     <p>Our academic team is currently matching a certified teacher for your requested schedule and location.</p>
-                    <p class="highlight-text">💡 Payment instructions & receipt upload will be unlocked right here on this page within <strong>3 to 5 working hours</strong> once admin approves teacher availability.</p>
+                    <p class="highlight-text"> Payment instructions & receipt upload will be unlocked right here on this page within <strong>3 to 5 working hours</strong> once admin approves teacher availability.</p>
                   </div>
                 </div>
               }
@@ -327,11 +327,11 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               @if (trackedResult()!.statusCode === 3 || trackedResult()!.status === 'PaymentSubmitted') {
                 <div class="payment-submitted-card">
                   <div class="submitted-header">
-                    <div class="submitted-icon">⏳</div>
+                    <div class="submitted-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
                     <div>
                       <h3>Payment Receipt Submitted & Under Admin Review</h3>
                       <p>Your payment screenshot and transaction ID (<code>{{ trackedResult()!.transactionId }}</code>) have been securely received.</p>
-                      <div class="sla-timer-badge">⏰ Verification SLA: 1 to 3 Working Hours</div>
+                      <div class="sla-timer-badge"> Verification SLA: 1 to 3 Working Hours</div>
                     </div>
                   </div>
 
@@ -342,7 +342,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   </div>
 
                   <div class="under-review-notice">
-                    <p>✅ Our finance administration is cross-checking your receipt. Once verified, your Student Credentials will appear right here.</p>
+                    <p> Our finance administration is cross-checking your receipt. Once verified, your Student Credentials will appear right here.</p>
                   </div>
                 </div>
               }
@@ -350,17 +350,17 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               <!-- CASE 3: PAYMENT SLIP UPLOAD FORM (ONLY UNLOCKED WHEN ADMIN APPROVES TEACHER!) -->
               @if (trackedResult()!.statusCode === 2 || trackedResult()!.status === 'ApprovedPendingPayment') {
                 <div class="payment-card">
-                  <h3>💳 Tuition & 500 ETB Admission Fee Payment Instructions</h3>
+                  <h3>Tuition & 500 ETB Admission Fee Payment Instructions</h3>
                   <p>Teacher matched! Please transfer tuition + 500 ETB registration fee to one of the official BrightTutor accounts below:</p>
 
                   <div class="bank-options">
                     <div class="bank-pill">
-                      <strong>🏦 Commercial Bank of Ethiopia (CBE)</strong><br />
+                      <strong> Commercial Bank of Ethiopia (CBE)</strong><br />
                       Account No: <code>1000123456789</code><br />
                       Account Name: BrightTutor Academy PLC
                     </div>
                     <div class="bank-pill">
-                      <strong>📱 Telebirr Mobile Transfer</strong><br />
+                      <strong> Telebirr Mobile Transfer</strong><br />
                       Mobile / Till: <code>0911000000</code> / Merchant ID 889900<br />
                       Account Name: BrightTutor Academy
                     </div>
@@ -391,7 +391,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                       <input type="file" (change)="onFileSelected($event)" accept="image/*" required />
                       @if (receiptForm.receiptImageBase64) {
                         <div class="preview-box">
-                          <p>✅ Screenshot attached cleanly.</p>
+                          <p> Screenshot attached cleanly.</p>
                           <img [src]="receiptForm.receiptImageBase64" alt="Receipt Preview" />
                         </div>
                       }
@@ -406,7 +406,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
               @if (trackedResult()!.issuedStudentCode) {
                 <div class="credentials-issued-card">
-                  <div class="issued-icon">🎉</div>
+                  <div class="issued-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/></svg></div>
                   <h3>ACCOUNT ACTIVATED & STUDENT ID ISSUED!</h3>
                   <div class="student-id-display">
                     Issued Student ID Code: <code>{{ trackedResult()!.issuedStudentCode }}</code>
@@ -419,7 +419,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   </div>
 
                   <a routerLink="/login" [queryParams]="{email: trackedResult()!.issuedStudentCode}" class="btn-direct-login">
-                    🔑 Click Here to Login to Your Student Dashboard →
+                     Click Here to Login to Your Student Dashboard →
                   </a>
                 </div>
               }
@@ -440,7 +440,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
     .header-nav-row { margin-bottom: 1rem; }
     .btn-back-login { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--color-surface); color: var(--color-primary); border: 1.5px solid var(--color-border); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: var(--shadow-card); transition: all 0.2s; }
-    .btn-back-login:hover { background: var(--color-primary); color: white; border-color: var(--color-primary); transform: translateX(-3px); }
+    .btn-back-login:hover { background: var(--color-action); color: white; border-color: var(--color-primary); transform: translateX(-3px); }
 
     .portal-header h1 {
       color: var(--color-primary);
@@ -475,7 +475,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     }
 
     .tab-btn.active {
-      background: var(--color-accent);
+      background: var(--color-action);
       color: #fff;
       border-color: var(--color-accent);
     }
@@ -484,7 +484,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       background: var(--color-surface);
       border: 1.5px solid var(--color-border);
       padding: 1.75rem;
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       box-shadow: var(--shadow-card);
       width: 100%;
       box-sizing: border-box;
@@ -567,7 +567,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     }
 
     .custom-course-box {
-      background: rgba(16, 185, 129, 0.08);
+      background: rgba(var(--color-accent-rgb), 0.08);
       border: 1.5px dashed var(--color-accent);
       padding: 1rem;
       border-radius: 10px;
@@ -586,7 +586,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #0B3D2E, #059669);
+      background: var(--color-action);
       color: #fff;
       padding: 0.75rem 1.5rem;
       border: none;
@@ -607,7 +607,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     }
 
     .btn-success {
-      background: #10B981;
+      background: var(--color-action);
       color: #fff;
       padding: 0.85rem 1.75rem;
       border: none;
@@ -619,10 +619,10 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     }
 
     .success-header-card {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.08));
-      border: 2px solid #10B981;
+      background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.1), rgba(6, 182, 212, 0.08));
+      border: 2px solid var(--color-accent);
       padding: 1.75rem;
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       text-align: center;
       margin-bottom: 1.5rem;
 
@@ -664,7 +664,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
         .no-payment-guarantee {
           font-size: 0.9rem;
           color: #047857;
-          background: rgba(16, 185, 129, 0.1);
+          background: rgba(var(--color-accent-rgb), 0.1);
           padding: 0.65rem 0.85rem;
           border-radius: 6px;
           margin: 0;
@@ -678,10 +678,10 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .fee-notice-banner {
       display: flex;
       gap: 1rem;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1.5px solid #10B981;
+      background: rgba(var(--color-accent-rgb), 0.08);
+      border: 1.5px solid var(--color-accent);
       padding: 1.2rem;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       margin-bottom: 1.5rem;
       align-items: flex-start;
 
@@ -694,7 +694,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .schedule-config-card, .group-schedule-card {
       background: var(--color-bg);
       border: 1.5px solid var(--color-border);
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: 1.25rem;
       margin-bottom: 1.25rem;
 
@@ -722,7 +722,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
       &:hover { border-color: var(--color-accent); }
       &.selected {
-        background: var(--color-accent);
+        background: var(--color-action);
         color: #fff;
         border-color: var(--color-accent);
       }
@@ -750,7 +750,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
         .rate-label { color: var(--color-muted); }
         .rate-val { font-weight: 600; color: var(--color-text); }
-        .text-green { color: #059669; }
+        .text-green { color: var(--color-accent); }
       }
     }
 
@@ -774,12 +774,12 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       background: rgba(245, 158, 11, 0.1);
       border: 1.5px solid #F59E0B;
       padding: 1.25rem;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       margin-top: 1.25rem;
       align-items: flex-start;
 
       .banner-icon { font-size: 2.25rem; flex-shrink: 0; }
-      .banner-content h4 { margin: 0 0 0.35rem 0; color: #B45309; font-size: 1.1rem; }
+      .banner-content h4 { margin: 0 0 0.35rem 0; color: var(--color-warning); font-size: 1.1rem; }
       .banner-content p { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #78350F; }
       .highlight-text { font-weight: 600; color: #92400E !important; }
     }
@@ -787,18 +787,18 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .search-bar { display: flex; gap: 0.75rem; margin-top: 1rem; margin-bottom: 1.5rem; }
     .search-bar input { flex: 1; padding: 0.75rem; border-radius: 8px; border: 1.5px solid var(--color-border); background: var(--color-surface); }
 
-    .result-box { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: 12px; padding: 1.25rem; }
-    .status-badge { display: inline-block; background: var(--color-accent); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .result-box { background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem; }
+    .status-badge { display: inline-block; background: var(--color-action); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; }
     .notice-card { background: var(--color-surface); padding: 1rem; border-radius: 10px; border-left: 4px solid var(--color-accent); margin: 1rem 0; }
     .notice-title { font-weight: 700; margin-bottom: 0.25rem; color: var(--color-text); }
-    .teacher-card { display: flex; gap: 0.75rem; background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; align-items: center; }
+    .teacher-card { display: flex; gap: 0.75rem; background: rgba(var(--color-accent-rgb), 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1rem; align-items: center; }
     .teacher-icon { font-size: 2rem; }
     .teacher-name { font-size: 1.1rem; font-weight: 700; color: var(--color-accent); margin: 0; }
 
     .payment-submitted-card {
       background: var(--color-surface);
       border: 2px solid var(--color-accent);
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       padding: 1.5rem;
       margin-top: 1.5rem;
       box-shadow: var(--shadow-card);
@@ -830,7 +830,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       }
 
       .under-review-notice {
-        background: rgba(16, 185, 129, 0.08);
+        background: rgba(var(--color-accent-rgb), 0.08);
         border: 1px solid var(--color-accent);
         padding: 0.85rem;
         border-radius: 8px;
@@ -842,14 +842,14 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     }
 
     .face-enrollment-card {
-      background: var(--color-bg, #F4FAF6);
-      border: 1.5px solid var(--color-border, #DCE8E1);
-      border-radius: 12px;
+      background: var(--color-bg);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1.25rem;
       margin: 1.5rem 0;
 
-      h4 { margin: 0 0 0.25rem 0; color: var(--color-text, #0B241B); font-size: 1rem; font-weight: 800; }
-      .subtitle { margin: 0 0 1rem 0; color: var(--color-muted, #5C786A); font-size: 0.85rem; }
+      h4 { margin: 0 0 0.25rem 0; color: var(--color-text); font-size: 1rem; font-weight: 800; }
+      .subtitle { margin: 0 0 1rem 0; color: var(--color-muted); font-size: 0.85rem; }
 
       .capture-options-row {
         display: flex;
@@ -862,14 +862,14 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           font-weight: 700;
           font-size: 0.88rem;
           cursor: pointer;
-          border: 1px solid var(--color-border, #DCE8E1);
-          background: var(--color-surface, #ffffff);
-          color: var(--color-text, #0B241B);
+          border: 1px solid var(--color-border);
+          background: var(--color-surface);
+          color: var(--color-text);
           transition: all 0.2s;
 
           &:hover {
-            border-color: var(--color-accent-bright, #10B981);
-            background: var(--color-success-bg, #E9F7EF);
+            border-color: var(--color-accent-bright);
+            background: var(--color-success-bg);
           }
         }
       }
@@ -883,8 +883,8 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           width: 100%;
           height: 240px;
           object-fit: cover;
-          border-radius: 12px;
-          border: 2px solid var(--color-accent-bright, #10B981);
+          border-radius: var(--radius-lg);
+          border: 2px solid var(--color-accent-bright);
         }
 
         .btn-snap-now {
@@ -892,7 +892,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           bottom: 12px;
           left: 50%;
           transform: translateX(-50%);
-          background: linear-gradient(135deg, #0B3D2E, #059669);
+          background: var(--color-action);
           color: #ffffff;
           border: none;
           padding: 0.55rem 1.1rem;
@@ -900,7 +900,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           font-weight: 800;
           font-size: 0.85rem;
           cursor: pointer;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          box-shadow: var(--shadow-card);
         }
       }
 
@@ -915,27 +915,27 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           height: 80px;
           object-fit: cover;
           border-radius: 50%;
-          border: 3px solid var(--color-accent-bright, #10B981);
+          border: 3px solid var(--color-accent-bright);
         }
 
         .enrolled-badge {
           display: flex;
           align-items: center;
           gap: 0.4rem;
-          background: var(--color-success-bg, #E9F7EF);
-          color: var(--color-accent-bright, #10B981);
+          background: var(--color-success-bg);
+          color: var(--color-accent-bright);
           padding: 0.35rem 0.75rem;
           border-radius: 20px;
           font-size: 0.82rem;
           font-weight: 700;
-          border: 1px solid var(--color-border, #DCE8E1);
+          border: 1px solid var(--color-border);
         }
 
         .btn-retake {
           padding: 0.4rem 0.8rem;
           border-radius: 6px;
-          border: 1px solid var(--color-border, #DCE8E1);
-          background: #ffffff;
+          border: 1px solid var(--color-border);
+          background: var(--color-surface);
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
@@ -943,26 +943,26 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       }
     }
 
-    .payment-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.25rem; border-radius: 12px; margin-top: 1.5rem; }
+    .payment-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.25rem; border-radius: var(--radius-lg); margin-top: 1.5rem; }
     .bank-options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
     .bank-pill { background: var(--color-bg); padding: 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); font-size: 0.85rem; }
     .preview-box { margin-top: 0.5rem; }
     .preview-box img { max-width: 250px; border-radius: 8px; border: 1px solid var(--color-border); margin-top: 0.5rem; }
     .credentials-issued-card {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.05));
-      border: 2px solid #10B981;
+      background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.05));
+      border: 2px solid var(--color-accent);
       padding: 1.5rem;
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       text-align: center;
       margin-top: 1.5rem;
       box-shadow: var(--shadow-card);
 
       .issued-icon { font-size: 3rem; margin-bottom: 0.35rem; }
       h3 { color: #047857; font-size: 1.35rem; font-weight: 900; margin: 0 0 0.75rem 0; }
-      .student-id-display { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-text); code { background: #10B981; color: white; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 1.2rem; font-weight: 800; } }
-      .login-credentials-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 1rem; text-align: left; margin-bottom: 1.25rem; p { margin: 0.35rem 0; font-size: 0.95rem; } code { background: rgba(59, 130, 246, 0.15); color: #2563eb; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700; } }
-      .btn-direct-login { display: inline-block; background: linear-gradient(135deg, #0B3D2E, #059669); color: white; padding: 0.85rem 1.75rem; border-radius: 10px; font-weight: 800; font-size: 1rem; text-decoration: none; box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25); transition: transform 0.2s; }
-      .btn-direct-login:hover { transform: translateY(-2px); }
+      .student-id-display { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-text); code { background: var(--color-action); color: white; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 1.2rem; font-weight: 800; } }
+      .login-credentials-box { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: 1rem; text-align: left; margin-bottom: 1.25rem; p { margin: 0.35rem 0; font-size: 0.95rem; } code { background: rgba(59, 130, 246, 0.15); color: var(--color-info); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700; } }
+      .btn-direct-login { display: inline-block; background: var(--color-action); color: white; padding: 0.85rem 1.75rem; border-radius: 10px; font-weight: 800; font-size: 1rem; text-decoration: none; box-shadow: var(--shadow-card); transition: transform 0.2s; }
+      .btn-direct-login:hover { transform: none; }
     }
 
     @media (max-width: 768px) {
@@ -1137,7 +1137,7 @@ export class StudentRegisterComponent implements OnInit {
       const detection = await this.faceService.extractFaceDescriptor(canvas);
       if (detection) {
         this.referenceFaceDescriptorJson.set(JSON.stringify(detection.descriptorArray));
-        this.toastService.show('✅ Face Biometric Profile Enrolled (100% Quality)!', 'success');
+        this.toastService.show(' Face Biometric Profile Enrolled (100% Quality)!', 'success');
       } else {
         this.toastService.show('Photo captured! Please ensure face is centered.', 'info');
       }
@@ -1161,7 +1161,7 @@ export class StudentRegisterComponent implements OnInit {
             const detection = await this.faceService.extractFaceDescriptor(img);
             if (detection) {
               this.referenceFaceDescriptorJson.set(JSON.stringify(detection.descriptorArray));
-              this.toastService.show('✅ Reference Face Biometric Descriptor Extracted Successfully!', 'success');
+              this.toastService.show(' Reference Face Biometric Descriptor Extracted Successfully!', 'success');
             } else {
               this.toastService.show('Photo loaded! Face recognition will auto-enroll on first attendance check-in.', 'info');
             }

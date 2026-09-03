@@ -16,7 +16,7 @@ import { ToastService } from '../../services/toast.service';
     <div class="courses-page">
       <div class="page-header">
         <div>
-          <h1>📚 Course, Group & Class Management</h1>
+          <h1>Course, Group & Class Management</h1>
           <p>Manage courses, online 1-on-1 classes, group sessions, home visits, student enrollments, and teacher assignments.</p>
         </div>
         <div class="header-actions">
@@ -61,11 +61,11 @@ import { ToastService } from '../../services/toast.service';
               <div class="course-footer">
                 <span>
                   @if (parseServiceTypeNumber(course.serviceType) === 2) {
-                    👥 {{ course.classGroupCount }} Class Groups
+                     {{ course.classGroupCount }} Class Groups
                   } @else if (parseServiceTypeNumber(course.serviceType) === 3) {
-                    🏠 Home-to-Home Visit Session
+                     Home-to-Home Visit Session
                   } @else {
-                    💻 1-on-1 Online Session
+                     1-on-1 Online Session
                   }
                 </span>
                 <div class="card-actions">
@@ -75,7 +75,7 @@ import { ToastService } from '../../services/toast.service';
                     title="Edit Course Details"
                     (click)="openEditCourseModal(course)"
                   >
-                    ✏️
+                    <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg>
                   </button>
                   <button
                     type="button"
@@ -84,7 +84,7 @@ import { ToastService } from '../../services/toast.service';
                     [title]="course.isActive ? 'Deactivate Course' : 'Activate Course'"
                     (click)="toggleCourseStatus(course)"
                   >
-                    {{ course.isActive ? '⏸️' : '▶️' }}
+                    <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="course.isActive ? 'M8 5v14M16 5v14' : 'm8 5 11 7-11 7V5Z'"/></svg>
                   </button>
                 </div>
               </div>
@@ -126,7 +126,7 @@ import { ToastService } from '../../services/toast.service';
                       title="Edit Class Group"
                       (click)="openEditGroupModal(group)"
                     >
-                      ✏️
+                      <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg>
                     </button>
                     <button
                       type="button"
@@ -135,7 +135,7 @@ import { ToastService } from '../../services/toast.service';
                       [title]="group.isActive ? 'Deactivate Class Group' : 'Activate Class Group'"
                       (click)="toggleClassGroupStatus(group)"
                     >
-                      {{ group.isActive ? '⏸️' : '▶️' }}
+                      <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="group.isActive ? 'M8 5v14M16 5v14' : 'm8 5 11 7-11 7V5Z'"/></svg>
                     </button>
                   </td>
                 </tr>
@@ -180,7 +180,7 @@ import { ToastService } from '../../services/toast.service';
                       title="Unenroll Student"
                       (click)="unenrollStudent(enrollment)"
                     >
-                      ❌ Unenroll
+                       Unenroll
                     </button>
                   </td>
                 </tr>
@@ -208,7 +208,7 @@ import { ToastService } from '../../services/toast.service';
             <tbody>
               @for (assign of teacherAssignments(); track assign.id) {
                 <tr>
-                  <td class="group-name">👨‍🏫 {{ assign.teacherName }}</td>
+                  <td class="group-name"> {{ assign.teacherName }}</td>
                   <td>{{ assign.courseName }}</td>
                   <td>{{ assign.classGroupName || 'All Sessions / 1-on-1' }}</td>
                   <td>{{ assign.startDate | date:'mediumDate' }}</td>
@@ -219,7 +219,7 @@ import { ToastService } from '../../services/toast.service';
                       title="Remove Teacher Assignment"
                       (click)="removeTeacherAssignment(assign)"
                     >
-                      🗑️ Remove
+                      <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg> Remove
                     </button>
                   </td>
                 </tr>
@@ -251,9 +251,9 @@ import { ToastService } from '../../services/toast.service';
               <div class="form-group">
                 <label for="serviceType">Delivery Method *</label>
                 <select id="serviceType" name="serviceType" [(ngModel)]="newCourse.serviceType">
-                  <option [ngValue]="1">💻 Online Session (1-on-1 Personal Tutor)</option>
-                  <option [ngValue]="2">👥 Group Session (Academic Center Class)</option>
-                  <option [ngValue]="3">🏠 Home-to-Home Visit Tutoring</option>
+                  <option [ngValue]="1"> Online Session (1-on-1 Personal Tutor)</option>
+                  <option [ngValue]="2"> Group Session (Academic Center Class)</option>
+                  <option [ngValue]="3"> Home-to-Home Visit Tutoring</option>
                 </select>
               </div>
               <div class="modal-footer">
@@ -270,7 +270,7 @@ import { ToastService } from '../../services/toast.service';
         <div class="modal-overlay" (click)="closeEditCourseModal()">
           <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h3>✏️ Edit Course Details</h3>
+              <h3>Edit Course Details</h3>
               <button type="button" class="close-btn" (click)="closeEditCourseModal()">&times;</button>
             </div>
             <form (ngSubmit)="onUpdateCourse()">
@@ -285,9 +285,9 @@ import { ToastService } from '../../services/toast.service';
               <div class="form-group">
                 <label for="editServiceType">Delivery Method *</label>
                 <select id="editServiceType" name="editServiceType" [(ngModel)]="editingCourse.serviceType">
-                  <option [ngValue]="1">💻 Online Session (1-on-1 Personal Tutor)</option>
-                  <option [ngValue]="2">👥 Group Session (Academic Center Class)</option>
-                  <option [ngValue]="3">🏠 Home-to-Home Visit Tutoring</option>
+                  <option [ngValue]="1"> Online Session (1-on-1 Personal Tutor)</option>
+                  <option [ngValue]="2"> Group Session (Academic Center Class)</option>
+                  <option [ngValue]="3"> Home-to-Home Visit Tutoring</option>
                 </select>
               </div>
               <div class="modal-footer">
@@ -338,7 +338,7 @@ import { ToastService } from '../../services/toast.service';
         <div class="modal-overlay" (click)="closeEditGroupModal()">
           <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h3>✏️ Edit Class Group & Schedule</h3>
+              <h3>Edit Class Group & Schedule</h3>
               <button type="button" class="close-btn" (click)="closeEditGroupModal()">&times;</button>
             </div>
             <form (ngSubmit)="onUpdateGroup()">
@@ -364,7 +364,7 @@ import { ToastService } from '../../services/toast.service';
         <div class="modal-overlay" (click)="closeEnrollModal()">
           <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h3>🎓 Enroll Student to Course / Class</h3>
+              <h3>Enroll Student to Course / Class</h3>
               <button type="button" class="close-btn" (click)="closeEnrollModal()">&times;</button>
             </div>
             <form (ngSubmit)="onEnrollStudent()">
@@ -414,7 +414,7 @@ import { ToastService } from '../../services/toast.service';
         <div class="modal-overlay" (click)="closeAssignTeacherModal()">
           <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h3>👨‍🏫 Assign Teacher to Course / Class Group</h3>
+              <h3>Assign Teacher to Course / Class Group</h3>
               <button type="button" class="close-btn" (click)="closeAssignTeacherModal()">&times;</button>
             </div>
             <form (ngSubmit)="onAssignTeacher()">
@@ -466,8 +466,8 @@ import { ToastService } from '../../services/toast.service';
     .page-header h1 { font-size: 1.75rem; color: var(--color-primary); margin-bottom: 0.25rem; }
     .page-header p { color: var(--color-muted); margin: 0; }
     .header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .btn-create { background: var(--color-accent); color: white; border: none; padding: 0.65rem 1.1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-    .btn-create:hover { background: var(--color-primary-light); transform: translateY(-1px); }
+    .btn-create { background: var(--color-action); color: white; border: none; padding: 0.65rem 1.1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
+    .btn-create:hover { background: var(--color-action); transform: none; }
     .btn-create.secondary { background: #0284c7; }
     .btn-create.accent { background: #d97706; }
     .btn-create.teacher-btn { background: #7c3aed; }
@@ -477,7 +477,7 @@ import { ToastService } from '../../services/toast.service';
     .tab-btn.active { color: var(--color-accent-bright); border-bottom-color: var(--color-accent-bright); }
     
     .courses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
-    .course-card { background: var(--color-surface); border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); transition: all 0.2s; }
+    .course-card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 1.25rem; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); transition: all 0.2s; }
     .course-card.deactivated { opacity: 0.6; background: var(--color-bg); }
     .course-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
     .service-pill { padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
@@ -486,34 +486,34 @@ import { ToastService } from '../../services/toast.service';
     .service-pill.home { background: var(--color-success-bg); color: var(--color-success); }
     
     .status-pill { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; background: var(--color-error-bg); color: var(--color-error); font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .status-pill.active { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-pill.active { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(var(--color-accent-rgb), 0.3); }
     
     .course-card h3 { font-size: 1.15rem; color: var(--color-text); margin-bottom: 0.5rem; }
     .course-card p { font-size: 0.875rem; color: var(--color-muted); margin-bottom: 1rem; }
     .course-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--color-muted); border-top: 1px solid var(--color-border); padding-top: 0.75rem; }
     .card-actions { display: flex; gap: 0.4rem; }
     
-    .table-card { background: var(--color-surface); border-radius: 12px; padding: 1rem; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); overflow-x: auto; }
+    .table-card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 1rem; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); overflow-x: auto; }
     .data-table { width: 100%; border-collapse: collapse; text-align: left; }
     .data-table th, .data-table td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
     .data-table th { background: var(--color-bg); font-weight: 600; color: var(--color-muted); font-size: 0.85rem; text-transform: uppercase; }
     .group-name { font-weight: 600; color: var(--color-text); }
     .status-badge { padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; background: var(--color-error-bg); color: var(--color-error); font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .status-badge.active { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-badge.active { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(var(--color-accent-rgb), 0.3); }
     .text-right { text-align: right; }
     .actions-cell { display: flex; justify-content: flex-end; gap: 0.4rem; align-items: center; }
     
     .icon-action-btn { border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); padding: 0.4rem 0.65rem; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
     .icon-action-btn:hover { background: var(--color-surface); transform: scale(1.03); }
-    .icon-action-btn.edit { border-color: var(--color-accent-bright); background: rgba(16, 185, 129, 0.1); }
+    .icon-action-btn.edit { border-color: var(--color-accent-bright); background: rgba(var(--color-accent-rgb), 0.1); }
     .icon-action-btn.toggle { border-color: var(--color-border); }
     .icon-action-btn.toggle.deactivate { border-color: rgba(239, 68, 68, 0.4); background: var(--color-error-bg); color: var(--color-error); }
     
-    .empty-card, .empty-state { background: var(--color-surface); padding: 2.5rem; border-radius: 12px; text-align: center; color: var(--color-muted); width: 100%; border: 1px solid var(--color-border); }
+    .empty-card, .empty-state { background: var(--color-surface); padding: 2.5rem; border-radius: var(--radius-lg); text-align: center; color: var(--color-muted); width: 100%; border: 1px solid var(--color-border); }
 
     /* Modal Styles */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
-    .modal-card { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); border-radius: 14px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-card-hover); }
+    .modal-card { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); border-radius: var(--radius-lg); width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-card-hover); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
     .modal-header h3 { margin: 0; font-size: 1.2rem; color: var(--color-text); }
     .close-btn { background: none; border: none; font-size: 1.5rem; color: var(--color-muted); cursor: pointer; }
@@ -522,8 +522,8 @@ import { ToastService } from '../../services/toast.service';
     .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font-size: 0.9rem; }
     .modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
     .btn-cancel { background: var(--color-bg); color: var(--color-muted); border: 1px solid var(--color-border); padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
-    .btn-save { background: var(--color-accent); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
-    .btn-save:hover { background: var(--color-primary-light); }
+    .btn-save { background: var(--color-action); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .btn-save:hover { background: var(--color-action); }
   `]
 })
 export class CoursesComponent implements OnInit {

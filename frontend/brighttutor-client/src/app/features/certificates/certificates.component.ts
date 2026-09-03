@@ -17,7 +17,7 @@ import { jsPDF } from 'jspdf';
   template: `
     <div class="certificates-page">
       <div class="page-header">
-        <h1>📜 Official Digital Certificates</h1>
+        <h1>Official Digital Certificates</h1>
         <p>Bright Tutorial Center Academic Completion & Teacher Service Recognition Portal.</p>
       </div>
 
@@ -25,7 +25,7 @@ import { jsPDF } from 'jspdf';
       @if (authService.isAdmin() || authService.isSuperAdmin()) {
         <!-- Action Panel: Student Eligibility Evaluator -->
         <div class="evaluator-card">
-          <h3>🎓 Student 3-Month Course Completion Evaluator</h3>
+          <h3>Student 3-Month Course Completion Evaluator</h3>
           <p class="rule-hint">Rule: Must complete 3-Month curriculum timeline (&ge;90 days) with &lt;20.0% absences (&ge;80% attendance rate).</p>
 
           <div class="eval-form-row">
@@ -65,7 +65,7 @@ import { jsPDF } from 'jspdf';
               </div>
 
               @if (eligibility()?.isEligible) {
-                <button type="button" class="btn-issue" (click)="onIssueStudentCert()">🎉 Issue Student Certificate</button>
+                <button type="button" class="btn-issue" (click)="onIssueStudentCert()"> Issue Student Certificate</button>
               }
             </div>
           }
@@ -73,7 +73,7 @@ import { jsPDF } from 'jspdf';
 
         <!-- Action Panel: Teacher Service Excellence Generator -->
         <div class="evaluator-card teacher-card">
-          <h3>👨‍🏫 Teacher 1-Year Service Excellence Certificate</h3>
+          <h3>Teacher 1-Year Service Excellence Certificate</h3>
           <p class="rule-hint">Rule: Must complete 1 full year (365 days) of active teaching service.</p>
           <div class="eval-form-row">
             <div class="form-group flex-1">
@@ -100,7 +100,7 @@ import { jsPDF } from 'jspdf';
               </div>
 
               @if (teacherEligibility()?.isEligible) {
-                <button type="button" class="btn-issue-tch" (click)="onIssueTeacherCert()">🏆 Issue 1-Year Service Certificate</button>
+                <button type="button" class="btn-issue-tch" (click)="onIssueTeacherCert()"> Issue 1-Year Service Certificate</button>
               }
             </div>
           }
@@ -110,7 +110,7 @@ import { jsPDF } from 'jspdf';
       <!-- TEACHER VIEW: Personal 1-Year Service Certificate Only -->
       @if (authService.isTeacher()) {
         <div class="evaluator-card teacher-card">
-          <h3>🏆 My 1-Year Teaching Service Certificate</h3>
+          <h3>My 1-Year Teaching Service Certificate</h3>
           <p class="rule-hint">Official Service Recognition awarded after completing 1 full year (365 days) of active service at Bright Tutorial Center.</p>
 
           @if (myTeacherStatus()) {
@@ -125,7 +125,7 @@ import { jsPDF } from 'jspdf';
               </div>
 
               @if (myTeacherStatus()?.isEligible) {
-                <button type="button" class="btn-claim-cert" (click)="onClaimTeacherCert()">📜 View / Print My 1-Year Certificate</button>
+                <button type="button" class="btn-claim-cert" (click)="onClaimTeacherCert()"> View / Print My 1-Year Certificate</button>
               }
             </div>
           } @else {
@@ -137,7 +137,7 @@ import { jsPDF } from 'jspdf';
       <!-- STUDENT VIEW: Personal 3-Month Completion Certificate Only -->
       @if (authService.isStudent()) {
         <div class="evaluator-card">
-          <h3>🎓 My 3-Month Course Completion Certificate</h3>
+          <h3>My 3-Month Course Completion Certificate</h3>
           <p class="rule-hint">Awarded upon completing your 3-Month course timeline with &ge;80% attendance rate.</p>
 
           @if (myStudentStatus()) {
@@ -149,7 +149,7 @@ import { jsPDF } from 'jspdf';
               </div>
 
               @if (myStudentStatus()?.isEligible) {
-                <button type="button" class="btn-claim-cert" (click)="onClaimStudentCert()">📜 View / Print My Certificate</button>
+                <button type="button" class="btn-claim-cert" (click)="onClaimStudentCert()"> View / Print My Certificate</button>
               }
             </div>
           } @else {
@@ -309,13 +309,13 @@ import { jsPDF } from 'jspdf';
           <div class="prominent-action-bar bottom-bar no-print">
             <div class="action-buttons-flex center-actions">
               <button type="button" class="btn-action-gold lg" (click)="downloadCertificatePdf()">
-                📥 Download PDF Certificate
+                 Download PDF Certificate
               </button>
               <button type="button" class="btn-action-green lg" (click)="downloadCertificatePng()">
-                🖼️ Download PNG Image
+                 Download PNG Image
               </button>
               <button type="button" class="btn-action-outline lg" (click)="printCertificate()">
-                🖨️ Print / Save PDF
+                 Print / Save PDF
               </button>
               <button type="button" class="btn-action-close lg" (click)="activeCertificate.set(null)">
                 ✕ Close
@@ -333,7 +333,7 @@ import { jsPDF } from 'jspdf';
     .page-header h1 { color: #364522; margin-bottom: 0.25rem; font-size: 1.75rem; font-weight: 800; }
     .page-header p { color: var(--color-muted); margin-bottom: 1.5rem; }
 
-    .evaluator-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.5rem; border-radius: 14px; box-shadow: var(--shadow-card); margin-bottom: 1.5rem; }
+    .evaluator-card { background: var(--color-surface); border: 1px solid var(--color-border); padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-card); margin-bottom: 1.5rem; }
     .evaluator-card h3 { margin: 0 0 0.25rem 0; color: var(--color-text); font-size: 1.2rem; }
     .rule-hint { font-size: 0.85rem; color: var(--color-muted); margin-bottom: 1rem; }
 
@@ -350,14 +350,14 @@ import { jsPDF } from 'jspdf';
 
     .eligibility-result { margin-top: 1.25rem; padding: 1.25rem; border-radius: 10px; }
     .eligibility-result.eligible { background: #f4f7f0; border: 1px solid #364522; color: #232f15; }
-    .eligibility-result.ineligible { background: #fef2f2; border: 1px solid #ef4444; color: #991b1b; }
+    .eligibility-result.ineligible { background: var(--color-error-bg); border: 1px solid #ef4444; color: var(--color-error); }
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; font-size: 0.88rem; margin-top: 0.5rem; }
 
-    .status-box { padding: 1.25rem; border-radius: 12px; margin-top: 1rem; }
+    .status-box { padding: 1.25rem; border-radius: var(--radius-lg); margin-top: 1rem; }
     .status-passed { background: #f4f7f0; border: 1px solid #364522; color: #232f15; }
-    .status-pending { background: #fffbebfb; border: 1px solid #f59e0b; color: #b45309; }
+    .status-pending { background: #fffbebfb; border: 1px solid #f59e0b; color: var(--color-warning); }
     .status-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; }
-    .progress-bar-wrap { background: #e5e7eb; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 0.5rem; }
+    .progress-bar-wrap { background: var(--color-border); height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 0.5rem; }
     .progress-bar-fill { background: #364522; height: 100%; transition: width 0.3s ease; }
     .progress-meta { display: flex; justify-content: space-between; font-size: 0.85rem; }
 

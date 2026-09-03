@@ -79,7 +79,7 @@ export interface SelectOption {
       display: block;
       font-size: 0.85rem;
       font-weight: 600;
-      color: var(--color-muted, #5C786A);
+      color: var(--color-muted);
       margin-bottom: 0.35rem;
     }
 
@@ -88,34 +88,34 @@ export interface SelectOption {
       justify-content: space-between;
       align-items: center;
       padding: 0.75rem 1rem;
-      background: var(--color-surface, #ffffff);
-      border: 1.5px solid var(--color-border, #DCE8E1);
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border);
       border-radius: 8px;
       cursor: pointer;
       transition: border-color 0.2s, box-shadow 0.2s;
 
       &:hover {
-        border-color: var(--color-accent-bright, #10B981);
+        border-color: var(--color-accent-bright);
       }
     }
 
     .selected-text {
       font-size: 0.9rem;
-      color: var(--color-text, #0B241B);
+      color: var(--color-text);
       font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
 
       &.placeholder {
-        color: var(--color-muted, #809C8E);
+        color: var(--color-muted);
         font-weight: 400;
       }
     }
 
     .chevron {
       font-size: 0.65rem;
-      color: var(--color-muted, #809C8E);
+      color: var(--color-muted);
       margin-left: 0.5rem;
     }
 
@@ -124,10 +124,10 @@ export interface SelectOption {
       top: calc(100% + 4px);
       left: 0;
       width: 100%;
-      background: var(--color-surface, #ffffff);
-      border: 1.5px solid var(--color-border, #DCE8E1);
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border);
       border-radius: 10px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      box-shadow: var(--shadow-card);
       z-index: 99999;
       overflow: hidden;
       animation: fadeIn 0.15s ease-out;
@@ -135,21 +135,21 @@ export interface SelectOption {
 
     .search-box {
       padding: 0.5rem;
-      background: var(--color-bg, #F4FAF6);
-      border-bottom: 1px solid var(--color-border, #DCE8E1);
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
 
       input {
         width: 100%;
         padding: 0.5rem 0.75rem;
-        background: var(--color-surface, #ffffff);
-        color: var(--color-text, #0B241B);
-        border: 1px solid var(--color-border, #DCE8E1);
+        background: var(--color-surface);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
         border-radius: 6px;
         font-size: 0.85rem;
         outline: none;
 
         &:focus {
-          border-color: var(--color-accent-bright, #10B981);
+          border-color: var(--color-accent-bright);
         }
       }
     }
@@ -157,41 +157,41 @@ export interface SelectOption {
     .options-list {
       max-height: 210px;
       overflow-y: auto;
-      background: var(--color-surface, #ffffff);
+      background: var(--color-surface);
     }
 
     .option-item {
       padding: 0.65rem 1rem;
       cursor: pointer;
-      border-bottom: 1px solid var(--color-border, #DCE8E1);
+      border-bottom: 1px solid var(--color-border);
       transition: background 0.15s;
 
       &:hover {
-        background: rgba(16, 185, 129, 0.12);
+        background: rgba(var(--color-accent-rgb), 0.12);
       }
 
       &.selected {
-        background: var(--color-success-bg, #E9F7EF);
+        background: var(--color-success-bg);
         font-weight: 600;
-        color: var(--color-accent-bright, #10B981);
+        color: var(--color-accent-bright);
       }
     }
 
     .opt-name {
       font-size: 0.9rem;
-      color: var(--color-text, #0B241B);
+      color: var(--color-text);
     }
 
     .opt-subtext {
       font-size: 0.75rem;
-      color: var(--color-muted, #809C8E);
+      color: var(--color-muted);
       margin-top: 2px;
     }
 
     .no-options {
       padding: 1rem;
       text-align: center;
-      color: var(--color-muted, #809C8E);
+      color: var(--color-muted);
       font-size: 0.85rem;
     }
 

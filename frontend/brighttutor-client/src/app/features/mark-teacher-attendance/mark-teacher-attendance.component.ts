@@ -28,8 +28,8 @@ export class MarkTeacherAttendanceComponent implements OnInit {
   statusOptions = [
     { label: "Present", value: AttendanceStatus.Present, icon: "✓", class: "status-present" },
     { label: "Absent", value: AttendanceStatus.Absent, icon: "✕", class: "status-absent" },
-    { label: "Late", value: AttendanceStatus.Late, icon: "⏱", class: "status-late" },
-    { label: "Excused", value: AttendanceStatus.Excused, icon: "✉", class: "status-excused" },
+    { label: "Late", value: AttendanceStatus.Late, icon: "", class: "status-late" },
+    { label: "Excused", value: AttendanceStatus.Excused, icon: "", class: "status-excused" },
   ];
 
   resultMessage = signal<string | null>(null);

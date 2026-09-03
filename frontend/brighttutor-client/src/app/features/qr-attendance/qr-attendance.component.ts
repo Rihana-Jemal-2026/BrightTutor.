@@ -14,7 +14,7 @@ import { ToastService } from '../../services/toast.service';
   template: `
     <div class="qr-page">
       <div class="page-header">
-        <h1>📱 Dynamic QR + Biometric Face Recognition</h1>
+        <h1>Dynamic QR + Biometric Face Recognition</h1>
         <p>1:1 AI Biometric Matching & Classroom Anti-Proxy Attendance System.</p>
       </div>
 
@@ -26,7 +26,7 @@ import { ToastService } from '../../services/toast.service';
           [class.active]="viewMode() === 'projector'"
           (click)="setViewMode('projector')"
         >
-          🖥️ Classroom Projector Display & Live Roll Call
+           Classroom Projector Display & Live Roll Call
         </button>
         <button
           type="button"
@@ -34,7 +34,7 @@ import { ToastService } from '../../services/toast.service';
           [class.active]="viewMode() === 'scanner'"
           (click)="setViewMode('scanner')"
         >
-          📱 Student Mobile Check-In Scanner (Camera + Face Match)
+           Student Mobile Check-In Scanner (Camera + Face Match)
         </button>
       </div>
 
@@ -70,20 +70,20 @@ import { ToastService } from '../../services/toast.service';
               </div>
 
               <div class="qr-meta">
-                <p class="location-tag">📍 Location: <strong>{{ qrSession()?.location }}</strong></p>
+                <p class="location-tag"> Location: <strong>{{ qrSession()?.location }}</strong></p>
                 <p class="nonce-tag">
-                  🔑 Dynamic Security Nonce:
+                   Dynamic Security Nonce:
                   <code class="nonce-code">{{ qrSession()?.qrNonce }}</code>
                 </p>
-                <p class="timestamp-tag">🕒 Live Session Time: {{ qrSession()?.timestamp | date:'mediumTime' }}</p>
+                <p class="timestamp-tag"> Live Session Time: {{ qrSession()?.timestamp | date:'mediumTime' }}</p>
               </div>
 
               <div class="qr-actions-row">
                 <button type="button" class="btn-refresh-qr" (click)="onGroupSelected()">
-                  🔄 Refresh QR Nonce
+                   Refresh QR Nonce
                 </button>
                 <button type="button" class="btn-quick-scan" (click)="useNonceForScanner()">
-                  📲 Test Scanner With This QR Nonce
+                   Test Scanner With This QR Nonce
                 </button>
               </div>
             </div>
@@ -91,7 +91,7 @@ import { ToastService } from '../../services/toast.service';
             <!-- LIVE CLASSROOM ATTENDEE ROLL CALL FEED -->
             <div class="live-roll-call-section">
               <div class="roll-call-header">
-                <h3>👥 Live Classroom Checked-In Attendees (Today)</h3>
+                <h3>Live Classroom Checked-In Attendees (Today)</h3>
                 <span class="attendee-count-badge">{{ liveAttendees().length }} Students Present</span>
               </div>
 
@@ -118,8 +118,8 @@ import { ToastService } from '../../services/toast.service';
                         <h4>{{ att.studentName }}</h4>
                         <span class="student-code-text">{{ att.studentCode }}</span>
                         <div class="checkin-meta-row">
-                          <span class="time-text">🕒 {{ att.checkInTime }}</span>
-                          <span class="confidence-badge">🛡️ {{ att.matchConfidence | number:'1.0-1' }}% Match</span>
+                          <span class="time-text"> {{ att.checkInTime }}</span>
+                          <span class="confidence-badge"> {{ att.matchConfidence | number:'1.0-1' }}% Match</span>
                         </div>
                       </div>
                     </div>
@@ -127,13 +127,13 @@ import { ToastService } from '../../services/toast.service';
                 </div>
               } @else {
                 <div class="empty-roll-call">
-                  <p>⏳ Awaiting student check-ins. Students scanning the QR code with verified Face ID will appear here in real-time.</p>
+                  <p> Awaiting student check-ins. Students scanning the QR code with verified Face ID will appear here in real-time.</p>
                 </div>
               }
             </div>
           } @else {
             <div class="select-prompt">
-              <span class="prompt-icon">📺</span>
+              <span class="prompt-icon"></span>
               <p>Please select a class group above to project the live classroom QR Code onto the screen.</p>
             </div>
           }
@@ -144,7 +144,7 @@ import { ToastService } from '../../services/toast.service';
       @if (viewMode() === 'scanner') {
         <div class="scanner-card">
           <div class="scanner-header">
-            <h3>📱 Student Anti-Proxy Biometric Check-In</h3>
+            <h3>Student Anti-Proxy Biometric Check-In</h3>
             <p>Select your student account, align your face in the camera viewport, and verify 1:1 biometric identity.</p>
           </div>
 
@@ -152,7 +152,7 @@ import { ToastService } from '../../services/toast.service';
           @if (verifiedResult()) {
             <div class="verified-success-card">
               <div class="success-header">
-                <div class="success-icon">✅</div>
+                <div class="success-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></div>
                 <div>
                   <h4>Attendance Successfully Verified!</h4>
                   <p>{{ verifiedResult()?.message }}</p>
@@ -168,20 +168,20 @@ import { ToastService } from '../../services/toast.service';
               <div class="side-by-side-proof">
                 @if (selectedStudent()?.profilePhotoUrl) {
                   <div class="proof-photo-item">
-                    <span class="proof-label">👤 Enrolled Master Profile:</span>
+                    <span class="proof-label"> Enrolled Master Profile:</span>
                     <img [src]="selectedStudent()!.profilePhotoUrl" alt="Master Profile" class="proof-img" />
                   </div>
                 }
                 @if (capturedSnapshot()) {
                   <div class="proof-photo-item">
-                    <span class="proof-label">📸 Today's Live Selfie Proof:</span>
+                    <span class="proof-label"> Today's Live Selfie Proof:</span>
                     <img [src]="capturedSnapshot()" alt="Live Selfie" class="proof-img live-ring" />
                   </div>
                 }
               </div>
 
               <button type="button" class="btn-checkin-another" (click)="resetVerification()">
-                🔄 Check In Another Student
+                 Check In Another Student
               </button>
             </div>
           } @else {
@@ -216,15 +216,15 @@ import { ToastService } from '../../services/toast.service';
                       <img [src]="selectedStudent()!.profilePhotoUrl" alt="Master Face ID" class="master-face-avatar" />
                       <div>
                         <div class="master-enrolled-badge">
-                          <span class="badge-icon">🛡️</span> Master Biometric Enrolled
+                          <span class="badge-icon"></span> Master Biometric Enrolled
                         </div>
                         <p class="profile-student-title">{{ selectedStudent()!.firstName }} {{ selectedStudent()!.lastName }} ({{ selectedStudent()!.studentCode }})</p>
                       </div>
                     } @else {
-                      <div class="master-face-empty">👤</div>
+                      <div class="master-face-empty"></div>
                       <div>
                         <div class="master-pending-badge">
-                          <span class="badge-icon">⚠️</span> No Master Face ID Enrolled Yet
+                          <span class="badge-icon"></span> No Master Face ID Enrolled Yet
                         </div>
                         <p class="profile-student-title">Align your face in the camera to enroll this student's master profile.</p>
                       </div>
@@ -233,10 +233,10 @@ import { ToastService } from '../../services/toast.service';
 
                   <div class="profile-card-actions">
                     <button type="button" class="btn-enroll-live" (click)="enrollCurrentFaceAsMaster()">
-                      📸 {{ selectedStudent()?.profilePhotoUrl ? 'Update Master Face Photo' : 'Save Camera as Master Face ID' }}
+                       {{ selectedStudent()?.profilePhotoUrl ? 'Update Master Face Photo' : 'Save Camera as Master Face ID' }}
                     </button>
                     <label class="btn-enroll-file">
-                      📁 Upload Photo
+                       Upload Photo
                       <input type="file" accept="image/*" (change)="onUploadMasterFace($event)" style="display: none;" />
                     </label>
                   </div>
@@ -267,7 +267,7 @@ import { ToastService } from '../../services/toast.service';
                   @if (!cameraActive()) {
                     <div class="camera-simulation-mesh">
                       <div class="mesh-grid"></div>
-                      <div class="simulated-face-silhouette">👤</div>
+                      <div class="simulated-face-silhouette"></div>
                     </div>
                   }
 
@@ -288,19 +288,19 @@ import { ToastService } from '../../services/toast.service';
                   <div class="camera-status-overlay">
                     @if (biometricStatus() === 'MATCHED') {
                       <span class="status-pill status-verified">
-                        <span class="pulse-dot-green"></span> ✅ Biometric Match Confirmed: {{ biometricConfidence() }}% Similarity
+                        <span class="pulse-dot-green"></span>  Biometric Match Confirmed: {{ biometricConfidence() }}% Similarity
                       </span>
                     } @else if (biometricStatus() === 'MISMATCH') {
                       <span class="status-pill status-mismatch">
-                        <span class="pulse-dot-red"></span> ❌ Biometric Mismatch ({{ biometricConfidence() }}%): Proxy Attempt Blocked!
+                        <span class="pulse-dot-red"></span>  Biometric Mismatch ({{ biometricConfidence() }}%): Proxy Attempt Blocked!
                       </span>
                     } @else if (biometricStatus() === 'ENROLLED') {
                       <span class="status-pill status-enrolled">
-                        <span class="pulse-dot-green"></span> 📸 Biometric Profile Ready (Auto-Enroll on Check-In)
+                        <span class="pulse-dot-green"></span>  Biometric Profile Ready (Auto-Enroll on Check-In)
                       </span>
                     } @else {
                       <span class="status-pill status-scanning">
-                        <span class="pulse-dot-yellow"></span> 🔍 Align Face in Frame for Biometric Matching...
+                        <span class="pulse-dot-yellow"></span>  Align Face in Frame for Biometric Matching...
                       </span>
                     }
                   </div>
@@ -309,10 +309,10 @@ import { ToastService } from '../../services/toast.service';
                 <!-- Camera Controls & Face Trigger -->
                 <div class="camera-controls-bar">
                   <button type="button" class="btn-camera-toggle" (click)="toggleCamera()">
-                    {{ cameraActive() ? '📷 Turn Off Camera' : '🎥 Start Live Web Camera' }}
+                    {{ cameraActive() ? ' Turn Off Camera' : ' Start Live Web Camera' }}
                   </button>
                   <button type="button" class="btn-verify-face" (click)="scanAndVerifyFace()">
-                    ⚡ Run Instant AI Face Match
+                     Run Instant AI Face Match
                   </button>
                 </div>
               </div>
@@ -328,11 +328,11 @@ import { ToastService } from '../../services/toast.service';
                 [disabled]="checkingIn() || biometricStatus() === 'MISMATCH'"
               >
                 @if (checkingIn()) {
-                  ⏳ Verifying Biometrics & Marking Attendance...
+                   Verifying Biometrics & Marking Attendance...
                 } @else if (biometricStatus() === 'MISMATCH') {
-                  ❌ Check-In Blocked (Face Mismatch)
+                   Check-In Blocked (Face Mismatch)
                 } @else {
-                  ✅ Submit Verified Attendance Check-In
+                   Submit Verified Attendance Check-In
                 }
               </button>
             </form>
@@ -351,13 +351,13 @@ import { ToastService } from '../../services/toast.service';
     .page-header {
       margin-bottom: 1.5rem;
       h1 {
-        color: var(--color-text, #0B241B);
+        color: var(--color-text);
         font-size: 1.75rem;
         font-weight: 800;
         margin-bottom: 0.25rem;
       }
       p {
-        color: var(--color-muted, #5C786A);
+        color: var(--color-muted);
         font-size: 0.95rem;
         margin: 0;
       }
@@ -375,23 +375,23 @@ import { ToastService } from '../../services/toast.service';
         font-size: 0.95rem;
         font-weight: 700;
         cursor: pointer;
-        border: 1.5px solid var(--color-border, #DCE8E1);
-        background: var(--color-surface, #ffffff);
-        color: var(--color-text, #0B241B);
+        border: 1.5px solid var(--color-border);
+        background: var(--color-surface);
+        color: var(--color-text);
         transition: all 0.2s ease;
 
         &.active {
-          background: linear-gradient(135deg, #0B3D2E, #059669);
+          background: var(--color-action);
           color: #ffffff;
-          border-color: #0B3D2E;
-          box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
+          border-color: var(--color-primary);
+          box-shadow: var(--shadow-card);
         }
       }
     }
 
     .projector-card, .scanner-card {
-      background: var(--color-surface, #ffffff);
-      border: 1px solid var(--color-border, #DCE8E1);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-radius: 16px;
       padding: 2rem;
       box-shadow: var(--shadow-card, 0 4px 20px rgba(0, 0, 0, 0.05));
@@ -403,30 +403,30 @@ import { ToastService } from '../../services/toast.service';
         display: block;
         font-weight: 700;
         margin-bottom: 0.5rem;
-        color: var(--color-text, #0B241B);
+        color: var(--color-text);
       }
       select {
         width: 100%;
         padding: 0.75rem 1rem;
         border-radius: 8px;
-        border: 1.5px solid var(--color-border, #DCE8E1);
-        background: var(--color-bg, #F4FAF6);
-        color: var(--color-text, #0B241B);
+        border: 1.5px solid var(--color-border);
+        background: var(--color-bg);
+        color: var(--color-text);
         font-size: 1rem;
       }
     }
 
     .qr-display-box {
       text-align: center;
-      background: var(--color-bg, #F4FAF6);
-      border: 2px dashed var(--color-border, #DCE8E1);
+      background: var(--color-bg);
+      border: 2px dashed var(--color-border);
       border-radius: 16px;
       padding: 2rem 1.5rem;
       margin-bottom: 2rem;
 
       .qr-badge {
         display: inline-block;
-        background: var(--color-accent-bright, #10B981);
+        background: var(--color-action);
         color: white;
         padding: 0.3rem 0.85rem;
         border-radius: 20px;
@@ -436,8 +436,8 @@ import { ToastService } from '../../services/toast.service';
         margin-bottom: 0.75rem;
       }
 
-      h2 { margin: 0 0 0.25rem 0; color: var(--color-text, #0B241B); font-size: 1.6rem; font-weight: 800; }
-      .course-sub { color: var(--color-muted, #5C786A); margin: 0 0 1.5rem 0; font-size: 1rem; }
+      h2 { margin: 0 0 0.25rem 0; color: var(--color-text); font-size: 1.6rem; font-weight: 800; }
+      .course-sub { color: var(--color-muted); margin: 0 0 1.5rem 0; font-size: 1rem; }
     }
 
     .qr-code-graphic {
@@ -448,9 +448,9 @@ import { ToastService } from '../../services/toast.service';
       .qr-image-wrapper {
         position: relative;
         padding: 12px;
-        background: #ffffff;
+        background: var(--color-surface);
         border-radius: 16px;
-        box-shadow: 0 8px 30px rgba(11, 61, 46, 0.15);
+        box-shadow: var(--shadow-card);
 
         .real-qr-image {
           width: 220px;
@@ -462,7 +462,7 @@ import { ToastService } from '../../services/toast.service';
         .qr-pulse-border {
           position: absolute;
           inset: -4px;
-          border: 2px solid var(--color-accent-bright, #10B981);
+          border: 2px solid var(--color-accent-bright);
           border-radius: 20px;
           animation: qrPulse 2s infinite;
           pointer-events: none;
@@ -481,11 +481,11 @@ import { ToastService } from '../../services/toast.service';
       flex-direction: column;
       gap: 0.4rem;
       font-size: 0.9rem;
-      color: var(--color-text, #0B241B);
+      color: var(--color-text);
       margin-bottom: 1.5rem;
 
       .nonce-code {
-        background: #0B3D2E;
+        background: var(--color-action);
         color: #ffffff;
         padding: 0.2rem 0.6rem;
         border-radius: 6px;
@@ -505,24 +505,24 @@ import { ToastService } from '../../services/toast.service';
         border-radius: 8px;
         font-weight: 700;
         cursor: pointer;
-        border: 1px solid var(--color-border, #DCE8E1);
-        background: var(--color-surface, #ffffff);
-        color: var(--color-text, #0B241B);
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
+        color: var(--color-text);
         transition: all 0.2s;
 
         &.btn-quick-scan {
-          background: var(--color-accent-bright, #10B981);
+          background: var(--color-action);
           color: white;
-          border-color: var(--color-accent-bright, #10B981);
+          border-color: var(--color-accent-bright);
         }
       }
     }
 
     /* Live Roll Call Section */
     .live-roll-call-section {
-      background: var(--color-surface, #ffffff);
-      border: 1.5px solid var(--color-border, #DCE8E1);
-      border-radius: 14px;
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1.5rem;
 
       .roll-call-header {
@@ -531,11 +531,11 @@ import { ToastService } from '../../services/toast.service';
         align-items: center;
         margin-bottom: 1.25rem;
 
-        h3 { margin: 0; color: var(--color-text, #0B241B); font-size: 1.2rem; font-weight: 800; }
+        h3 { margin: 0; color: var(--color-text); font-size: 1.2rem; font-weight: 800; }
         .attendee-count-badge {
-          background: var(--color-success-bg, #E9F7EF);
-          color: var(--color-accent-bright, #10B981);
-          border: 1px solid var(--color-border, #DCE8E1);
+          background: var(--color-success-bg);
+          color: var(--color-accent-bright);
+          border: 1px solid var(--color-border);
           padding: 0.3rem 0.75rem;
           border-radius: 20px;
           font-weight: 800;
@@ -550,9 +550,9 @@ import { ToastService } from '../../services/toast.service';
       }
 
       .attendee-card {
-        background: var(--color-bg, #F4FAF6);
-        border: 1.5px solid var(--color-border, #DCE8E1);
-        border-radius: 12px;
+        background: var(--color-bg);
+        border: 1.5px solid var(--color-border);
+        border-radius: var(--radius-lg);
         padding: 1rem;
         display: flex;
         gap: 1rem;
@@ -573,34 +573,34 @@ import { ToastService } from '../../services/toast.service';
               height: 52px;
               object-fit: cover;
               border-radius: 8px;
-              border: 1.5px solid var(--color-border, #DCE8E1);
+              border: 1.5px solid var(--color-border);
 
               &.live {
-                border-color: var(--color-accent-bright, #10B981);
+                border-color: var(--color-accent-bright);
               }
             }
 
             .photo-tag {
               font-size: 0.65rem;
-              color: var(--color-muted, #5C786A);
-              &.live { color: #059669; font-weight: 700; }
+              color: var(--color-muted);
+              &.live { color: var(--color-accent); font-weight: 700; }
             }
           }
         }
 
         .attendee-info {
           flex: 1;
-          h4 { margin: 0 0 0.15rem 0; font-size: 0.95rem; color: var(--color-text, #0B241B); font-weight: 800; }
-          .student-code-text { font-size: 0.75rem; color: var(--color-muted, #5C786A); }
+          h4 { margin: 0 0 0.15rem 0; font-size: 0.95rem; color: var(--color-text); font-weight: 800; }
+          .student-code-text { font-size: 0.75rem; color: var(--color-muted); }
           .checkin-meta-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 0.4rem;
 
-            .time-text { font-size: 0.75rem; color: var(--color-text, #0B241B); font-weight: 600; }
+            .time-text { font-size: 0.75rem; color: var(--color-text); font-weight: 600; }
             .confidence-badge {
-              background: #0B3D2E;
+              background: var(--color-action);
               color: #ffffff;
               font-size: 0.72rem;
               font-weight: 800;
@@ -614,16 +614,16 @@ import { ToastService } from '../../services/toast.service';
       .empty-roll-call {
         text-align: center;
         padding: 2rem 1rem;
-        color: var(--color-muted, #5C786A);
+        color: var(--color-muted);
         font-size: 0.9rem;
       }
     }
 
     /* Student Master Face Profile Card */
     .student-face-profile-card {
-      background: var(--color-bg, #F4FAF6);
-      border: 1.5px solid var(--color-border, #DCE8E1);
-      border-radius: 12px;
+      background: var(--color-bg);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1rem 1.25rem;
       margin-bottom: 1.25rem;
       display: flex;
@@ -642,15 +642,15 @@ import { ToastService } from '../../services/toast.service';
           height: 56px;
           object-fit: cover;
           border-radius: 50%;
-          border: 2.5px solid var(--color-accent-bright, #10B981);
-          box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
+          border: 2.5px solid var(--color-accent-bright);
+          box-shadow: var(--shadow-card);
         }
 
         .master-face-empty {
           width: 56px;
           height: 56px;
           border-radius: 50%;
-          background: #E2E8F0;
+          background: var(--color-border);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -662,13 +662,13 @@ import { ToastService } from '../../services/toast.service';
           display: inline-flex;
           align-items: center;
           gap: 0.3rem;
-          background: var(--color-success-bg, #E9F7EF);
-          color: var(--color-accent-bright, #10B981);
+          background: var(--color-success-bg);
+          color: var(--color-accent-bright);
           font-size: 0.75rem;
           font-weight: 800;
           padding: 0.15rem 0.5rem;
-          border-radius: 12px;
-          border: 1px solid var(--color-border, #DCE8E1);
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--color-border);
         }
 
         .master-pending-badge {
@@ -680,14 +680,14 @@ import { ToastService } from '../../services/toast.service';
           font-size: 0.75rem;
           font-weight: 800;
           padding: 0.15rem 0.5rem;
-          border-radius: 12px;
+          border-radius: var(--radius-lg);
         }
 
         .profile-student-title {
           margin: 0.25rem 0 0 0;
           font-size: 0.88rem;
           font-weight: 700;
-          color: var(--color-text, #0B241B);
+          color: var(--color-text);
         }
       }
 
@@ -702,24 +702,24 @@ import { ToastService } from '../../services/toast.service';
           font-size: 0.82rem;
           font-weight: 700;
           cursor: pointer;
-          border: 1px solid var(--color-border, #DCE8E1);
-          background: #ffffff;
-          color: var(--color-text, #0B241B);
+          border: 1px solid var(--color-border);
+          background: var(--color-surface);
+          color: var(--color-text);
           transition: all 0.2s;
 
           &:hover {
-            background: var(--color-success-bg, #E9F7EF);
-            border-color: var(--color-accent-bright, #10B981);
+            background: var(--color-success-bg);
+            border-color: var(--color-accent-bright);
           }
         }
 
         .btn-enroll-live {
-          background: linear-gradient(135deg, #0B3D2E, #059669);
+          background: var(--color-action);
           color: #ffffff;
           border: none;
 
           &:hover {
-            background: var(--color-accent-bright, #10B981);
+            background: var(--color-action);
           }
         }
       }
@@ -738,7 +738,7 @@ import { ToastService } from '../../services/toast.service';
         border-radius: 16px;
         overflow: hidden;
         background: #000000;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: var(--shadow-card);
 
         .camera-video-feed {
           width: 100%;
@@ -753,7 +753,7 @@ import { ToastService } from '../../services/toast.service';
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #071712, #0B3D2E);
+          background: linear-gradient(135deg, #071712, var(--color-primary));
 
           .simulated-face-silhouette {
             font-size: 5rem;
@@ -774,9 +774,9 @@ import { ToastService } from '../../services/toast.service';
           transition: all 0.3s;
 
           &.face-locked {
-            border-color: #10B981;
+            border-color: var(--color-accent);
             border-style: solid;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.5);
           }
 
           &.face-mismatch {
@@ -790,8 +790,8 @@ import { ToastService } from '../../services/toast.service';
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #10B981, transparent);
-            box-shadow: 0 0 10px #10B981;
+            background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+            box-shadow: 0 0 10px var(--color-accent);
             animation: scanMove 2.5s infinite linear;
 
             &.laser-red {
@@ -813,7 +813,7 @@ import { ToastService } from '../../services/toast.service';
       position: absolute;
       width: 14px;
       height: 14px;
-      border-color: #10B981;
+      border-color: var(--color-accent);
       border-style: solid;
 
       &.top-left { top: -6px; left: -6px; border-width: 3px 0 0 3px; }
@@ -841,16 +841,16 @@ import { ToastService } from '../../services/toast.service';
         backdrop-filter: blur(8px);
         color: #ffffff;
 
-        &.status-verified { background: rgba(16, 185, 129, 0.9); }
+        &.status-verified { background: rgba(var(--color-accent-rgb), 0.9); }
         &.status-mismatch { background: rgba(239, 68, 68, 0.9); }
         &.status-enrolled { background: rgba(59, 130, 246, 0.9); }
         &.status-scanning { background: rgba(245, 158, 11, 0.9); }
       }
     }
 
-    .pulse-dot-green { width: 8px; height: 8px; border-radius: 50%; background: #ffffff; animation: pulse 1.5s infinite; }
-    .pulse-dot-red { width: 8px; height: 8px; border-radius: 50%; background: #ffffff; animation: pulse 1.5s infinite; }
-    .pulse-dot-yellow { width: 8px; height: 8px; border-radius: 50%; background: #ffffff; animation: pulse 1.5s infinite; }
+    .pulse-dot-green { width: 8px; height: 8px; border-radius: 50%; background: var(--color-surface); animation: pulse 1.5s infinite; }
+    .pulse-dot-red { width: 8px; height: 8px; border-radius: 50%; background: var(--color-surface); animation: pulse 1.5s infinite; }
+    .pulse-dot-yellow { width: 8px; height: 8px; border-radius: 50%; background: var(--color-surface); animation: pulse 1.5s infinite; }
 
     @keyframes pulse {
       0% { opacity: 0.4; transform: scale(0.9); }
@@ -871,13 +871,13 @@ import { ToastService } from '../../services/toast.service';
         font-size: 0.85rem;
         font-weight: 700;
         cursor: pointer;
-        border: 1px solid var(--color-border, #DCE8E1);
-        background: var(--color-bg, #F4FAF6);
-        color: var(--color-text, #0B241B);
+        border: 1px solid var(--color-border);
+        background: var(--color-bg);
+        color: var(--color-text);
         transition: all 0.2s;
 
         &.btn-verify-face {
-          background: linear-gradient(135deg, #0B3D2E, #059669);
+          background: var(--color-action);
           color: #ffffff;
           border: none;
         }
@@ -892,14 +892,14 @@ import { ToastService } from '../../services/toast.service';
       font-weight: 600;
 
       &.notice-matched {
-        background: rgba(16, 185, 129, 0.1);
-        border: 1.5px solid #10B981;
+        background: rgba(var(--color-accent-rgb), 0.1);
+        border: 1.5px solid var(--color-accent);
         color: #065F46;
       }
       &.notice-mismatch {
         background: rgba(239, 68, 68, 0.1);
         border: 1.5px solid #EF4444;
-        color: #991B1B;
+        color: var(--color-error);
       }
       &.notice-enrolled {
         background: rgba(59, 130, 246, 0.1);
@@ -907,9 +907,9 @@ import { ToastService } from '../../services/toast.service';
         color: #1E40AF;
       }
       &.notice-scanning {
-        background: var(--color-bg, #F4FAF6);
-        border: 1px solid var(--color-border, #DCE8E1);
-        color: var(--color-muted, #5C786A);
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        color: var(--color-muted);
       }
     }
 
@@ -923,13 +923,13 @@ import { ToastService } from '../../services/toast.service';
 
     .form-group {
       margin-bottom: 1.25rem;
-      label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--color-text, #0B241B); }
-      .form-control { width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1.5px solid var(--color-border, #DCE8E1); font-size: 0.95rem; }
+      label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--color-text); }
+      .form-control { width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1.5px solid var(--color-border); font-size: 0.95rem; }
     }
 
     .btn-checkin {
       width: 100%;
-      background: linear-gradient(135deg, #0B3D2E, #059669);
+      background: var(--color-action);
       color: white;
       border: none;
       padding: 0.95rem 1.5rem;
@@ -938,7 +938,7 @@ import { ToastService } from '../../services/toast.service';
       font-size: 1.05rem;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 14px rgba(11, 61, 46, 0.25);
+      box-shadow: var(--shadow-card);
 
       &:disabled {
         opacity: 0.5;
@@ -948,9 +948,9 @@ import { ToastService } from '../../services/toast.service';
 
     /* Verified Success Card */
     .verified-success-card {
-      background: var(--color-bg, #F4FAF6);
-      border: 2px solid var(--color-accent-bright, #10B981);
-      border-radius: 14px;
+      background: var(--color-bg);
+      border: 2px solid var(--color-accent-bright);
+      border-radius: var(--radius-lg);
       padding: 1.5rem;
       margin-top: 1rem;
 
@@ -960,10 +960,10 @@ import { ToastService } from '../../services/toast.service';
         gap: 1rem;
         margin-bottom: 1rem;
         padding-bottom: 0.75rem;
-        border-bottom: 1px solid var(--color-border, #DCE8E1);
+        border-bottom: 1px solid var(--color-border);
         .success-icon { font-size: 2rem; }
         h4 { margin: 0; font-size: 1.15rem; font-weight: 800; }
-        p { margin: 0.2rem 0 0 0; color: var(--color-muted, #5C786A); font-size: 0.85rem; }
+        p { margin: 0.2rem 0 0 0; color: var(--color-muted); font-size: 0.85rem; }
       }
 
       .success-details-grid {
@@ -973,8 +973,8 @@ import { ToastService } from '../../services/toast.service';
         font-size: 0.9rem;
         margin-bottom: 1.25rem;
 
-        .badge-present { background: #E9F7EF; color: #10B981; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 700; }
-        .badge-match { background: #0B3D2E; color: #ffffff; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 700; }
+        .badge-present { background: var(--color-success-bg); color: var(--color-accent); padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 700; }
+        .badge-match { background: var(--color-action); color: #ffffff; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 700; }
       }
 
       .side-by-side-proof {
@@ -985,17 +985,17 @@ import { ToastService } from '../../services/toast.service';
 
         .proof-photo-item {
           text-align: center;
-          .proof-label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--color-text, #0B241B); }
+          .proof-label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--color-text); }
           .proof-img {
             width: 120px;
             height: 120px;
             object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid var(--color-border, #DCE8E1);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--color-border);
 
             &.live-ring {
-              border-color: var(--color-accent-bright, #10B981);
-              box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+              border-color: var(--color-accent-bright);
+              box-shadow: var(--shadow-card);
             }
           }
         }
@@ -1005,8 +1005,8 @@ import { ToastService } from '../../services/toast.service';
         width: 100%;
         padding: 0.75rem;
         border-radius: 8px;
-        border: 1.5px solid var(--color-border, #DCE8E1);
-        background: #ffffff;
+        border: 1.5px solid var(--color-border);
+        background: var(--color-surface);
         font-weight: 700;
         cursor: pointer;
       }
@@ -1015,7 +1015,7 @@ import { ToastService } from '../../services/toast.service';
     .select-prompt {
       text-align: center;
       padding: 3rem 1.5rem;
-      color: var(--color-muted, #5C786A);
+      color: var(--color-muted);
       .prompt-icon { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
     }
   `]
@@ -1173,7 +1173,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
       this.cameraActive.set(false);
       this.biometricStatus.set('MATCHED');
       this.biometricConfidence.set(96);
-      this.biometricNotice.set('✅ Simulation Mode: Camera unavailable. Verified position test active.');
+      this.biometricNotice.set(' Simulation Mode: Camera unavailable. Verified position test active.');
     }
   }
 
@@ -1214,7 +1214,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
       const detection = await this.faceService.extractFaceDescriptor(this.videoElement.nativeElement);
       if (!detection) {
         this.biometricStatus.set('SCANNING');
-        this.biometricNotice.set('⚠️ Looking for face... Please center your face in the viewport.');
+        this.biometricNotice.set(' Looking for face... Please center your face in the viewport.');
         return;
       }
 
@@ -1230,10 +1230,10 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
 
           if (comparison.isMatch) {
             this.biometricStatus.set('MATCHED');
-            this.biometricNotice.set(`✅ Biometric Match: ${comparison.confidencePercent}% Confidence! (Identity matches ${student.firstName})`);
+            this.biometricNotice.set(` Biometric Match: ${comparison.confidencePercent}% Confidence! (Identity matches ${student.firstName})`);
           } else {
             this.biometricStatus.set('MISMATCH');
-            this.biometricNotice.set(`❌ Biometric Mismatch (${comparison.confidencePercent}%): Live face does NOT match ${student.firstName}'s registered profile! Anti-Proxy Lock Active.`);
+            this.biometricNotice.set(` Biometric Mismatch (${comparison.confidencePercent}%): Live face does NOT match ${student.firstName}'s registered profile! Anti-Proxy Lock Active.`);
           }
         } catch {
           this.biometricStatus.set('MATCHED');
@@ -1243,7 +1243,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
         // First-time enrollment for this student
         this.biometricStatus.set('ENROLLED');
         this.biometricConfidence.set(98);
-        this.biometricNotice.set(`📸 Clear Face Captured (${detection.score}% Quality). Biometric profile will be enrolled on check-in.`);
+        this.biometricNotice.set(` Clear Face Captured (${detection.score}% Quality). Biometric profile will be enrolled on check-in.`);
       }
     } catch {
       // Fallback
@@ -1301,8 +1301,8 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
           this.selectedStudent.set({ ...student });
           this.biometricStatus.set('MATCHED');
           this.biometricConfidence.set(98);
-          this.biometricNotice.set(`✅ Master Face Profile Enrolled for ${student.firstName}! Real-time 1:1 matching is now active.`);
-          this.toastService.show(`✅ Master Face ID Enrolled for ${student.firstName} ${student.lastName}!`, 'success');
+          this.biometricNotice.set(` Master Face Profile Enrolled for ${student.firstName}! Real-time 1:1 matching is now active.`);
+          this.toastService.show(` Master Face ID Enrolled for ${student.firstName} ${student.lastName}!`, 'success');
         },
         error: (err) => {
           this.toastService.show(err.error?.message || 'Failed to save biometric profile.', 'error');
@@ -1339,7 +1339,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
                   this.selectedStudent.set({ ...student });
                   this.biometricStatus.set('MATCHED');
                   this.biometricConfidence.set(98);
-                  this.toastService.show(`✅ Master Face ID Enrolled for ${student.firstName} ${student.lastName}!`, 'success');
+                  this.toastService.show(` Master Face ID Enrolled for ${student.firstName} ${student.lastName}!`, 'success');
                 },
                 error: (err) => {
                   this.toastService.show(err.error?.message || 'Failed to save biometric profile.', 'error');
@@ -1372,7 +1372,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
     }
 
     if (this.biometricStatus() === 'MISMATCH') {
-      this.toastService.show('❌ Anti-Proxy Block: Live face does not match selected student record!', 'error');
+      this.toastService.show(' Anti-Proxy Block: Live face does not match selected student record!', 'error');
       return;
     }
 

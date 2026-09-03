@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from "@angular/core";
+import { Component, inject, computed, signal, OnInit } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { of } from "rxjs";
@@ -25,11 +25,16 @@ export class TeacherReportComponent implements OnInit {
   startDate = signal("2026-08-01");
   endDate = signal(new Date().toISOString().slice(0, 10));
 
-  reportResource = rxResource<any | null, unknown>({
-    stream: () => {
-      const id = this.teacherId();
+  filtersTouched = signal(false);
+  optionsError = signal('');
+  canSearch = computed(() => !!this.startDate() && !!this.endDate() && this.startDate() <= this.endDate() && !!this.teacherId() && !this.optionsError());
+
+  reportResource = rxResource({
+    params: () => this.filtersTouched() && this.canSearch() ? { teacherId: this.teacherId(), startDate: this.startDate(), endDate: this.endDate() } : undefined,
+    stream: ({ params }) => {
+      const id = params.teacherId;
       if (!id) return of(null);
-      return this.api.getTeacherReport(id, this.startDate(), this.endDate());
+      return this.api.getTeacherReport(id, params.startDate, params.endDate);
     },
   });
 
@@ -52,20 +57,21 @@ export class TeacherReportComponent implements OnInit {
             subtext: t.email
           }));
           this.teacherOptions.set(opts);
-          if (opts.length > 0) {
-            this.teacherId.set(opts[0].id);
-          }
-        }
+        },
+        error: () => this.optionsError.set('Could not load filter choices. Refresh the page to try again.')
       });
     }
   }
 
   onTeacherSelected(teacherId: string) {
     this.teacherId.set(teacherId);
-    this.search();
+    this.filtersTouched.set(true);
+
   }
 
   search() {
-    this.reportResource.reload();
+    if (!this.canSearch()) return;
+    if (this.filtersTouched()) this.reportResource.reload();
+    else this.filtersTouched.set(true);
   }
 }

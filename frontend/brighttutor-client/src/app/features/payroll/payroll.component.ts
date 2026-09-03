@@ -11,7 +11,7 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
     <div class="payroll-page">
       <div class="page-header">
         <div>
-          <h1>💳 Integrated Payroll & Student Invoicing</h1>
+          <h1>Integrated Payroll & Student Invoicing</h1>
           <p>Automated calculation of teacher payout statements and student billing by service delivery method.</p>
         </div>
       </div>
@@ -19,31 +19,31 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
       <!-- Tab Switcher -->
       <div class="tab-bar">
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'payouts'" (click)="activeTab.set('payouts')">
-          👨‍🏫 Teacher Payout Statements ({{ payouts().length }})
+           Teacher Payout Statements ({{ payouts().length }})
         </button>
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'invoices'" (click)="activeTab.set('invoices')">
-          🎓 Student Invoices & Billing ({{ invoices().length }})
+           Student Invoices & Billing ({{ invoices().length }})
         </button>
       </div>
 
       <!-- Rate Rules Summary Banner -->
       <div class="rate-summary-card">
         <div class="rate-badge-item">
-          <span class="icon">💻</span>
+          <span class="icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></span>
           <div>
             <strong>Online 1-on-1</strong>
             <p>Teacher: $30/hr | Student: $45/hr</p>
           </div>
         </div>
         <div class="rate-badge-item">
-          <span class="icon">👥</span>
+          <span class="icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg></span>
           <div>
             <strong>Group Sessions</strong>
             <p>Teacher: $40/hr | Student: $25/student/hr</p>
           </div>
         </div>
         <div class="rate-badge-item">
-          <span class="icon">🏠</span>
+          <span class="icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v11h-7v-7h-4v7H3V10Z"/></svg></span>
           <div>
             <strong>Home-to-Home Visit</strong>
             <p>Teacher: $50/visit + $10 travel | Student: $75/visit</p>
@@ -82,15 +82,15 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
               <div class="breakdown-list">
                 <h4>Earnings Breakdown by Delivery Method</h4>
                 <div class="breakdown-item">
-                  <span>💻 Online Sessions</span>
+                  <span> Online Sessions</span>
                   <span>\${{ formatCurrency(payout.onlineEarnings) }}</span>
                 </div>
                 <div class="breakdown-item">
-                  <span>👥 Group Classes</span>
+                  <span> Group Classes</span>
                   <span>\${{ formatCurrency(payout.groupEarnings) }}</span>
                 </div>
                 <div class="breakdown-item">
-                  <span>🏠 Home Visits</span>
+                  <span> Home Visits</span>
                   <span>\${{ formatCurrency(payout.homeVisitEarnings) }}</span>
                 </div>
               </div>
@@ -128,15 +128,15 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
               <div class="breakdown-list">
                 <h4>Invoice Charge Summary</h4>
                 <div class="breakdown-item">
-                  <span>💻 Online Sessions</span>
+                  <span> Online Sessions</span>
                   <span>\${{ formatCurrency(invoice.onlineTotal) }}</span>
                 </div>
                 <div class="breakdown-item">
-                  <span>👥 Group Sessions</span>
+                  <span> Group Sessions</span>
                   <span>\${{ formatCurrency(invoice.groupTotal) }}</span>
                 </div>
                 <div class="breakdown-item">
-                  <span>🏠 Home Visits</span>
+                  <span> Home Visits</span>
                   <span>\${{ formatCurrency(invoice.homeVisitTotal) }}</span>
                 </div>
               </div>
@@ -157,18 +157,18 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
     .tab-btn { background: none; border: none; padding: 0.75rem 1.25rem; font-weight: 600; color: var(--color-muted); border-bottom: 2px solid transparent; cursor: pointer; font-size: 0.9rem; }
     .tab-btn.active { color: var(--color-accent-bright); border-bottom-color: var(--color-accent-bright); }
 
-    .rate-summary-card { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; background: var(--color-surface); border: 1px solid var(--color-border); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: var(--shadow-card); }
+    .rate-summary-card { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; background: var(--color-surface); border: 1px solid var(--color-border); padding: 1rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem; box-shadow: var(--shadow-card); }
     .rate-badge-item { display: flex; align-items: center; gap: 0.75rem; }
     .rate-badge-item .icon { font-size: 1.5rem; }
     .rate-badge-item strong { display: block; font-size: 0.9rem; color: var(--color-text); }
     .rate-badge-item p { margin: 0; font-size: 0.8rem; color: var(--color-muted); }
 
     .payouts-grid, .invoices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; }
-    .statement-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 14px; padding: 1.25rem; box-shadow: var(--shadow-card); }
+    .statement-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem; box-shadow: var(--shadow-card); }
     .statement-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
     .statement-header h3 { margin: 0 0 0.2rem 0; font-size: 1.15rem; color: var(--color-text); }
     .sub-text { font-size: 0.8rem; color: var(--color-muted); }
-    .total-pay-pill { background: var(--color-success-bg); color: var(--color-success); font-weight: 700; font-size: 1.1rem; padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .total-pay-pill { background: var(--color-success-bg); color: var(--color-success); font-weight: 700; font-size: 1.1rem; padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid rgba(var(--color-accent-rgb), 0.3); }
     .total-pay-pill.invoice-pill { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
 
     .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; background: var(--color-bg); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; }
@@ -178,7 +178,7 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
     .breakdown-list h4 { margin: 0 0 0.5rem 0; font-size: 0.85rem; color: var(--color-muted); text-transform: uppercase; }
     .breakdown-item { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--color-border); font-size: 0.85rem; color: var(--color-text); }
     .breakdown-item:last-child { border-bottom: none; }
-    .empty-state { text-align: center; padding: 3rem; color: var(--color-muted); background: var(--color-surface); border-radius: 12px; border: 1px solid var(--color-border); width: 100%; }
+    .empty-state { text-align: center; padding: 3rem; color: var(--color-muted); background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border); width: 100%; }
   `]
 })
 export class PayrollComponent implements OnInit {

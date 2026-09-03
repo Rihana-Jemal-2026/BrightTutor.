@@ -1,79 +1,5 @@
-:root, [data-theme="light"] {
-  color-scheme: light;
-  --color-bg: #F4FAF6;
-  --color-surface: #FFFFFF;
-  --color-primary: #0B3D2E;
-  --color-primary-light: #14523F;
-  --color-accent: #059669;
-  --color-accent-bright: #10B981;
-  --color-text: #0B241B;
-  --color-muted: #5C786A;
-  --color-border: #DCE8E1;
-  --color-error: #DC2626;
-  --color-error-bg: #FCEEEC;
-  --color-success: #059669;
-  --color-success-bg: #E9F7EF;
-
-  --color-topbar-bg: #0B3D2E;
-  --color-topbar-text: #FFFFFF;
-  --color-sidebar-bg: #FFFFFF;
-  --color-sidebar-text: #0B241B;
-  --color-sidebar-border: #DCE8E1;
-
-  --status-present: #059669;
-  --status-present-bg: #E9F7EF;
-  --status-absent: #DC2626;
-  --status-absent-bg: #FCEEEC;
-  --status-late: #D97706;
-  --status-late-bg: #FFFBEB;
-  --status-excused: #0284C7;
-  --status-excused-bg: #F0F9FF;
-
-  --font-display: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --shadow-card: 0 4px 16px rgba(11, 61, 46, 0.06), 0 1px 3px rgba(11, 61, 46, 0.04);
-  --shadow-card-hover: 0 12px 30px rgba(16, 185, 129, 0.22), 0 4px 12px rgba(11, 61, 46, 0.08);
-}
-
-[data-theme="dark"] {
-  color-scheme: dark;
-  --color-bg: #071712;
-  --color-surface: #0E261E;
-  --color-primary: #34D399;
-  --color-primary-light: #10B981;
-  --color-accent: #10B981;
-  --color-accent-bright: #34D399;
-  --color-text: #F0FDF4;
-  --color-muted: #809C8E;
-  --color-border: #184234;
-  --color-error: #F87171;
-  --color-error-bg: #371717;
-  --color-success: #34D399;
-  --color-success-bg: #063726;
-
-  --color-topbar-bg: #061A14;
-  --color-topbar-text: #F0FDF4;
-  --color-sidebar-bg: #0A1E17;
-  --color-sidebar-text: #F0FDF4;
-  --color-sidebar-border: #184234;
-
-  --status-present: #34D399;
-  --status-present-bg: #063726;
-  --status-absent: #F87171;
-  --status-absent-bg: #371717;
-  --status-late: #FBBF24;
-  --status-late-bg: #382B06;
-  --status-excused: #38BDF8;
-  --status-excused-bg: #072C3E;
-
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.3);
-  --shadow-card-hover: 0 12px 32px rgba(52, 211, 153, 0.2), 0 4px 14px rgba(0, 0, 0, 0.5);
-}
+@use "styles/tokens";
+@use "styles/controls";
 
 * {
   box-sizing: border-box;
@@ -100,7 +26,7 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(11, 61, 46, 0.2);
+  background: rgba(var(--color-accent-rgb), 0.2);
   border-radius: 4px;
 }
 
@@ -171,7 +97,7 @@ input[type="date"], input[type="time"], input[type="datetime-local"] {
   &:hover {
     border-color: var(--color-accent-bright);
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-2px);
+    transform: none;
   }
 }
 
@@ -198,9 +124,9 @@ input[type="date"], input[type="time"], input[type="datetime-local"] {
   }
 
   &.badge-primary {
-    background: rgba(11, 61, 46, 0.08);
+    background: rgba(var(--color-accent-rgb), 0.08);
     color: var(--color-primary);
-    border: 1px solid rgba(11, 61, 46, 0.15);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.15);
   }
 }
 
@@ -359,9 +285,9 @@ button.sidebar-btn-item {
   .btn-toggle-pw {
     position: absolute;
     right: 8px;
-    background: rgba(11, 61, 46, 0.08);
-    color: #0B3D2E;
-    border: 1px solid rgba(11, 61, 46, 0.2);
+    background: rgba(var(--color-accent-rgb), 0.08);
+    color: var(--color-primary);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.2);
     padding: 0.25rem 0.65rem;
     border-radius: 6px;
     font-size: 0.8rem;
@@ -371,7 +297,7 @@ button.sidebar-btn-item {
     user-select: none;
 
     &:hover {
-      background: #0B3D2E;
+      background: var(--color-primary);
       color: #ffffff;
     }
   }

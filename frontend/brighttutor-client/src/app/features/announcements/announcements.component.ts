@@ -193,9 +193,9 @@ export class AnnouncementsComponent implements OnInit {
     if (name) localStorage.setItem('teacher_msg_avail_' + name.toLowerCase(), String(newState));
 
     if (newState) {
-      this.toast.showSuccess('🟢 Direct student messaging is now OPEN. Enrolled students can contact you.');
+      this.toast.showSuccess(' Direct student messaging is now OPEN. Enrolled students can contact you.');
     } else {
-      this.toast.showWarning('🔴 Direct student messaging is CLOSED. Students cannot send new inquiries.');
+      this.toast.showWarning(' Direct student messaging is CLOSED. Students cannot send new inquiries.');
     }
   }
 
@@ -561,11 +561,11 @@ export class AnnouncementsComponent implements OnInit {
   }
 
   getTargetRoleLabel(role?: any): string {
-    if (role === 1 || role === '1' || role === 'Admin') return '👑 Admins Only';
-    if (role === 2 || role === '2' || role === 'Teacher') return '👨‍🏫 Teachers Only';
-    if (role === 3 || role === '3' || role === 'Student') return '🎓 Students Only';
-    if (role === 4 || role === '4' || role === 'Parent') return '👨‍👩‍👧 Parents Only';
-    return '🌐 All Campus & Roles';
+    if (role === 1 || role === '1' || role === 'Admin') return ' Admins Only';
+    if (role === 2 || role === '2' || role === 'Teacher') return ' Teachers Only';
+    if (role === 3 || role === '3' || role === 'Student') return ' Students Only';
+    if (role === 4 || role === '4' || role === 'Parent') return ' Parents Only';
+    return ' All Campus & Roles';
   }
 
   getTargetRoleClass(role?: any): string {

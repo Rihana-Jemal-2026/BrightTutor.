@@ -21,7 +21,7 @@ import { jsPDF } from 'jspdf';
       <!-- HEADER -->
       <div class="page-header">
         <div class="header-content">
-          <div class="header-icon-box">📚</div>
+          <div class="header-icon-box"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14m0-14C8 4 4 4 2 5v15c3-1 7-1 10 1 3-2 7-2 10-1V5c-2-1-6-1-10 2Z"/></svg></div>
           <div>
             <h1 class="page-title">{{ authService.isStudent() ? 'My Course Tasks, Quizzes & Grades' : 'Homework, Tests, Gradebook & Certification' }}</h1>
             <p class="page-subtitle">{{ authService.isStudent() ? 'Take interactive quizzes, submit homework, and view your academic achievements.' : 'Multi-assessment management, automated test evaluation, dynamic weighted gradebook & official certificate issuance.' }}</p>
@@ -31,7 +31,7 @@ import { jsPDF } from 'jspdf';
         @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
           <div class="header-actions">
             <button class="btn btn-primary" (click)="openCreateModal()">
-              <span class="icon">➕</span> Create Assessment / Test
+              <span class="icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span> Create Assessment / Test
             </button>
           </div>
         }
@@ -41,21 +41,21 @@ import { jsPDF } from 'jspdf';
       <div class="nav-tabs-container">
         <div class="nav-tabs">
           <button class="tab-btn" [class.active]="activeTab() === 'assessments'" (click)="setTab('assessments')">
-            <span class="tab-icon">📑</span> {{ authService.isStudent() ? 'Available Tasks & Tests' : 'Course Tasks & Tests' }}
+            <span class="tab-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="m8 14 3 3 5-6"/></svg></span> {{ authService.isStudent() ? 'Available Tasks & Tests' : 'Course Tasks & Tests' }}
             <span class="tab-badge">{{ assessments().length }}</span>
           </button>
           
           @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
             <button class="tab-btn" [class.active]="activeTab() === 'gradebook'" (click)="setTab('gradebook')">
-              <span class="tab-icon">📊</span> Master Gradebook Matrix
+              <span class="tab-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/></svg></span> Master Gradebook Matrix
             </button>
             <button class="tab-btn" [class.active]="activeTab() === 'final-grading'" (click)="setTab('final-grading')">
-              <span class="tab-icon">🎓</span> Final Course Grading & Certificates
+              <span class="tab-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Zm4 2v6c4 3 8 3 12 0v-6m4-2v8"/></svg></span> Final Course Grading & Certificates
             </button>
           }
 
           <button class="tab-btn" [class.active]="activeTab() === 'student-view'" (click)="setTab('student-view')">
-            <span class="tab-icon">👤</span> {{ authService.isStudent() ? 'My Performance & Grades' : 'Student Portal Preview' }}
+            <span class="tab-icon"></span> {{ authService.isStudent() ? 'My Performance & Grades' : 'Student Portal Preview' }}
           </button>
         </div>
       </div>
@@ -96,11 +96,11 @@ import { jsPDF } from 'jspdf';
             </div>
           } @else if (assessments().length === 0) {
             <div class="empty-state-card">
-              <div class="empty-icon">📚</div>
+              <div class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14m0-14C8 4 4 4 2 5v15c3-1 7-1 10 1 3-2 7-2 10-1V5c-2-1-6-1-10 2Z"/></svg></div>
               <h3>No Assessments Found</h3>
               <p>No homework, quizzes, or tests match your filters.</p>
               @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
-                <button class="btn btn-primary" (click)="openCreateModal()">➕ Create First Assessment</button>
+                <button class="btn btn-primary" (click)="openCreateModal()"> Create First Assessment</button>
               }
             </div>
           } @else {
@@ -110,16 +110,16 @@ import { jsPDF } from 'jspdf';
                   <div class="card-header">
                     <span class="type-tag" [ngClass]="getTypeTagClass(a.type)">{{ a.typeName }}</span>
                     <div class="header-right-meta">
-                      <span class="weight-badge">⚖️ {{ a.weightPercentage }}% Weight</span>
+                      <span class="weight-badge"> {{ a.weightPercentage }}% Weight</span>
                       @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
-                        <button type="button" class="btn-card-edit" (click)="openEditModal(a)" title="Edit Assessment & Questions">✏️</button>
-                        <button type="button" class="btn-card-delete" (click)="deleteAssessment(a.id)" title="Delete Assessment">🗑️</button>
+                        <button type="button" class="btn-card-edit" (click)="openEditModal(a)" title="Edit Assessment & Questions"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg></button>
+                        <button type="button" class="btn-card-delete" (click)="deleteAssessment(a.id)" title="Delete Assessment"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg></button>
                       }
                     </div>
                   </div>
 
                   <h3 class="assessment-title">{{ a.title }}</h3>
-                  <p class="assessment-course">📖 {{ a.courseName }}</p>
+                  <p class="assessment-course"> {{ a.courseName }}</p>
                   <p class="assessment-desc">{{ a.description }}</p>
 
                   <div class="assessment-meta">
@@ -130,7 +130,7 @@ import { jsPDF } from 'jspdf';
                     @if (a.durationMinutes) {
                       <div class="meta-item">
                         <span class="meta-label">Time Limit:</span>
-                        <span class="meta-value">⏱️ {{ a.durationMinutes }} mins</span>
+                        <span class="meta-value"> {{ a.durationMinutes }} mins</span>
                       </div>
                     }
                     <div class="meta-item">
@@ -149,19 +149,19 @@ import { jsPDF } from 'jspdf';
                   <div class="card-footer">
                     @if (a.hasQuestions || a.type === 2 || a.type === 3) {
                       <button class="btn btn-quiz-take" (click)="openTakeQuizModal(a)">
-                        ⏱️ Take Interactive Test
+                         Take Interactive Test
                       </button>
                     } @else {
                       <button class="btn btn-submit-hw" (click)="openSubmitHwModal(a)">
-                        📤 Submit Homework
+                         Submit Homework
                       </button>
                     }
                     @if (authService.isAdmin() || authService.isSuperAdmin() || authService.isTeacher()) {
                       <button class="btn btn-edit-action" (click)="openEditModal(a)">
-                        ✏️ Edit
+                        <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Edit
                       </button>
                       <button class="btn btn-review" (click)="openSubmissionsModal(a)">
-                        📥 Submissions ({{ a.submissionsCount }})
+                         Submissions ({{ a.submissionsCount }})
                       </button>
                     }
                   </div>
@@ -201,7 +201,7 @@ import { jsPDF } from 'jspdf';
             </div>
           } @else if (!gradebookData() || gradebookData()!.students.length === 0) {
             <div class="empty-state-card">
-              <div class="empty-icon">📊</div>
+              <div class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/></svg></div>
               <h3>No Enrolled Students in this Course</h3>
               <p>Enroll students in this course to view the live grading matrix.</p>
             </div>
@@ -229,7 +229,7 @@ import { jsPDF } from 'jspdf';
                         @if (row.profilePhotoUrl) {
                           <img [src]="row.profilePhotoUrl" alt="" class="student-thumb" />
                         } @else {
-                          <span class="student-avatar-fallback">👤</span>
+                          <span class="student-avatar-fallback"></span>
                         }
                         <span class="student-name">{{ row.studentName }}</span>
                       </td>
@@ -250,14 +250,14 @@ import { jsPDF } from 'jspdf';
                       </td>
                       <td>
                         @if (row.isFinalized) {
-                          <span class="status-badge status-finalized">🔒 Finalized</span>
+                          <span class="status-badge status-finalized"> Finalized</span>
                         } @else {
-                          <span class="status-badge status-active">⏳ In Progress</span>
+                          <span class="status-badge status-active"> In Progress</span>
                         }
                       </td>
                       <td>
                         <button class="btn btn-sm btn-finalize" (click)="openFinalizeModal(row)">
-                          🎓 {{ row.isFinalized ? 'View / Update Grade' : 'Finalize Grade' }}
+                           {{ row.isFinalized ? 'View / Update Grade' : 'Finalize Grade' }}
                         </button>
                       </td>
                     </tr>
@@ -275,7 +275,7 @@ import { jsPDF } from 'jspdf';
       @if (activeTab() === 'final-grading') {
         <div class="tab-pane">
           <div class="final-grading-banner">
-            <div class="banner-icon">🏆</div>
+            <div class="banner-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/></svg></div>
             <div>
               <h2>Course Completion & Digital Certificate Authority</h2>
               <p>Finalize the student's cumulative GPA to generate their verified <strong>Digital Certificate of Completion & Honors</strong>.</p>
@@ -294,8 +294,8 @@ import { jsPDF } from 'jspdf';
               </select>
             </div>
             <div class="summary-stats-pills">
-              <span class="stat-pill">👥 Students: <strong>{{ finalGradingData()?.students?.length || 0 }}</strong></span>
-              <span class="stat-pill stat-issued">📜 Issued Certificates: <strong>{{ getIssuedCertsCount() }}</strong></span>
+              <span class="stat-pill"> Students: <strong>{{ finalGradingData()?.students?.length || 0 }}</strong></span>
+              <span class="stat-pill stat-issued"> Issued Certificates: <strong>{{ getIssuedCertsCount() }}</strong></span>
             </div>
           </div>
 
@@ -306,7 +306,7 @@ import { jsPDF } from 'jspdf';
             </div>
           } @else if (!finalGradingData() || finalGradingData()!.students.length === 0) {
             <div class="empty-state-card">
-              <div class="empty-icon">🎓</div>
+              <div class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5L2 9Zm4 2v6c4 3 8 3 12 0v-6m4-2v8"/></svg></div>
               <h3>No Enrolled Students for This Course</h3>
               <p>Select a different course above to view students and issue certificates.</p>
             </div>
@@ -318,7 +318,7 @@ import { jsPDF } from 'jspdf';
                     @if (row.profilePhotoUrl) {
                       <img [src]="row.profilePhotoUrl" class="final-avatar" alt="" />
                     } @else {
-                      <div class="final-avatar-fallback">👤</div>
+                      <div class="final-avatar-fallback"></div>
                     }
                     <div>
                       <h3>{{ row.studentName }}</h3>
@@ -346,24 +346,24 @@ import { jsPDF } from 'jspdf';
                   </div>
 
                   <div class="honors-award-box">
-                    <span class="award-icon">🎖️</span>
+                    <span class="award-icon"></span>
                     <span>Honors Tier: <strong>{{ row.honorsDistinction }}</strong></span>
                   </div>
 
                   @if (row.isFinalized) {
                     <div class="cert-issued-alert">
-                      <span class="alert-icon">✅</span>
+                      <span class="alert-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span>
                       <div>
                         <strong>Certificate Issued!</strong>
                         <p>Official completion certificate is active and verified.</p>
                       </div>
                     </div>
                     <button type="button" class="btn btn-view-cert" (click)="viewGeneratedCert(row.certificateId, row.studentId)">
-                      📜 View & Print Digital Certificate
+                       View & Print Digital Certificate
                     </button>
                   } @else {
                     <button class="btn btn-primary btn-block" (click)="openFinalizeModal(row)">
-                      🎓 Finalize Grade & Issue Certificate
+                       Finalize Grade & Issue Certificate
                     </button>
                   }
                 </div>
@@ -392,14 +392,14 @@ import { jsPDF } from 'jspdf';
           } @else {
             <div class="student-logged-in-badge">
               <div class="student-info-left">
-                <div class="student-avatar-pill">👤</div>
+                <div class="student-avatar-pill"></div>
                 <div>
                   <h3 class="student-profile-title">{{ getSelectedStudent()?.firstName || authService.currentUser()?.firstName }} {{ getSelectedStudent()?.lastName || authService.currentUser()?.lastName }}</h3>
                   <span class="code-sub">Student Code: <strong>{{ getSelectedStudent()?.studentCode || 'STU-ACTIVE' }}</strong></span>
                 </div>
               </div>
               <div class="student-badge-right">
-                <span class="role-chip">🎓 Verified Student Account</span>
+                <span class="role-chip"> Verified Student Account</span>
               </div>
             </div>
           }
@@ -410,7 +410,7 @@ import { jsPDF } from 'jspdf';
           <div class="student-gradebook-sheet">
             <div class="sheet-top-bar">
               <div class="course-selector-box">
-                <label for="studentCoursePicker">📖 My Enrolled Course:</label>
+                <label for="studentCoursePicker"> My Enrolled Course:</label>
                 <select id="studentCoursePicker" [(ngModel)]="studentSelectedCourseId" (change)="onStudentCourseChange()" class="form-control course-dropdown-lg">
                   @for (c of courses(); track c.id) {
                     <option [value]="c.id">{{ c.name }}</option>
@@ -421,10 +421,10 @@ import { jsPDF } from 'jspdf';
               <div class="sheet-cert-action">
                 @if (studentGradebookRow()?.isFinalized) {
                   <button type="button" class="btn btn-view-cert" (click)="viewGeneratedCert(studentGradebookRow()?.certificateId, currentStudentId)">
-                    📜 View & Print My Digital Certificate
+                     View & Print My Digital Certificate
                   </button>
                 } @else {
-                  <span class="in-progress-pill">⏳ Academic Term Active (Grading in Progress)</span>
+                  <span class="in-progress-pill"> Academic Term Active (Grading in Progress)</span>
                 }
               </div>
             </div>
@@ -433,7 +433,7 @@ import { jsPDF } from 'jspdf';
             <div class="student-metrics-grid">
               <div class="metric-card card-hw">
                 <div class="metric-header">
-                  <span class="metric-icon">📝</span>
+                  <span class="metric-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="m8 14 3 3 5-6"/></svg></span>
                   <span class="metric-weight">30% Weight</span>
                 </div>
                 <div class="metric-body">
@@ -444,7 +444,7 @@ import { jsPDF } from 'jspdf';
 
               <div class="metric-card card-quiz">
                 <div class="metric-header">
-                  <span class="metric-icon">⏱️</span>
+                  <span class="metric-icon"></span>
                   <span class="metric-weight">30% Weight</span>
                 </div>
                 <div class="metric-body">
@@ -455,7 +455,7 @@ import { jsPDF } from 'jspdf';
 
               <div class="metric-card card-test">
                 <div class="metric-header">
-                  <span class="metric-icon">📊</span>
+                  <span class="metric-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/></svg></span>
                   <span class="metric-weight">40% Weight</span>
                 </div>
                 <div class="metric-body">
@@ -466,7 +466,7 @@ import { jsPDF } from 'jspdf';
 
               <div class="metric-card card-gpa">
                 <div class="metric-header">
-                  <span class="metric-icon">🏆</span>
+                  <span class="metric-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="m8 12-2 9 6-3 6 3-2-9"/></svg></span>
                   <span class="metric-weight">Final GPA</span>
                 </div>
                 <div class="metric-body">
@@ -482,7 +482,7 @@ import { jsPDF } from 'jspdf';
             <!-- Honors Standing Strip -->
             <div class="honors-banner">
               <div class="honors-left">
-                <span class="honors-icon">🎖️</span>
+                <span class="honors-icon"></span>
                 <div>
                   <strong>Academic Standing & Honors Tier:</strong>
                   <span class="honors-tier-name">{{ studentGradebookRow()?.honorsDistinction || 'Course In Progress' }}</span>
@@ -490,7 +490,7 @@ import { jsPDF } from 'jspdf';
               </div>
               <div class="honors-right">
                 <span class="status-indicator" [class.finalized]="studentGradebookRow()?.isFinalized">
-                  {{ studentGradebookRow()?.isFinalized ? '🔒 Official Finalized Grade' : '⚡ Live Dynamic Calculation' }}
+                  {{ studentGradebookRow()?.isFinalized ? ' Official Finalized Grade' : ' Live Dynamic Calculation' }}
                 </span>
               </div>
             </div>
@@ -500,7 +500,7 @@ import { jsPDF } from 'jspdf';
           <div class="transcript-table-card">
             <div class="transcript-header">
               <div>
-                <h3>📋 Course Assessment Breakdown & Academic Transcript</h3>
+                <h3>Course Assessment Breakdown & Academic Transcript</h3>
                 <p>Real-time scores, task weighting, and instructor feedback for your active coursework.</p>
               </div>
             </div>
@@ -529,7 +529,7 @@ import { jsPDF } from 'jspdf';
                       <td>
                         <span class="type-tag" [ngClass]="getTypeTagClass(a.type)">{{ a.typeName }}</span>
                       </td>
-                      <td class="weight-cell">⚖️ {{ a.weightPercentage }}%</td>
+                      <td class="weight-cell"> {{ a.weightPercentage }}%</td>
                       <td>{{ a.maxScore }} pts</td>
                       <td class="score-cell">
                         @if (a.studentSubmission?.score !== null && a.studentSubmission?.score !== undefined) {
@@ -547,27 +547,27 @@ import { jsPDF } from 'jspdf';
                       </td>
                       <td>
                         @if (a.studentSubmission?.status === 2 || a.studentSubmission?.statusName === 'Graded') {
-                          <span class="status-pill pill-graded">✅ Graded</span>
+                          <span class="status-pill pill-graded"> Graded</span>
                         } @else if (a.studentSubmission) {
-                          <span class="status-pill pill-pending">⏳ Under Review</span>
+                          <span class="status-pill pill-pending"> Under Review</span>
                         } @else {
-                          <span class="status-pill pill-todo">⚠️ Pending</span>
+                          <span class="status-pill pill-todo"> Pending</span>
                         }
                       </td>
                       <td class="action-feedback-cell">
                         <div class="feedback-action-stack">
                           @if (a.studentSubmission?.feedback) {
-                            <div class="feedback-bubble">💬 <em>"{{ a.studentSubmission.feedback }}"</em></div>
+                            <div class="feedback-bubble"> <em>"{{ a.studentSubmission.feedback }}"</em></div>
                           }
                           @if (a.hasQuestions && a.studentSubmission) {
                             <button type="button" class="btn btn-review-answers btn-xs" (click)="openQuizReviewModal(a, a.studentSubmission)">
-                              📋 Review Test Answers
+                               Review Test Answers
                             </button>
                           } @else if (!a.studentSubmission) {
                             @if (a.hasQuestions || a.type === 2 || a.type === 3) {
-                              <button class="btn btn-quiz-take btn-xs" (click)="openTakeQuizModal(a)">⏱️ Take Test</button>
+                              <button class="btn btn-quiz-take btn-xs" (click)="openTakeQuizModal(a)"> Take Test</button>
                             } @else {
-                              <button class="btn btn-submit-hw btn-xs" (click)="openSubmitHwModal(a)">📤 Submit Work</button>
+                              <button class="btn btn-submit-hw btn-xs" (click)="openSubmitHwModal(a)"> Submit Work</button>
                             }
                           } @else {
                             <span class="text-muted">Awaiting evaluation</span>
@@ -594,7 +594,7 @@ import { jsPDF } from 'jspdf';
         <div class="modal-backdrop" (click)="closeModals()">
           <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h2>{{ isEditMode() ? '✏️ Edit Assessment & Questions' : '➕ Create Homework, Quiz, or Test' }}</h2>
+              <h2>{{ isEditMode() ? ' Edit Assessment & Questions' : ' Create Homework, Quiz, or Test' }}</h2>
               <button class="close-btn" (click)="closeModals()">✕</button>
             </div>
 
@@ -612,11 +612,11 @@ import { jsPDF } from 'jspdf';
                 <div class="form-group">
                   <label>Assessment Category *</label>
                   <select [(ngModel)]="newAssessment.type" name="type" required class="form-control">
-                    <option [value]="1">📑 Homework Assignment (Written/File)</option>
-                    <option [value]="2">⏱️ Interactive Online Quiz (Timed/Auto-Graded)</option>
-                    <option [value]="3">📝 Course Test (Midterm/Exam)</option>
-                    <option [value]="4">🎓 Final Examination</option>
-                    <option [value]="5">💡 Final Capstone Project</option>
+                    <option [value]="1"> Homework Assignment (Written/File)</option>
+                    <option [value]="2"> Interactive Online Quiz (Timed/Auto-Graded)</option>
+                    <option [value]="3"> Course Test (Midterm/Exam)</option>
+                    <option [value]="4"> Final Examination</option>
+                    <option [value]="5"> Final Capstone Project</option>
                   </select>
                 </div>
               </div>
@@ -640,7 +640,7 @@ import { jsPDF } from 'jspdf';
                   <div class="weight-label-row">
                     <label>Grade Weight (%) *</label>
                     <span class="budget-badge" [class.budget-warning]="isWeightBudgetExceeded()" [class.budget-full]="getRemainingWeightBudget() === 0">
-                      💡 Available: <strong>{{ getRemainingWeightBudget() }}%</strong>
+                       Available: <strong>{{ getRemainingWeightBudget() }}%</strong>
                     </span>
                   </div>
                   <input type="number" [(ngModel)]="newAssessment.weightPercentage" name="weightPercentage" min="1" [max]="getRemainingWeightBudget()" class="form-control" [class.input-error]="isWeightBudgetExceeded()" required />
@@ -649,11 +649,11 @@ import { jsPDF } from 'jspdf';
                     <div class="weight-fill-new" [style.width.%]="newAssessment.weightPercentage || 0" [class.fill-exceeded]="isWeightBudgetExceeded()"></div>
                   </div>
                   @if (isWeightBudgetExceeded()) {
-                    <p class="budget-err-msg">⚠️ Weight exceeds remaining {{ getRemainingWeightBudget() }}% budget (Course total capped at 100%).</p>
+                    <p class="budget-err-msg"> Weight exceeds remaining {{ getRemainingWeightBudget() }}% budget (Course total capped at 100%).</p>
                   }
                 </div>
                 <div class="form-group" *ngIf="+newAssessment.type === 2 || +newAssessment.type === 3 || +newAssessment.type === 4">
-                  <label>⏱️ Time Limit (Minutes)</label>
+                  <label> Time Limit (Minutes)</label>
                   <input type="number" [(ngModel)]="newAssessment.durationMinutes" name="durationMinutes" min="1" max="180" class="form-control" placeholder="15" />
                 </div>
                 <div class="form-group">
@@ -667,17 +667,17 @@ import { jsPDF } from 'jspdf';
                 <div class="quiz-builder-section">
                   <div class="quiz-builder-header">
                     <div>
-                      <h4>📝 Interactive Questions & Answer Keys ({{ newQuizQuestions.length }} Questions)</h4>
+                      <h4> Interactive Questions & Answer Keys ({{ newQuizQuestions.length }} Questions)</h4>
                       <p class="quiz-builder-sub">Add questions, type the 4 choices, and select the radio button for the correct answer.</p>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline" (click)="addQuizQuestion()">➕ Add Question</button>
+                    <button type="button" class="btn btn-sm btn-outline" (click)="addQuizQuestion()"> Add Question</button>
                   </div>
 
                   @for (q of newQuizQuestions; track q.id; let qIdx = $index) {
                     <div class="question-card">
                       <div class="question-card-header">
                         <span>Question #{{ qIdx + 1 }}</span>
-                        <button type="button" class="btn-text-danger" (click)="removeQuizQuestion(qIdx)">🗑️ Remove</button>
+                        <button type="button" class="btn-text-danger" (click)="removeQuizQuestion(qIdx)"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg> Remove</button>
                       </div>
 
                       <input type="text" [(ngModel)]="q.question" [name]="'q_text_' + qIdx" placeholder="Enter question prompt..." class="form-control mb-2" required />
@@ -711,7 +711,7 @@ import { jsPDF } from 'jspdf';
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModals()">Cancel</button>
                 <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-                  {{ submitting() ? 'Saving...' : (isEditMode() ? '💾 Save Changes' : 'Publish Assessment') }}
+                  {{ submitting() ? 'Saving...' : (isEditMode() ? ' Save Changes' : 'Publish Assessment') }}
                 </button>
               </div>
             </form>
@@ -727,11 +727,11 @@ import { jsPDF } from 'jspdf';
           <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
             <div class="modal-header quiz-header">
               <div>
-                <h2>⏱️ {{ activeQuizAssessment.title }}</h2>
+                <h2>{{ activeQuizAssessment.title }}</h2>
                 <p class="quiz-sub">{{ activeQuizAssessment.courseName }} | {{ activeQuizQuestions.length }} Questions</p>
               </div>
               <div class="timer-badge" [class.timer-urgent]="quizSecondsRemaining() <= 120">
-                <span class="timer-icon">⏳</span> {{ formattedQuizTime() }} Time Remaining
+                <span class="timer-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span> {{ formattedQuizTime() }} Time Remaining
               </div>
             </div>
 
@@ -758,7 +758,7 @@ import { jsPDF } from 'jspdf';
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" (click)="closeModals()">Cancel</button>
               <button type="button" class="btn btn-primary" (click)="submitQuizAnswers()" [disabled]="submitting()">
-                {{ submitting() ? 'Submitting & Evaluating...' : '✅ Submit Test for Instant Auto-Grading' }}
+                {{ submitting() ? 'Submitting & Evaluating...' : ' Submit Test for Instant Auto-Grading' }}
               </button>
             </div>
           </div>
@@ -772,7 +772,7 @@ import { jsPDF } from 'jspdf';
         <div class="modal-backdrop" (click)="closeModals()">
           <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h2>📤 Submit Homework: {{ activeHwAssessment.title }}</h2>
+              <h2>Submit Homework: {{ activeHwAssessment.title }}</h2>
               <button class="close-btn" (click)="closeModals()">✕</button>
             </div>
 
@@ -815,7 +815,7 @@ import { jsPDF } from 'jspdf';
           <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
             <div class="modal-header">
               <div>
-                <h2>📥 Submissions: {{ activeAssessmentDetails.title }}</h2>
+                <h2>Submissions: {{ activeAssessmentDetails.title }}</h2>
                 <p class="sub-text">{{ activeAssessmentDetails.courseName }} | Max Points: {{ activeAssessmentDetails.maxScore }}</p>
               </div>
               <button class="close-btn" (click)="closeModals()">✕</button>
@@ -824,7 +824,7 @@ import { jsPDF } from 'jspdf';
             <div class="submissions-list-container">
               @if (activeAssessmentDetails.submissions.length === 0) {
                 <div class="empty-state-card">
-                  <div class="empty-icon">⏳</div>
+                  <div class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
                   <p>No students have submitted this assignment yet.</p>
                 </div>
               } @else {
@@ -859,11 +859,11 @@ import { jsPDF } from 'jspdf';
                         <td>
                           <div class="sub-actions-row">
                             <button class="btn btn-sm btn-outline" (click)="openGradeDialog(sub)">
-                              ✏️ Grade
+                              <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Grade
                             </button>
                             @if (sub.answersJson || activeAssessmentDetails?.hasQuestions) {
                               <button type="button" class="btn btn-sm btn-review-sub" (click)="openQuizReviewModal(activeAssessmentDetails, sub)">
-                                🔍 Answers
+                                 Answers
                               </button>
                             }
                           </div>
@@ -885,7 +885,7 @@ import { jsPDF } from 'jspdf';
         <div class="modal-backdrop" (click)="showGradeDialog.set(false)">
           <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h2>✏️ Grade Submission: {{ activeSubmissionToGrade.studentName }}</h2>
+              <h2>Grade Submission: {{ activeSubmissionToGrade.studentName }}</h2>
               <button class="close-btn" (click)="showGradeDialog.set(false)">✕</button>
             </div>
 
@@ -933,7 +933,7 @@ import { jsPDF } from 'jspdf';
         <div class="modal-backdrop" (click)="closeModals()">
           <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h2>🎓 Finalize Course Grade: {{ activeStudentToFinalize.studentName }}</h2>
+              <h2>Finalize Course Grade: {{ activeStudentToFinalize.studentName }}</h2>
               <button class="close-btn" (click)="closeModals()">✕</button>
             </div>
 
@@ -973,9 +973,9 @@ import { jsPDF } from 'jspdf';
                 <div class="form-group">
                   <label>Certificate Honors Tier</label>
                   <select [(ngModel)]="finalizeHonors" name="finalizeHonors" class="form-control">
-                    <option value="High Distinction (Honors)">🥇 High Distinction (Honors)</option>
-                    <option value="Merit">🥈 Merit</option>
-                    <option value="Pass">🥉 Standard Pass</option>
+                    <option value="High Distinction (Honors)"> High Distinction (Honors)</option>
+                    <option value="Merit"> Merit</option>
+                    <option value="Pass"> Standard Pass</option>
                   </select>
                 </div>
               </div>
@@ -988,7 +988,7 @@ import { jsPDF } from 'jspdf';
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" (click)="closeModals()">Cancel</button>
                 <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-                  {{ submitting() ? 'Issuing Certificate...' : '🔒 Confirm Final Grade & Issue Certificate' }}
+                  {{ submitting() ? 'Issuing Certificate...' : ' Confirm Final Grade & Issue Certificate' }}
                 </button>
               </div>
             </form>
@@ -1003,10 +1003,10 @@ import { jsPDF } from 'jspdf';
         <div class="modal-backdrop cert-backdrop" (click)="closeModals()">
           <div class="modal-content cert-modal-dialog" (click)="$event.stopPropagation()">
             <div class="cert-dialog-header no-print">
-              <div class="cert-status-tag">📜 Official Verified Digital Certificate</div>
+              <div class="cert-status-tag"> Official Verified Digital Certificate</div>
               <div class="cert-btn-group">
-                <button type="button" class="btn btn-download-pdf" (click)="downloadCertificatePdf()">📥 Download PDF</button>
-                <button type="button" class="btn btn-print" (click)="printCertificate()">🖨️ Print Certificate</button>
+                <button type="button" class="btn btn-download-pdf" (click)="downloadCertificatePdf()"> Download PDF</button>
+                <button type="button" class="btn btn-print" (click)="printCertificate()"> Print Certificate</button>
                 <button class="close-btn" (click)="closeModals()">✕</button>
               </div>
             </div>
@@ -1017,7 +1017,7 @@ import { jsPDF } from 'jspdf';
 
                 <!-- Header -->
                 <div class="diploma-top">
-                  <div class="diploma-crown">🎓</div>
+                  <div class="diploma-crown"></div>
                   <h2 class="diploma-school">BRIGHT TUTORIAL CENTER</h2>
                   <p class="diploma-motto">Official Certificate of Academic Completion & Excellence</p>
                   <div class="diploma-ribbon">OFFICIAL DIPLOMA OF ACADEMIC ACHIEVEMENT</div>
@@ -1085,7 +1085,7 @@ import { jsPDF } from 'jspdf';
           <div class="modal-content modal-lg review-modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
               <div>
-                <h2>📋 Test & Quiz Review: Question-by-Question Analysis</h2>
+                <h2>Test & Quiz Review: Question-by-Question Analysis</h2>
                 <p class="sub-text">{{ activeReviewAssessment()?.title }} — {{ activeReviewAssessment()?.courseName }}</p>
               </div>
               <button class="close-btn" (click)="closeModals()">✕</button>
@@ -1094,7 +1094,7 @@ import { jsPDF } from 'jspdf';
             <!-- Score Summary Card -->
             <div class="review-score-banner">
               <div class="score-banner-left">
-                <span class="banner-avatar">👤</span>
+                <span class="banner-avatar"></span>
                 <div>
                   <strong class="banner-student-name">{{ activeReviewSubmission()?.studentName || getSelectedStudent()?.firstName || 'Student' }} {{ getSelectedStudent()?.lastName || '' }}</strong>
                   <span class="banner-sub">Submitted: {{ activeReviewSubmission()?.submittedAt || 'Recent' }}</span>
@@ -1121,9 +1121,9 @@ import { jsPDF } from 'jspdf';
 
                     <div class="q-result-badge">
                       @if (isAnswerCorrect(q, qIdx)) {
-                        <span class="badge-correct">✅ Correct (+{{ q.points || 10 }} pts)</span>
+                        <span class="badge-correct"> Correct (+{{ q.points || 10 }} pts)</span>
                       } @else {
-                        <span class="badge-wrong">❌ Incorrect (0 pts)</span>
+                        <span class="badge-wrong"> Incorrect (0 pts)</span>
                       }
                     </div>
                   </div>
@@ -1140,11 +1140,11 @@ import { jsPDF } from 'jspdf';
                         <div class="opt-text">{{ opt }}</div>
                         <div class="opt-status-tag">
                           @if (getStudentAnswerIndex(q, qIdx) === optIdx && q.correctOption === optIdx) {
-                            <span class="tag-your-correct">✅ Your Choice (Correct)</span>
+                            <span class="tag-your-correct"> Your Choice (Correct)</span>
                           } @else if (getStudentAnswerIndex(q, qIdx) === optIdx && q.correctOption !== optIdx) {
-                            <span class="tag-your-wrong">❌ Your Choice (Incorrect)</span>
+                            <span class="tag-your-wrong"> Your Choice (Incorrect)</span>
                           } @else if (q.correctOption === optIdx) {
-                            <span class="tag-correct-key">⭐ Correct Answer</span>
+                            <span class="tag-correct-key"> Correct Answer</span>
                           }
                         </div>
                       </div>
@@ -1188,26 +1188,26 @@ import { jsPDF } from 'jspdf';
 
         .header-icon-box {
           font-size: 2.2rem;
-          background: linear-gradient(135deg, #0B3D2E, #10B981);
+          background: var(--color-action);
           color: white;
           width: 56px;
           height: 56px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 14px;
-          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+          border-radius: var(--radius-lg);
+          box-shadow: var(--shadow-card);
         }
 
         .page-title {
           font-size: 1.5rem;
           font-weight: 800;
-          color: var(--color-text, #0B241B);
+          color: var(--color-text);
           margin: 0;
         }
 
         .page-subtitle {
-          color: var(--color-muted, #5C786A);
+          color: var(--color-muted);
           font-size: 0.88rem;
           margin: 0.25rem 0 0 0;
         }
@@ -1217,7 +1217,7 @@ import { jsPDF } from 'jspdf';
     /* Tabs */
     .nav-tabs-container {
       margin-bottom: 1.5rem;
-      border-bottom: 1.5px solid var(--color-border, #DCE8E1);
+      border-bottom: 1.5px solid var(--color-border);
 
       .nav-tabs {
         display: flex;
@@ -1233,23 +1233,24 @@ import { jsPDF } from 'jspdf';
           background: transparent;
           font-weight: 700;
           font-size: 0.92rem;
-          color: var(--color-muted, #5C786A);
+          color: var(--color-muted);
           border-bottom: 3px solid transparent;
           cursor: pointer;
           transition: all 0.2s;
 
           &:hover {
-            color: var(--color-accent-bright, #10B981);
+            color: var(--color-accent-bright);
           }
 
           &.active {
-            color: var(--color-accent-dark, #0B3D2E);
-            border-bottom-color: var(--color-accent-bright, #10B981);
+            color: white;
+            background: var(--color-action);
+            border-bottom-color: transparent;
           }
 
           .tab-badge {
-            background: #E2E8F0;
-            color: #475569;
+            background: var(--color-border);
+            color: var(--color-muted);
             font-size: 0.75rem;
             padding: 0.15rem 0.5rem;
             border-radius: 10px;
@@ -1260,9 +1261,9 @@ import { jsPDF } from 'jspdf';
 
     /* Filters Card */
     .filters-card {
-      background: white;
-      border: 1px solid var(--color-border, #DCE8E1);
-      border-radius: 12px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1rem 1.25rem;
       margin-bottom: 1.5rem;
       display: flex;
@@ -1278,28 +1279,29 @@ import { jsPDF } from 'jspdf';
         label {
           font-size: 0.8rem;
           font-weight: 700;
-          color: var(--color-muted, #5C786A);
+          color: var(--color-muted);
         }
       }
 
       .type-pill-group {
         display: flex;
+        flex-wrap: wrap;
         gap: 0.4rem;
 
         .type-pill {
           padding: 0.4rem 0.85rem;
           border-radius: 20px;
-          border: 1px solid var(--color-border, #DCE8E1);
-          background: white;
+          border: 1px solid var(--color-border);
+          background: var(--color-surface);
           font-size: 0.8rem;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.2s;
 
           &.active {
-            background: var(--color-accent-dark, #0B3D2E);
+            background: var(--color-action);
             color: white;
-            border-color: var(--color-accent-dark, #0B3D2E);
+            border-color: var(--color-accent-dark);
           }
         }
       }
@@ -1313,18 +1315,18 @@ import { jsPDF } from 'jspdf';
     }
 
     .assessment-card {
-      background: white;
-      border-radius: 14px;
-      border: 1.5px solid var(--color-border, #DCE8E1);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-border);
       padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      box-shadow: var(--shadow-card);
       transition: transform 0.2s, box-shadow 0.2s;
 
       &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        transform: none;
+        box-shadow: var(--shadow-card);
       }
 
       .card-header {
@@ -1348,7 +1350,7 @@ import { jsPDF } from 'jspdf';
           .weight-badge {
             font-size: 0.78rem;
             font-weight: 700;
-            color: #64748B;
+            color: var(--color-muted);
           }
 
           .btn-card-edit, .btn-card-delete {
@@ -1363,7 +1365,7 @@ import { jsPDF } from 'jspdf';
 
             &:hover {
               opacity: 1;
-              background: #F1F5F9;
+              background: var(--color-surface-low);
               transform: scale(1.1);
             }
           }
@@ -1373,27 +1375,27 @@ import { jsPDF } from 'jspdf';
       .assessment-title {
         font-size: 1.1rem;
         font-weight: 800;
-        color: var(--color-text, #0B241B);
+        color: var(--color-text);
         margin: 0 0 0.25rem 0;
       }
 
       .assessment-course {
         font-size: 0.82rem;
-        color: var(--color-muted, #5C786A);
+        color: var(--color-muted);
         margin: 0 0 0.5rem 0;
         font-weight: 600;
       }
 
       .assessment-desc {
         font-size: 0.85rem;
-        color: #475569;
+        color: var(--color-muted);
         margin: 0 0 1rem 0;
         line-height: 1.4;
         flex-grow: 1;
       }
 
       .assessment-meta {
-        background: #F8FAFC;
+        background: var(--color-bg);
         border-radius: 8px;
         padding: 0.65rem 0.85rem;
         margin-bottom: 1rem;
@@ -1406,8 +1408,8 @@ import { jsPDF } from 'jspdf';
           flex-direction: column;
           font-size: 0.78rem;
 
-          .meta-label { color: #64748B; }
-          .meta-value { font-weight: 700; color: #1E293B; }
+          .meta-label { color: var(--color-muted); }
+          .meta-value { font-weight: 700; color: var(--color-text); }
           .due-date { color: #D97706; }
         }
       }
@@ -1433,25 +1435,25 @@ import { jsPDF } from 'jspdf';
         }
 
         .btn-submit-hw {
-          background: linear-gradient(135deg, #0B3D2E, #059669);
+          background: var(--color-action);
           color: white;
           border: none;
         }
 
         .btn-edit-action {
-          background: #EFF6FF;
-          color: #2563EB;
+          background: var(--color-info-bg);
+          color: var(--color-info);
           border: 1px solid #BFDBFE;
 
           &:hover {
-            background: #DBEAFE;
+            background: var(--color-info-bg);
           }
         }
 
         .btn-review {
-          background: #F1F5F9;
+          background: var(--color-surface-low);
           color: #334155;
-          border: 1px solid #CBD5E1;
+          border: 1px solid var(--color-border);
         }
       }
     }
@@ -1460,7 +1462,7 @@ import { jsPDF } from 'jspdf';
     .tag-hw { background: #E0F2FE; color: #0284C7; }
     .tag-quiz { background: #F3E8FF; color: #9333EA; }
     .tag-test { background: #FEF3C7; color: #D97706; }
-    .tag-exam { background: #FEE2E2; color: #DC2626; }
+    .tag-exam { background: #FEE2E2; color: var(--color-error); }
 
     /* Master Gradebook Table */
     .gradebook-controls {
@@ -1468,10 +1470,10 @@ import { jsPDF } from 'jspdf';
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      background: white;
+      background: var(--color-surface);
       padding: 1rem 1.25rem;
-      border-radius: 12px;
-      border: 1px solid var(--color-border, #DCE8E1);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
       flex-wrap: wrap;
       gap: 1rem;
 
@@ -1509,9 +1511,9 @@ import { jsPDF } from 'jspdf';
     }
 
     .gradebook-table-container {
-      background: white;
-      border-radius: 12px;
-      border: 1px solid var(--color-border, #DCE8E1);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
       overflow-x: auto;
     }
 
@@ -1521,17 +1523,17 @@ import { jsPDF } from 'jspdf';
       font-size: 0.88rem;
 
       th {
-        background: #F8FAFC;
+        background: var(--color-bg);
         padding: 0.85rem 1rem;
         font-weight: 800;
-        color: #475569;
+        color: var(--color-muted);
         text-align: left;
-        border-bottom: 1.5px solid #E2E8F0;
+        border-bottom: 1.5px solid var(--color-border);
       }
 
       td {
         padding: 0.85rem 1rem;
-        border-bottom: 1px solid #F1F5F9;
+        border-bottom: 1px solid var(--color-surface-low);
         vertical-align: middle;
       }
 
@@ -1551,19 +1553,19 @@ import { jsPDF } from 'jspdf';
           width: 36px;
           height: 36px;
           border-radius: 50%;
-          background: #E2E8F0;
+          background: var(--color-border);
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 1.2rem;
         }
 
-        .student-name { font-weight: 700; color: #1E293B; }
+        .student-name { font-weight: 700; color: var(--color-text); }
       }
 
       .code-badge {
-        background: #F1F5F9;
-        color: #475569;
+        background: var(--color-surface-low);
+        color: var(--color-muted);
         padding: 0.2rem 0.45rem;
         border-radius: 4px;
         font-size: 0.78rem;
@@ -1574,7 +1576,7 @@ import { jsPDF } from 'jspdf';
       .hw-score { color: #0284C7; }
       .quiz-score { color: #9333EA; }
       .test-score { color: #D97706; }
-      .total-score { font-size: 1rem; color: #0B3D2E; }
+      .total-score { font-size: 1rem; color: var(--color-primary); }
 
       .letter-badge {
         display: inline-block;
@@ -1587,12 +1589,12 @@ import { jsPDF } from 'jspdf';
       .grade-a { background: #DCFCE7; color: #16A34A; }
       .grade-b { background: #E0F2FE; color: #0284C7; }
       .grade-c { background: #FEF3C7; color: #D97706; }
-      .grade-d { background: #FEE2E2; color: #DC2626; }
+      .grade-d { background: #FEE2E2; color: var(--color-error); }
 
       .honors-tag {
         font-size: 0.8rem;
         font-weight: 700;
-        color: #475569;
+        color: var(--color-muted);
       }
 
       .status-badge {
@@ -1605,7 +1607,7 @@ import { jsPDF } from 'jspdf';
       .status-active { background: #FEF3C7; color: #D97706; }
 
       .btn-finalize {
-        background: linear-gradient(135deg, #0B3D2E, #059669);
+        background: var(--color-action);
         color: white;
         border: none;
         padding: 0.4rem 0.75rem;
@@ -1617,9 +1619,9 @@ import { jsPDF } from 'jspdf';
 
     /* Final Course Grading Cards */
     .final-grading-banner {
-      background: linear-gradient(135deg, #0B3D2E, #10B981);
+      background: var(--color-action);
       color: white;
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
       display: flex;
@@ -1636,10 +1638,10 @@ import { jsPDF } from 'jspdf';
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
-      background: white;
+      background: var(--color-surface);
       padding: 1rem 1.25rem;
-      border-radius: 12px;
-      border: 1px solid var(--color-border, #DCE8E1);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
       flex-wrap: wrap;
       gap: 1rem;
 
@@ -1650,13 +1652,13 @@ import { jsPDF } from 'jspdf';
 
         label {
           font-weight: 700;
-          color: #1E293B;
+          color: var(--color-text);
           font-size: 0.9rem;
         }
 
         .course-select {
           min-width: 280px;
-          border: 1.5px solid #CBD5E1;
+          border: 1.5px solid var(--color-border);
           border-radius: 8px;
           padding: 0.5rem 0.75rem;
           font-weight: 600;
@@ -1668,13 +1670,13 @@ import { jsPDF } from 'jspdf';
         gap: 0.75rem;
 
         .stat-pill {
-          background: #F1F5F9;
+          background: var(--color-surface-low);
           padding: 0.4rem 0.85rem;
           border-radius: 8px;
           font-size: 0.82rem;
-          color: #475569;
+          color: var(--color-muted);
 
-          strong { color: #0F172A; }
+          strong { color: var(--color-text); }
 
           &.stat-issued {
             background: #DCFCE7;
@@ -1692,17 +1694,17 @@ import { jsPDF } from 'jspdf';
     }
 
     .final-student-card {
-      background: white;
-      border-radius: 14px;
-      border: 1.5px solid var(--color-border, #DCE8E1);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-border);
       padding: 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
 
       &.card-finalized {
-        border-color: #10B981;
-        background: #F4FAF6;
+        border-color: var(--color-accent);
+        background: var(--color-bg);
       }
 
       .card-top {
@@ -1715,26 +1717,26 @@ import { jsPDF } from 'jspdf';
           height: 52px;
           border-radius: 50%;
           object-fit: cover;
-          border: 2px solid #10B981;
+          border: 2px solid var(--color-accent);
         }
 
         .final-avatar-fallback {
           width: 52px;
           height: 52px;
           border-radius: 50%;
-          background: #E2E8F0;
+          background: var(--color-border);
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 1.8rem;
         }
 
-        h3 { margin: 0; font-size: 1.15rem; font-weight: 800; color: #0B241B; }
+        h3 { margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--color-text); }
       }
 
       .score-breakdown-box {
-        background: white;
-        border: 1px solid #E2E8F0;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
         border-radius: 10px;
         padding: 0.85rem;
         display: flex;
@@ -1745,18 +1747,18 @@ import { jsPDF } from 'jspdf';
         .breakdown-item {
           display: flex;
           justify-content: space-between;
-          color: #475569;
+          color: var(--color-muted);
         }
 
         .breakdown-total {
-          border-top: 1px dashed #CBD5E1;
+          border-top: 1px dashed var(--color-border);
           padding-top: 0.5rem;
           margin-top: 0.25rem;
           display: flex;
           justify-content: space-between;
           font-weight: 800;
 
-          .total-percent { color: #0B3D2E; font-size: 1rem; }
+          .total-percent { color: var(--color-primary); font-size: 1rem; }
         }
       }
 
@@ -1766,7 +1768,7 @@ import { jsPDF } from 'jspdf';
         gap: 0.5rem;
         font-size: 0.88rem;
         font-weight: 700;
-        color: #1E293B;
+        color: var(--color-text);
       }
 
       .cert-issued-alert {
@@ -1785,7 +1787,7 @@ import { jsPDF } from 'jspdf';
       .btn-view-cert {
         display: block;
         text-align: center;
-        background: #0B3D2E;
+        background: var(--color-action);
         color: white;
         padding: 0.65rem;
         border-radius: 8px;
@@ -1798,7 +1800,7 @@ import { jsPDF } from 'jspdf';
     .student-logged-in-badge {
       background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
       border: 1.5px solid #86EFAC;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: 1rem 1.5rem;
       margin-bottom: 1.5rem;
       display: flex;
@@ -1816,7 +1818,7 @@ import { jsPDF } from 'jspdf';
           width: 48px;
           height: 48px;
           border-radius: 50%;
-          background: #10B981;
+          background: var(--color-action);
           color: white;
           display: flex;
           align-items: center;
@@ -1851,9 +1853,9 @@ import { jsPDF } from 'jspdf';
     }
 
     .student-portal-header {
-      background: white;
-      border: 1px solid var(--color-border, #DCE8E1);
-      border-radius: 12px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1rem 1.25rem;
       margin-bottom: 1.5rem;
 
@@ -1868,12 +1870,12 @@ import { jsPDF } from 'jspdf';
 
     /* Student Gradebook Sheet & Multi-Course Hub */
     .student-gradebook-sheet {
-      background: white;
-      border: 1px solid var(--color-border, #DCE8E1);
-      border-radius: 14px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      box-shadow: var(--shadow-card);
 
       .sheet-top-bar {
         display: flex;
@@ -1883,45 +1885,45 @@ import { jsPDF } from 'jspdf';
         gap: 1rem;
         margin-bottom: 1.5rem;
         padding-bottom: 1.25rem;
-        border-bottom: 1px solid #E2E8F0;
+        border-bottom: 1px solid var(--color-border);
 
         .course-selector-box {
           display: flex;
           align-items: center;
           gap: 0.85rem;
-          label { font-weight: 800; color: #0F172A; font-size: 0.95rem; }
+          label { font-weight: 800; color: var(--color-text); font-size: 0.95rem; }
           .course-dropdown-lg {
             min-width: 280px;
             font-weight: 700;
-            color: #0B3D2E;
-            border: 1.5px solid #CBD5E1;
+            color: var(--color-primary);
+            border: 1.5px solid var(--color-border);
             border-radius: 8px;
             padding: 0.5rem 0.85rem;
-            background: #F8FAFC;
+            background: var(--color-bg);
           }
         }
 
         .sheet-cert-action {
           .btn-view-cert {
-            background: linear-gradient(135deg, #0B3D2E 0%, #10B981 100%);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
             color: white;
             border: none;
             padding: 0.65rem 1.25rem;
             border-radius: 8px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 2px 8px rgba(var(--color-accent-rgb), 0.3);
             transition: all 0.2s;
-            &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+            &:hover { transform: none; box-shadow: var(--shadow-card); }
           }
           .in-progress-pill {
-            background: #F1F5F9;
-            color: #64748B;
+            background: var(--color-surface-low);
+            color: var(--color-muted);
             font-size: 0.85rem;
             font-weight: 700;
             padding: 0.45rem 0.85rem;
             border-radius: 20px;
-            border: 1px solid #E2E8F0;
+            border: 1px solid var(--color-border);
           }
         }
       }
@@ -1933,7 +1935,7 @@ import { jsPDF } from 'jspdf';
         margin-bottom: 1.25rem;
 
         .metric-card {
-          border-radius: 12px;
+          border-radius: var(--radius-lg);
           padding: 1.15rem;
           display: flex;
           flex-direction: column;
@@ -1957,11 +1959,11 @@ import { jsPDF } from 'jspdf';
             display: flex;
             flex-direction: column;
             gap: 0.2rem;
-            .metric-label { font-size: 0.82rem; font-weight: 700; color: #475569; }
+            .metric-label { font-size: 0.82rem; font-weight: 700; color: var(--color-muted); }
             .metric-val {
               font-size: 1.6rem;
               font-weight: 900;
-              color: #0F172A;
+              color: var(--color-text);
               &.gpa-highlight { color: #065F46; }
               .gpa-letter { font-size: 1.1rem; color: #047857; margin-left: 0.25rem; }
             }
@@ -1983,16 +1985,16 @@ import { jsPDF } from 'jspdf';
             .metric-weight { color: #EA580C; }
           }
           &.card-gpa {
-            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            background: linear-gradient(135deg, var(--color-success-bg) 0%, var(--color-success-bg) 100%);
             border-color: #A7F3D0;
-            .metric-weight { color: #059669; }
+            .metric-weight { color: var(--color-accent); }
           }
         }
       }
 
       .honors-banner {
-        background: #F8FAFC;
-        border: 1px solid #E2E8F0;
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
         border-radius: 10px;
         padding: 0.85rem 1.25rem;
         display: flex;
@@ -2009,7 +2011,7 @@ import { jsPDF } from 'jspdf';
           strong { color: #334155; font-size: 0.9rem; }
           .honors-tier-name {
             margin-left: 0.4rem;
-            color: #0B3D2E;
+            color: var(--color-primary);
             font-weight: 800;
             font-size: 0.95rem;
           }
@@ -2033,16 +2035,16 @@ import { jsPDF } from 'jspdf';
 
     /* Detailed Transcript Table Card */
     .transcript-table-card {
-      background: white;
-      border: 1px solid var(--color-border, #DCE8E1);
-      border-radius: 14px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      box-shadow: var(--shadow-card);
 
       .transcript-header {
         margin-bottom: 1.25rem;
-        h3 { margin: 0 0 0.25rem 0; font-size: 1.2rem; font-weight: 800; color: #0B241B; }
-        p { margin: 0; font-size: 0.85rem; color: #64748B; }
+        h3 { margin: 0 0 0.25rem 0; font-size: 1.2rem; font-weight: 800; color: var(--color-text); }
+        p { margin: 0; font-size: 0.85rem; color: var(--color-muted); }
       }
 
       .transcript-table {
@@ -2051,12 +2053,12 @@ import { jsPDF } from 'jspdf';
         font-size: 0.9rem;
 
         th {
-          background: #F8FAFC;
-          color: #475569;
+          background: var(--color-bg);
+          color: var(--color-muted);
           font-weight: 800;
           text-align: left;
           padding: 0.85rem 1rem;
-          border-bottom: 2px solid #E2E8F0;
+          border-bottom: 2px solid var(--color-border);
           font-size: 0.82rem;
           text-transform: uppercase;
           letter-spacing: 0.5px;
@@ -2064,8 +2066,8 @@ import { jsPDF } from 'jspdf';
 
         td {
           padding: 1rem;
-          border-bottom: 1px solid #F1F5F9;
-          color: #1E293B;
+          border-bottom: 1px solid var(--color-surface-low);
+          color: var(--color-text);
           vertical-align: middle;
         }
 
@@ -2074,18 +2076,18 @@ import { jsPDF } from 'jspdf';
         }
 
         .task-title-cell {
-          strong { display: block; color: #0F172A; font-size: 0.95rem; }
-          .due-sub { display: block; font-size: 0.78rem; color: #64748B; margin-top: 0.15rem; }
+          strong { display: block; color: var(--color-text); font-size: 0.95rem; }
+          .due-sub { display: block; font-size: 0.78rem; color: var(--color-muted); margin-top: 0.15rem; }
         }
 
         .weight-cell {
           font-weight: 700;
-          color: #475569;
+          color: var(--color-muted);
           font-size: 0.85rem;
         }
 
         .score-cell {
-          .score-val { font-size: 1.05rem; font-weight: 900; color: #0B3D2E; }
+          .score-val { font-size: 1.05rem; font-weight: 900; color: var(--color-primary); }
           .unscored { color: #94A3B8; font-weight: 600; }
         }
 
@@ -2096,8 +2098,8 @@ import { jsPDF } from 'jspdf';
           padding: 0.25rem 0.6rem;
           border-radius: 6px;
           &.grade-a { background: #DCFCE7; color: #166534; }
-          &.grade-b { background: #EFF6FF; color: #1D4ED8; }
-          &.grade-c { background: #FEF3C7; color: #B45309; }
+          &.grade-b { background: var(--color-info-bg); color: #1D4ED8; }
+          &.grade-c { background: #FEF3C7; color: var(--color-warning); }
           &.grade-d { background: #FEE2E2; color: #B91C1C; }
         }
 
@@ -2110,13 +2112,13 @@ import { jsPDF } from 'jspdf';
 
           &.pill-graded { background: #DCFCE7; color: #15803D; }
           &.pill-pending { background: #FEF3C7; color: #D97706; }
-          &.pill-todo { background: #FEE2E2; color: #DC2626; }
+          &.pill-todo { background: #FEE2E2; color: var(--color-error); }
         }
 
         .action-feedback-cell {
           .feedback-bubble {
-            background: #F1F5F9;
-            border-left: 3px solid #10B981;
+            background: var(--color-surface-low);
+            border-left: 3px solid var(--color-accent);
             padding: 0.4rem 0.75rem;
             border-radius: 4px;
             font-size: 0.82rem;
@@ -2130,7 +2132,7 @@ import { jsPDF } from 'jspdf';
             cursor: pointer;
             border: none;
             &.btn-quiz-take { background: #4F46E5; color: white; }
-            &.btn-submit-hw { background: #0B3D2E; color: white; }
+            &.btn-submit-hw { background: var(--color-action); color: white; }
           }
         }
       }
@@ -2153,14 +2155,14 @@ import { jsPDF } from 'jspdf';
     }
 
     .modal-content {
-      background: white;
+      background: var(--color-surface);
       border-radius: 16px;
       padding: 1.75rem;
       width: 100%;
       max-width: 550px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--shadow-card);
 
       &.modal-lg { max-width: 750px; }
 
@@ -2194,12 +2196,12 @@ import { jsPDF } from 'jspdf';
       width: 100%;
       padding: 0.6rem 0.85rem;
       border-radius: 8px;
-      border: 1.5px solid #CBD5E1;
+      border: 1.5px solid var(--color-border);
       font-size: 0.9rem;
       outline: none;
       transition: border-color 0.2s;
 
-      &:focus { border-color: #10B981; }
+      &:focus { border-color: var(--color-accent); }
     }
 
     .btn {
@@ -2213,21 +2215,21 @@ import { jsPDF } from 'jspdf';
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #0B3D2E, #10B981);
+      background: var(--color-action);
       color: white;
       &:hover { opacity: 0.95; }
     }
 
-    .btn-secondary { background: #E2E8F0; color: #475569; }
-    .btn-outline { background: white; border: 1.5px solid #CBD5E1; color: #334155; }
+    .btn-secondary { background: var(--color-border); color: var(--color-muted); }
+    .btn-outline { background: var(--color-surface); border: 1.5px solid var(--color-border); color: #334155; }
     .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
     .btn-block { width: 100%; }
 
     /* Quiz Builder */
     .quiz-builder-section {
-      background: #F8FAFC;
-      border: 1.5px dashed #CBD5E1;
-      border-radius: 12px;
+      background: var(--color-bg);
+      border: 1.5px dashed var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 1.25rem;
       margin-top: 1rem;
 
@@ -2240,8 +2242,8 @@ import { jsPDF } from 'jspdf';
       }
 
       .question-card {
-        background: white;
-        border: 1px solid #E2E8F0;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 0.85rem;
@@ -2251,7 +2253,7 @@ import { jsPDF } from 'jspdf';
           justify-content: space-between;
           font-weight: 700;
           font-size: 0.82rem;
-          color: #64748B;
+          color: var(--color-muted);
           margin-bottom: 0.5rem;
         }
 
@@ -2273,7 +2275,7 @@ import { jsPDF } from 'jspdf';
 
     /* Interactive Quiz Taking Modal */
     .quiz-header {
-      .quiz-sub { margin: 0.25rem 0 0 0; color: #64748B; font-size: 0.85rem; }
+      .quiz-sub { margin: 0.25rem 0 0 0; color: var(--color-muted); font-size: 0.85rem; }
       .timer-badge {
         background: #FEF3C7;
         color: #D97706;
@@ -2285,12 +2287,12 @@ import { jsPDF } from 'jspdf';
     }
 
     .student-question-box {
-      background: #F8FAFC;
+      background: var(--color-bg);
       border-radius: 10px;
       padding: 1.25rem;
       margin-bottom: 1rem;
 
-      .q-number { font-size: 0.78rem; font-weight: 700; color: #64748B; }
+      .q-number { font-size: 0.78rem; font-weight: 700; color: var(--color-muted); }
       .q-title { font-size: 1.05rem; font-weight: 700; margin: 0.35rem 0 0.85rem 0; }
 
       .q-options-list {
@@ -2303,8 +2305,8 @@ import { jsPDF } from 'jspdf';
           align-items: center;
           gap: 0.65rem;
           padding: 0.65rem 1rem;
-          background: white;
-          border: 1.5px solid #E2E8F0;
+          background: var(--color-surface);
+          border: 1.5px solid var(--color-border);
           border-radius: 8px;
           cursor: pointer;
           font-weight: 600;
@@ -2339,20 +2341,20 @@ import { jsPDF } from 'jspdf';
     .loading-state, .empty-state-card {
       text-align: center;
       padding: 3rem 1.5rem;
-      background: white;
-      border-radius: 14px;
-      border: 1.5px solid var(--color-border, #DCE8E1);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-border);
 
       .empty-icon { font-size: 3rem; margin-bottom: 0.5rem; }
       h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; font-weight: 800; }
-      p { color: #64748B; margin-bottom: 1rem; }
+      p { color: var(--color-muted); margin-bottom: 1rem; }
     }
 
     .spinner {
       width: 40px;
       height: 40px;
-      border: 3px solid #E2E8F0;
-      border-top-color: #10B981;
+      border: 3px solid var(--color-border);
+      border-top-color: var(--color-accent);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin: 0 auto 1rem auto;
@@ -2378,9 +2380,9 @@ import { jsPDF } from 'jspdf';
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #0B241B;
+      background: var(--color-text);
       padding: 0.75rem 1.25rem;
-      border-radius: 12px 12px 0 0;
+      border-radius: var(--radius-lg) 12px 0 0;
       color: white;
 
       .cert-status-tag {
@@ -2396,7 +2398,7 @@ import { jsPDF } from 'jspdf';
 
         .btn-download-pdf {
           background: linear-gradient(135deg, #D4AF37, #B8860B);
-          color: #0B241B;
+          color: var(--color-text);
           border: 1px solid #FFF5B8;
           padding: 0.45rem 1rem;
           border-radius: 8px;
@@ -2407,13 +2409,13 @@ import { jsPDF } from 'jspdf';
           transition: all 0.2s;
 
           &:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.6);
+            transform: none;
+            box-shadow: var(--shadow-card);
           }
         }
 
         .btn-print {
-          background: linear-gradient(135deg, #10B981, #059669);
+          background: linear-gradient(135deg, var(--color-accent), var(--color-accent));
           color: white;
           border: none;
           padding: 0.45rem 1rem;
@@ -2436,9 +2438,9 @@ import { jsPDF } from 'jspdf';
     .diploma-outer-frame {
       background: #FDFBF7;
       padding: 1.5rem;
-      border: 12px solid #0B3D2E;
+      border: 12px solid var(--color-primary);
       border-radius: 0 0 12px 12px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      box-shadow: var(--shadow-card);
     }
 
     .diploma-inner-frame {
@@ -2452,11 +2454,11 @@ import { jsPDF } from 'jspdf';
     .diploma-top {
       margin-bottom: 1.5rem;
       .diploma-crown { font-size: 2.5rem; margin-bottom: 0.25rem; }
-      .diploma-school { font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; color: #0B3D2E; margin: 0; font-family: serif; }
+      .diploma-school { font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; color: var(--color-primary); margin: 0; font-family: serif; }
       .diploma-motto { font-size: 0.85rem; color: #856404; letter-spacing: 1px; margin: 0.25rem 0 0.75rem 0; font-style: italic; }
       .diploma-ribbon {
         display: inline-block;
-        background: #0B3D2E;
+        background: var(--color-action);
         color: #FDFBF7;
         font-size: 0.82rem;
         font-weight: 800;
@@ -2473,10 +2475,10 @@ import { jsPDF } from 'jspdf';
       .confer-name {
         font-size: 2.4rem;
         font-weight: 900;
-        color: #0B241B;
+        color: var(--color-text);
         font-family: serif;
         margin: 0.25rem 0 0.75rem 0;
-        border-bottom: 2px solid #E5E7EB;
+        border-bottom: 2px solid var(--color-border);
         display: inline-block;
         padding-bottom: 0.25rem;
       }
@@ -2495,8 +2497,8 @@ import { jsPDF } from 'jspdf';
         flex-wrap: wrap;
 
         .dpill {
-          background: #F3F4F6;
-          border: 1px solid #E5E7EB;
+          background: var(--color-surface-low);
+          border: 1px solid var(--color-border);
           padding: 0.5rem 1rem;
           border-radius: 8px;
           display: flex;
@@ -2504,8 +2506,8 @@ import { jsPDF } from 'jspdf';
           gap: 0.2rem;
           min-width: 140px;
 
-          .dpill-label { font-size: 0.7rem; font-weight: 800; color: #6B7280; letter-spacing: 0.5px; }
-          .dpill-val { font-size: 0.85rem; font-weight: 800; color: #111827; }
+          .dpill-label { font-size: 0.7rem; font-weight: 800; color: var(--color-muted); letter-spacing: 0.5px; }
+          .dpill-val { font-size: 0.85rem; font-weight: 800; color: var(--color-text); }
         }
       }
     }
@@ -2515,7 +2517,7 @@ import { jsPDF } from 'jspdf';
       justify-content: space-between;
       align-items: flex-end;
       padding-top: 1.5rem;
-      border-top: 1px solid #E5E7EB;
+      border-top: 1px solid var(--color-border);
 
       .sig-column {
         text-align: center;
@@ -2529,7 +2531,7 @@ import { jsPDF } from 'jspdf';
         }
         .sig-rule { height: 1.5px; background: #9CA3AF; margin-bottom: 0.35rem; }
         .sig-auth { font-weight: 800; font-size: 0.85rem; color: #1F2937; }
-        .sig-role { font-size: 0.75rem; color: #6B7280; }
+        .sig-role { font-size: 0.75rem; color: var(--color-muted); }
       }
 
       .seal-column {
@@ -2546,7 +2548,7 @@ import { jsPDF } from 'jspdf';
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 10px rgba(202, 138, 4, 0.3);
+          box-shadow: var(--shadow-card);
 
           .seal-star-gold { font-size: 0.7rem; color: #78350F; }
           .seal-title-gold { font-size: 0.65rem; font-weight: 900; color: #78350F; letter-spacing: 0.5px; }
@@ -2554,7 +2556,7 @@ import { jsPDF } from 'jspdf';
         }
 
         .seal-serial-text { font-size: 0.75rem; font-weight: 700; color: #4B5563; font-family: monospace; }
-        .seal-date-text { font-size: 0.72rem; color: #6B7280; }
+        .seal-date-text { font-size: 0.72rem; color: var(--color-muted); }
       }
     }
 
@@ -2583,7 +2585,7 @@ import { jsPDF } from 'jspdf';
         width: 100vw;
         max-width: 100%;
         margin: 0;
-        border: 10px solid #0B3D2E !important;
+        border: 10px solid var(--color-primary) !important;
         background: #FDFBF7 !important;
         box-shadow: none !important;
         border-radius: 0 !important;
@@ -2610,9 +2612,9 @@ import { jsPDF } from 'jspdf';
     }
 
     .review-score-banner {
-      background: linear-gradient(135deg, #0B3D2E 0%, #10B981 100%);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
       color: white;
-      border-radius: 12px;
+      border-radius: var(--radius-lg);
       padding: 1.25rem 1.5rem;
       display: flex;
       justify-content: space-between;
@@ -2648,18 +2650,18 @@ import { jsPDF } from 'jspdf';
       }
 
       .score-pill {
-        background: white;
+        background: var(--color-surface);
         padding: 0.5rem 1.25rem;
         border-radius: 30px;
         display: flex;
         align-items: center;
         gap: 0.65rem;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--shadow-card);
 
         .score-pill-val {
           font-weight: 900;
           font-size: 1.25rem;
-          color: #0B3D2E;
+          color: var(--color-primary);
         }
         .score-pill-grade {
           background: #DCFCE7;
@@ -2667,7 +2669,7 @@ import { jsPDF } from 'jspdf';
           font-weight: 800;
           font-size: 0.85rem;
           padding: 0.2rem 0.6rem;
-          border-radius: 12px;
+          border-radius: var(--radius-lg);
         }
       }
     }
@@ -2678,10 +2680,10 @@ import { jsPDF } from 'jspdf';
       gap: 1.25rem;
 
       .review-q-card {
-        background: white;
-        border-radius: 12px;
+        background: var(--color-surface);
+        border-radius: var(--radius-lg);
         padding: 1.25rem;
-        border: 2px solid #E2E8F0;
+        border: 2px solid var(--color-border);
 
         &.q-correct {
           border-color: #86EFAC;
@@ -2702,8 +2704,8 @@ import { jsPDF } from 'jspdf';
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            .q-idx { font-weight: 800; color: #1E293B; font-size: 0.95rem; }
-            .q-pts { font-size: 0.8rem; color: #64748B; font-weight: 600; }
+            .q-idx { font-weight: 800; color: var(--color-text); font-size: 0.95rem; }
+            .q-pts { font-size: 0.8rem; color: var(--color-muted); font-weight: 600; }
           }
 
           .badge-correct {
@@ -2716,7 +2718,7 @@ import { jsPDF } from 'jspdf';
           }
           .badge-wrong {
             background: #FEE2E2;
-            color: #991B1B;
+            color: var(--color-error);
             font-weight: 800;
             font-size: 0.82rem;
             padding: 0.35rem 0.85rem;
@@ -2727,7 +2729,7 @@ import { jsPDF } from 'jspdf';
         .review-q-title {
           font-size: 1.05rem;
           font-weight: 700;
-          color: #0F172A;
+          color: var(--color-text);
           margin: 0 0 1rem 0;
           line-height: 1.4;
         }
@@ -2743,13 +2745,13 @@ import { jsPDF } from 'jspdf';
             gap: 0.75rem;
             padding: 0.75rem 1rem;
             border-radius: 8px;
-            background: white;
-            border: 1.5px solid #E2E8F0;
+            background: var(--color-surface);
+            border: 1.5px solid var(--color-border);
             transition: all 0.2s;
 
             .opt-prefix {
               font-weight: 800;
-              color: #64748B;
+              color: var(--color-muted);
               font-size: 0.85rem;
               min-width: 22px;
             }
@@ -2757,7 +2759,7 @@ import { jsPDF } from 'jspdf';
             .opt-text {
               flex: 1;
               font-size: 0.92rem;
-              color: #1E293B;
+              color: var(--color-text);
             }
 
             .opt-status-tag {
@@ -2771,13 +2773,13 @@ import { jsPDF } from 'jspdf';
                 border-radius: 6px;
               }
               .tag-your-wrong {
-                background: #DC2626;
+                background: var(--color-error);
                 color: white;
                 padding: 0.25rem 0.65rem;
                 border-radius: 6px;
               }
               .tag-correct-key {
-                background: #0B3D2E;
+                background: var(--color-action);
                 color: #FDE047;
                 padding: 0.25rem 0.65rem;
                 border-radius: 6px;
@@ -2793,13 +2795,13 @@ import { jsPDF } from 'jspdf';
 
             &.opt-selected-wrong {
               background: #FEE2E2;
-              border-color: #DC2626;
+              border-color: var(--color-error);
               .opt-prefix, .opt-text { color: #7F1D1D; font-weight: 700; }
             }
 
             &.opt-actual-correct {
-              background: #ECFDF5;
-              border-color: #10B981;
+              background: var(--color-success-bg);
+              border-color: var(--color-accent);
               border-style: dashed;
               .opt-prefix, .opt-text { color: #065F46; font-weight: 700; }
             }
@@ -2817,7 +2819,7 @@ import { jsPDF } from 'jspdf';
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
-      &:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4); }
+      &:hover { transform: none; box-shadow: var(--shadow-card); }
     }
 
     .feedback-action-stack {
@@ -2837,17 +2839,17 @@ import { jsPDF } from 'jspdf';
         label { margin-bottom: 0; font-weight: 700; font-size: 0.88rem; }
 
         .budget-badge {
-          background: #EFF6FF;
+          background: var(--color-info-bg);
           color: #1D4ED8;
           border: 1px solid #BFDBFE;
           padding: 0.15rem 0.55rem;
-          border-radius: 12px;
+          border-radius: var(--radius-lg);
           font-size: 0.75rem;
           font-weight: 700;
 
           &.budget-warning {
             background: #FEE2E2;
-            color: #DC2626;
+            color: var(--color-error);
             border-color: #FECACA;
           }
           &.budget-full {
@@ -2861,19 +2863,19 @@ import { jsPDF } from 'jspdf';
       .weight-progress-bar {
         width: 100%;
         height: 6px;
-        background: #E2E8F0;
+        background: var(--color-border);
         border-radius: 4px;
         overflow: hidden;
         display: flex;
         margin-top: 0.4rem;
 
         .weight-fill-existing {
-          background: #64748B;
+          background: var(--color-muted);
           height: 100%;
         }
 
         .weight-fill-new {
-          background: #10B981;
+          background: var(--color-action);
           height: 100%;
           transition: width 0.2s ease;
 
@@ -2885,13 +2887,13 @@ import { jsPDF } from 'jspdf';
 
       .input-error {
         border-color: #EF4444 !important;
-        background: #FEF2F2 !important;
+        background: var(--color-error-bg) !important;
         &:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important; }
       }
 
       .budget-err-msg {
         font-size: 0.78rem;
-        color: #DC2626;
+        color: var(--color-error);
         margin: 0.35rem 0 0 0;
         font-weight: 700;
         line-height: 1.3;
@@ -3347,7 +3349,7 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
       } else {
         clearInterval(this.quizTimer);
         this.quizTimer = null;
-        this.toastService.show('⏳ Time is up! Submitting test automatically...', 'info');
+        this.toastService.show(' Time is up! Submitting test automatically...', 'info');
         this.submitQuizAnswers();
       }
     }, 1000);

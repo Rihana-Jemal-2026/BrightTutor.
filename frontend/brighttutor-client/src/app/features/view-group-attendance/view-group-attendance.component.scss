@@ -4,14 +4,14 @@
 
 .page-header {
   margin-bottom: 1.5rem;
-  h1 { font-size: 1.75rem; color: var(--color-text, #0B241B); margin-bottom: 0.25rem; font-weight: 700; }
-  p { color: var(--color-muted, #5C786A); margin: 0; }
+  h1 { font-size: 1.75rem; color: var(--color-text); margin-bottom: 0.25rem; font-weight: 700; }
+  p { color: var(--color-muted); margin: 0; }
 }
 
 .filter-card {
-  background: var(--color-surface, #ffffff);
-  border: 1px solid var(--color-border, #DCE8E1);
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   padding: 1.25rem;
   box-shadow: var(--shadow-card);
   display: grid;
@@ -22,22 +22,22 @@
 }
 
 .filter-col {
-  label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--color-text, #0B241B); margin-bottom: 0.35rem; }
+  label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.35rem; }
   input {
     width: 100%;
     box-sizing: border-box;
     padding: 0.65rem 0.85rem;
     border-radius: 8px;
-    border: 1.5px solid var(--color-border, #DCE8E1);
-    background: var(--color-surface, #ffffff);
-    color: var(--color-text, #0B241B);
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
     font-size: 0.9rem;
-    &:focus { border-color: var(--color-accent-bright, #10B981); outline: none; }
+    &:focus { border-color: var(--color-accent-bright); outline: none; }
   }
 }
 
 .btn-search {
-  background: linear-gradient(135deg, #0B3D2E, #059669);
+  background: var(--color-action);
   color: white;
   border: none;
   padding: 0.68rem 1.25rem;
@@ -46,13 +46,13 @@
   cursor: pointer;
   width: 100%;
   transition: all 0.2s;
-  &:hover { background: var(--color-accent-bright, #10B981); }
+  &:hover { background: var(--color-action); }
 }
 
 .table-card {
-  background: var(--color-surface, #ffffff);
-  border: 1px solid var(--color-border, #DCE8E1);
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   padding: 1rem;
   box-shadow: var(--shadow-card);
   overflow-x: auto;
@@ -62,10 +62,10 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  th, td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--color-border, #DCE8E1); color: var(--color-text, #0B241B); }
-  th { background: var(--color-bg, #F4FAF6); font-weight: 600; color: var(--color-muted, #5C786A); font-size: 0.85rem; text-transform: uppercase; }
-  .student-name { font-weight: 600; color: var(--color-text, #0B241B); }
-  .notes { color: var(--color-muted, #809C8E); font-size: 0.85rem; }
+  th, td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
+  th { background: var(--color-bg); font-weight: 600; color: var(--color-muted); font-size: 0.85rem; text-transform: uppercase; }
+  .student-name { font-weight: 600; color: var(--color-text); }
+  .notes { color: var(--color-muted); font-size: 0.85rem; }
 }
 
 .status-badge {
@@ -73,10 +73,10 @@
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  &.present { background: var(--status-present-bg, #E9F7EF); color: var(--status-present, #059669); }
-  &.absent { background: var(--status-absent-bg, #FCEEEC); color: var(--status-absent, #DC2626); }
-  &.late { background: var(--status-late-bg, #FFFBEB); color: var(--status-late, #D97706); }
-  &.excused { background: var(--status-excused-bg, #F0F9FF); color: var(--status-excused, #0284C7); }
+  &.present { background: var(--status-present-bg); color: var(--status-present); }
+  &.absent { background: var(--status-absent-bg); color: var(--status-absent); }
+  &.late { background: var(--status-late-bg); color: var(--status-late); }
+  &.excused { background: var(--status-excused-bg); color: var(--status-excused); }
 }
 
 .mode-badge {
@@ -88,8 +88,8 @@
 
   &.mode-group { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
   &.mode-online { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-  &.mode-home { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+  &.mode-home { background: #fef3c7; color: var(--color-warning); border: 1px solid #fde68a; }
   &.mode-qr { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
 }
 
-.loading-box, .empty-state { text-align: center; color: var(--color-muted, #809C8E); padding: 2.5rem; }
+.loading-box, .empty-state { text-align: center; color: var(--color-muted); padding: 2.5rem; }

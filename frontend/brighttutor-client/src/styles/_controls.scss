@@ -1,0 +1,285 @@
+// Shared presentation only. Feature layouts and interaction states stay local.
+:root body app-root {
+  font-size: 14px;
+  line-height: 1.5;
+
+  .report-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 240px;
+    padding: 40px 24px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    svg { width: 40px; height: 40px; color: var(--color-muted); margin-bottom: 18px; }
+    h2 { color: var(--color-text); font-size: 1.125rem; margin: 0 0 8px; }
+    p { max-width: 470px; margin: 0; line-height: 1.65; color: var(--color-muted); }
+  }
+  .report-filter-error { color: var(--color-error); font-size: .875rem; margin: 0 0 20px; }
+
+  :is(.page-header, .page-header-card, .header-card) h1 {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -.035em;
+    line-height: 1.3;
+  }
+
+  :is(.card, .metric-card, .summary-card, .course-card, .group-card,
+      .table-card, .filter-card, .filters-card, .form-card, .announcement-card,
+      .announcement-preview-card, .assessment-card, .question-card, .student-card,
+      .teacher-card, .inquiry-card, .portal-card, .registration-card, .tracking-card,
+      .app-card, .apply-card, .evaluator-card, .payment-card, .statement-card,
+      .notice-card, .plan-card, .action-card, .scanner-card, .projector-card,
+      .rate-summary-card, .date-row-card, .attendee-card, .selection-grid-card,
+      .schedule-config-card, .group-schedule-card, .face-enrollment-card) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  :is(.metric-card, .summary-card) {
+    border-color: transparent;
+    background: var(--color-surface);
+  }
+  :is(.metric-value, .stat-value, .summary-value) {
+    font-family: var(--font-display);
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+  }
+  :is(.metric-label, .stat-label) {
+    color: var(--color-muted);
+    letter-spacing: .04em;
+    font-size: .75rem;
+    font-weight: 600;
+  }
+
+  :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]) {
+    border-radius: var(--radius-md);
+    border-color: var(--color-border);
+    background-color: var(--color-surface-low);
+    color: var(--color-text);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  :is(input, select, textarea):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), .08);
+  }
+  input::placeholder, textarea::placeholder { color: var(--color-muted); opacity: .85; }
+  input[type="checkbox"], input[type="radio"] { accent-color: var(--color-action); }
+  input[type="file"]::file-selector-button {
+    background: var(--color-surface-low);
+    color: var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: .5rem .75rem;
+    margin-right: .75rem;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  :is(.btn-primary, .btn-save, .btn-submit, .btn-submit-receipt, .btn-enroll-primary,
+      .btn-search, .btn-check, .btn-issue, .btn-issue-tch, .btn-claim-cert,
+      .btn-login, .btn-add, .btn-create, .btn-view-schedule, .btn-cert-action) {
+    background: var(--color-action);
+    color: var(--color-on-action);
+    border-color: transparent;
+    border-radius: var(--radius-sm);
+    box-shadow: none;
+    font-weight: 600;
+  }
+  :is(.btn-primary, .btn-save, .btn-submit, .btn-login, .btn-add):hover:not(:disabled) {
+    background: #004c36;
+    color: #fff;
+    box-shadow: var(--shadow-card-hover);
+  }
+  :is(.btn-secondary, .btn-cancel, .btn-reset, .icon-action-btn) {
+    background: var(--color-surface-low);
+    color: var(--color-text);
+    border-color: var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+  button:disabled { cursor: not-allowed; opacity: .55; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  :is(button, a):focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+  :is(.data-table, .matrix-table, .gradebook-table, .breakdown-table, .transcript-table) th {
+    background: var(--color-surface-low);
+    color: var(--color-muted);
+    font-weight: 600;
+    font-size: .75rem;
+    letter-spacing: .045em;
+  }
+  :is(.data-table, .matrix-table, .gradebook-table, .breakdown-table, .transcript-table) td {
+    border-color: var(--color-border);
+    font-variant-numeric: tabular-nums;
+  }
+  :is(.data-table, .matrix-table, .gradebook-table) tbody tr:hover {
+    background: var(--color-surface-low);
+  }
+  :is(.table-card, .gradebook-table-container, .transcript-table-card, .matrix-card) {
+    overflow-x: auto;
+  }
+
+  :is(.status-badge, .role-badge, .audience-badge, .module-badge, .badge-role, .badge-count) {
+    border-radius: 999px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  :is(.badge-role, .role-badge, .module-badge) {
+    background: var(--color-info-bg);
+    color: var(--color-primary);
+    border-color: transparent;
+  }
+  :is(.modal-card, .modal-card-box, .receipt-modal-card, .select-dropdown-menu, .notification-dropdown) {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-overlay);
+  }
+  :is(.modal-card, .modal-card-box, .receipt-modal-card) {
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+  }
+  :is(.empty-card, .empty-state, .empty-state-card, .empty-notices) {
+    border-radius: var(--radius-lg);
+    color: var(--color-muted);
+    background: var(--color-surface);
+  }
+
+  .ui-icon { width: 1.25em; height: 1.25em; vertical-align: -.2em; flex-shrink: 0; }
+
+  // One quiet, consistently sized treatment for row and card actions.
+  .app-main-content :is(.icon-action-btn, .btn-action-icon, .btn-card-edit, .btn-card-delete) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 7px;
+    border: 1px solid var(--color-border);
+    border-radius: 7px;
+    background: var(--color-surface);
+    color: var(--color-muted);
+    box-shadow: none;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    .action-glyph { width: 17px; height: 17px; }
+    &:hover:not(:disabled) {
+      background: var(--color-surface-low);
+      color: var(--color-text);
+      border-color: var(--color-muted);
+      transform: none;
+    }
+    &:is(.btn-delete, .btn-unenroll, .btn-card-delete):hover:not(:disabled) {
+      background: var(--color-error-bg);
+      color: var(--color-error);
+      border-color: var(--color-error);
+    }
+  }
+  .app-main-content :is(.card-actions, .action-buttons-group, .actions-group) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .app-main-content .course-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: none;
+    .course-footer { margin-top: auto; gap: 10px; }
+    .course-header .status-badge { border: 0; border-radius: 999px; padding: 3px 9px; }
+  }
+  .app-main-content .status-buttons-group .status-buttons .btn-status:not(.active) {
+    background: var(--color-surface);
+    color: var(--color-muted);
+    border-color: var(--color-border);
+    box-shadow: none;
+    &:hover { background: var(--color-surface-low); color: var(--color-text); }
+  }
+  .app-main-content .student-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    .student-avatar {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--color-surface-low);
+      color: var(--color-muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .student-name { font-weight: 600; }
+    .student-code { color: var(--color-muted); font-size: 12px; margin-top: 2px; }
+  }
+
+  .app-main-content {
+    .page > h1 { color: var(--color-text); }
+    .select-trigger { background: var(--color-surface-low); }
+    :is(.page-header, .page-header-card) h1 { color: var(--color-text); }
+    :is(.header-actions, .action-buttons) .btn-create:is(.secondary, .accent, .teacher-btn) {
+      background: var(--color-surface-high);
+      color: var(--color-primary);
+    }
+    .metric-card { border-left: 0; }
+    .metric-icon, .action-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-surface-low);
+      color: var(--color-primary);
+      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      font-size: 1.35rem;
+    }
+    .metric-info .value { font-family: var(--font-display); letter-spacing: -.04em; }
+    .metric-info .label { font-size: .8125rem; }
+    :is(.service-pill.online, .service-pill.group) { background: var(--color-info-bg); color: var(--color-info); }
+    .eligibility-result.eligible, .status-passed { background: var(--color-success-bg); color: var(--color-success); border-color: var(--color-border); }
+    :is(.tab-bar, .nav-tabs-container) { border-bottom: none; }
+    .tab-bar { overflow-x: auto; max-width: 100%; }
+    :is(.tab-bar, .nav-tabs) .tab-btn {
+      border-bottom: none;
+      border-radius: 8px;
+      padding: .65rem 1rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    :is(.tab-bar, .nav-tabs) .tab-btn.active { background: var(--color-action); color: white; }
+  }
+
+  // The public account pages use the same calm surfaces as the academic portal.
+  .login-fullscreen { background: var(--color-bg); height: 100dvh; }
+  .glass-card { background: var(--color-surface); border-color: var(--color-border); box-shadow: var(--shadow-overlay); margin: auto; }
+  .login-header h2 { color: var(--color-text); }
+  .login-tabs { background: var(--color-surface-low); }
+  .login-tabs .tab-btn.active { background: var(--color-action); color: white; box-shadow: none; }
+  .glass-card .logo { background: var(--color-action); box-shadow: none; }
+
+  @media (max-width: 768px) {
+    :is(.page-header, .page-header-card, .header-card) { flex-wrap: wrap; gap: 1rem; }
+    :is(.page-header, .page-header-card) .header-content { min-width: 0; }
+    :is(.metrics-grid, .quick-actions-grid, .announcements-preview-grid) { grid-template-columns: minmax(0, 1fr); }
+    :is(.modal-card, .modal-card-box, .receipt-modal-card) { max-width: calc(100vw - 24px); }
+    :is(.role-selector, .filter-row, .header-actions) { flex-wrap: wrap; }
+    .login-fullscreen { padding: 1rem; }
+    .glass-card { padding: 1.5rem; }
+    .form-row { grid-template-columns: minmax(0, 1fr); }
+    .app-main-content .assessments-grid { grid-template-columns: minmax(0, 1fr); }
+    .app-main-content :is(.payouts-grid, .invoices-grid) { grid-template-columns: minmax(0, 1fr); }
+    .app-main-content .filters-card .filter-group { max-width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+}

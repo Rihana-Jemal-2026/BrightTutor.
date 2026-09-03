@@ -10,12 +10,12 @@
   h1 {
     font-size: 1.8rem;
     font-weight: 800;
-    color: var(--color-text, #0B241B);
+    color: var(--color-text);
     margin: 0 0 0.25rem 0;
   }
 
   .subtitle {
-    color: var(--color-muted, #5C786A);
+    color: var(--color-muted);
     margin: 0;
     font-size: 0.95rem;
   }
@@ -31,24 +31,24 @@
   gap: 0.75rem;
 
   &.alert-success {
-    background: var(--color-success-bg, #E9F7EF);
-    color: var(--color-accent-bright, #10B981);
-    border: 1px solid var(--color-border, #DCE8E1);
+    background: var(--color-success-bg);
+    color: var(--color-accent-bright);
+    border: 1px solid var(--color-border);
   }
 
   &.alert-error {
-    background: var(--color-error-bg, #FCEEEC);
-    color: var(--color-error, #DC2626);
-    border: 1px solid var(--color-error, #DC2626);
+    background: var(--color-error-bg);
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
   }
 }
 
 .form-card {
-  background: var(--color-surface, #ffffff);
+  background: var(--color-surface);
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: var(--shadow-card);
-  border: 1px solid var(--color-border, #DCE8E1);
+  border: 1px solid var(--color-border);
   transition: all 0.25s ease-in-out;
 
   &:hover {
@@ -72,30 +72,30 @@
   label {
     font-size: 0.875rem;
     font-weight: 700;
-    color: var(--color-text, #0B241B);
+    color: var(--color-text);
   }
 
   .form-control {
     width: 100%;
     box-sizing: border-box;
     padding: 0.75rem 1rem;
-    border: 1.5px solid var(--color-border, #DCE8E1);
+    border: 1.5px solid var(--color-border);
     border-radius: 0.6rem;
     font-size: 0.95rem;
-    color: var(--color-text, #0B241B);
-    background: var(--color-surface, #ffffff);
+    color: var(--color-text);
+    background: var(--color-surface);
     transition: all 0.2s ease;
 
     &:focus {
       outline: none;
-      border-color: var(--color-accent-bright, #10B981);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      border-color: var(--color-accent-bright);
+      box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.2);
     }
   }
 
   .field-error {
     font-size: 0.8rem;
-    color: var(--color-error, #DC2626);
+    color: var(--color-error);
     font-weight: 600;
   }
 }
@@ -118,24 +118,24 @@
     gap: 0.5rem;
     padding: 0.85rem 1rem;
     border-radius: 0.75rem;
-    border: 1.5px solid var(--color-border, #DCE8E1);
-    background: var(--color-surface, #ffffff);
-    color: var(--color-text, #0B241B);
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
     font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 
     &:hover {
-      border-color: var(--color-accent-bright, #10B981);
-      background: rgba(16, 185, 129, 0.08);
+      border-color: var(--color-accent-bright);
+      background: rgba(var(--color-accent-rgb), 0.08);
     }
 
     &.active {
-      background: linear-gradient(135deg, #0B3D2E, #059669);
+      background: var(--color-action);
       color: white;
-      border-color: var(--color-accent-bright, #10B981);
-      box-shadow: 0 4px 12px rgba(11, 61, 46, 0.25);
+      border-color: var(--color-accent-bright);
+      box-shadow: var(--shadow-card);
     }
   }
 }
@@ -143,7 +143,7 @@
 .btn-submit {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #0B3D2E, #059669);
+  background: var(--color-action);
   color: white;
   border: none;
   border-radius: 0.75rem;
@@ -158,8 +158,8 @@
   transition: all 0.2s ease-in-out;
 
   &:hover:not(:disabled) {
-    background: var(--color-accent-bright, #10B981);
-    transform: translateY(-2px);
+    background: var(--color-action);
+    transform: none;
   }
 
   &:disabled {

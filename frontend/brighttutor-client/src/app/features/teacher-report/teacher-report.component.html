@@ -5,7 +5,7 @@
     @if (!authService.isTeacher()) {
       <div class="field select-field">
         <app-searchable-select
-          label="👨‍🏫 Select Teacher"
+          label=" Select Teacher"
           placeholder="Choose Teacher..."
           searchPlaceholder="Type teacher name to search..."
           [options]="teacherOptions()"
@@ -19,15 +19,20 @@
         <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" readonly disabled />
       </div>
     }
-    <div class="field"><label>Start Date</label><input type="date" [(ngModel)]="startDate" name="startDate" class="form-control" /></div>
-    <div class="field"><label>End Date</label><input type="date" [(ngModel)]="endDate" name="endDate" class="form-control" /></div>
-    <button type="button" class="btn-search" (click)="search()">Search</button>
+    <div class="field"><label>Start Date</label><input type="date" [(ngModel)]="startDate" (ngModelChange)="filtersTouched.set(true)" name="startDate" class="form-control" /></div>
+    <div class="field"><label>End Date</label><input type="date" [(ngModel)]="endDate" (ngModelChange)="filtersTouched.set(true)" name="endDate" class="form-control" /></div>
   </div>
 
-  @if (reportResource.isLoading()) {
+  @if (startDate() && endDate() && startDate() > endDate()) { <p class="report-filter-error" role="alert">End date must be on or after start date.</p> }
+  @if (optionsError()) { <p class="report-filter-error" role="alert">{{ optionsError() }}</p> }
+  @if ((!filtersTouched() || !canSearch()) && !optionsError()) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>Choose a teacher and date range</h2><p>Choose a teacher and set the date range. The report appears automatically. Teachers can view their own attendance for the selected dates.</p></section>
+  } @else if (reportResource.isLoading()) {
     <div class="spinner">Loading...</div>
   } @else if (reportResource.error()) {
-    <div class="error">Could not load. Make sure the backend is running.</div>
+    <div class="error">We couldn’t load this report. Try again or change your filters. If the problem continues, contact your administrator. <button type="button" class="btn-secondary" (click)="search()">Try again</button></div>
+  } @else if (reportResource.hasValue() && reportResource.value()?.totalRecords === 0) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>No attendance records found</h2><p>There are no attendance records for these filters. Choose another date or selection to update the report automatically.</p></section>
   } @else if (reportResource.value(); as r) {
     <div class="summary-cards">
       <div class="summary-card total"><span class="value">{{ r.totalRecords }}</span><span class="label">Total</span></div>

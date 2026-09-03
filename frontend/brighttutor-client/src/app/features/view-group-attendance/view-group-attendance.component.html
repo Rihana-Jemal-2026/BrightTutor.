@@ -1,21 +1,21 @@
 <div class="view-attendance-page">
   <div class="page-header">
     <div>
-      <h1>📋 View Attendance History Records</h1>
+      <h1>View Attendance History Records</h1>
       <p>Comprehensive attendance records across Group Classes, 1-on-1 Online, and Home Tutoring sessions.</p>
     </div>
   </div>
 
   @if (noAssignedClasses()) {
     <div class="alert alert-warning" style="margin-bottom: 1.5rem; padding: 1.2rem; background: #fffbe6; border: 1.5px solid #ffe58f; border-radius: 10px; color: #873800;">
-      <strong>⚠️ No Assigned Class Groups Found</strong>
+      <strong> No Assigned Class Groups Found</strong>
       <p style="margin-top: 0.35rem; margin-bottom: 0;">You currently have no class groups assigned to your educator profile. Please contact Academy Admin to assign your teacher profile to a class group.</p>
     </div>
   } @else {
     <div class="filter-card">
       <div class="filter-col">
         <app-searchable-select
-          label="🎯 Filter by Class Group / Mode"
+          label=" Filter by Class Group / Mode"
           placeholder="Choose Class Group or All Records..."
           searchPlaceholder="Type group name to search..."
           [options]="groupOptions()"
@@ -26,19 +26,22 @@
 
       <div class="filter-col date-col">
         <label for="attendanceDate">Session Date</label>
-        <input id="attendanceDate" type="date" [(ngModel)]="attendanceDate" name="attendanceDate" class="form-control" />
+        <input id="attendanceDate" type="date" [(ngModel)]="attendanceDate" (ngModelChange)="filtersTouched.set(true)" name="attendanceDate" class="form-control" />
       </div>
 
-      <div class="filter-col action-col">
-        <button type="button" class="btn-search" (click)="search()">Search Records</button>
-      </div>
     </div>
   }
 
-  @if (recordsResource.isLoading()) {
+  
+  @if (optionsError()) { <p class="report-filter-error" role="alert">{{ optionsError() }}</p> }
+  @if ((!filtersTouched() || !canSearch()) && !noAssignedClasses() && !optionsError()) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>Choose which attendance to view</h2><p>Choose a class group, or keep All Records to include every attendance mode. The records appear automatically when you choose a class or change the session date.</p></section>
+  } @else if (recordsResource.isLoading()) {
     <div class="loading-box">Loading attendance records...</div>
   } @else if (recordsResource.error()) {
-    <div class="alert alert-danger">Could not load attendance records. Ensure backend service is active.</div>
+    <div class="alert alert-danger">We couldn’t load this report. Try again or change your filters. If the problem continues, contact your administrator. <button type="button" class="btn-secondary" (click)="search()">Try again</button></div>
+  } @else if (recordsResource.hasValue() && recordsResource.value()?.length === 0) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>No attendance records found</h2><p>There are no attendance records for these filters. Choose another date or selection to update the report automatically.</p></section>
   } @else {
     <div class="table-card">
       <table class="data-table">

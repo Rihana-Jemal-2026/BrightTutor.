@@ -5,7 +5,7 @@
     @if (!authService.isStudent()) {
       <div class="field select-field">
         <app-searchable-select
-          label="🎓 Select Student"
+          label=" Select Student"
           placeholder="Choose Student..."
           searchPlaceholder="Type student name to search..."
           [options]="studentOptions()"
@@ -19,20 +19,25 @@
         <input type="text" [value]="authService.currentUser()?.firstName + ' ' + authService.currentUser()?.lastName" class="form-control" readonly disabled />
       </div>
     }
-    <div class="field"><label>Year</label><input type="number" [(ngModel)]="year" name="year" class="form-control" /></div>
-    <div class="field"><label>Month</label><input type="number" min="1" max="12" [(ngModel)]="month" name="month" class="form-control" /></div>
-    <button type="button" class="btn-search" (click)="search()">Search</button>
+    <div class="field"><label>Year</label><input type="number" [(ngModel)]="year" (ngModelChange)="filtersTouched.set(true)" name="year" class="form-control" /></div>
+    <div class="field"><label>Month</label><input type="number" min="1" max="12" [(ngModel)]="month" (ngModelChange)="filtersTouched.set(true)" name="month" class="form-control" /></div>
   </div>
 
-  @if (calendarResource.isLoading()) {
+  @if (month() < 1 || month() > 12 || year() < 1 || year() > 9999) { <p class="report-filter-error" role="alert">Enter a valid year and a month from 1 to 12.</p> }
+  @if (optionsError()) { <p class="report-filter-error" role="alert">{{ optionsError() }}</p> }
+  @if ((!filtersTouched() || !canSearch()) && !optionsError()) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>Choose a student and month</h2><p>Choose a student, year, and month. Their attendance calendar appears automatically.</p></section>
+  } @else if (calendarResource.isLoading()) {
     <div class="spinner">Loading calendar records...</div>
   } @else if (calendarResource.error()) {
-    <div class="error">Could not load attendance calendar. Make sure backend is running.</div>
-  } @else {
+    <div class="error">We couldn’t load this report. Try again or change your filters. If the problem continues, contact your administrator. <button type="button" class="btn-secondary" (click)="search()">Try again</button></div>
+  } @else if (calendarResource.hasValue() && calendarResource.value()?.length === 0) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>No attendance records found</h2><p>There are no attendance records for these filters. Choose another date or selection to update the report automatically.</p></section>
+  } @else if (calendarResource.hasValue()) {
     <div class="day-list">
       @for (day of calendarResource.value()!; track $index) {
         <div class="day-row">
-          <span class="date">📅 {{ day.date }}</span>
+          <span class="date"> {{ day.date }}</span>
           <span class="type-badge">{{ getTypeLabel(day.attendanceType) }}</span>
           <span class="status-badge" [class]="getStatusClass(day.status)">{{ getStatusLabel(day.status) }}</span>
           <span class="times">

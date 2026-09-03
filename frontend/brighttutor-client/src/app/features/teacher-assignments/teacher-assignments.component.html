@@ -26,7 +26,7 @@
   <div class="filter-card">
     <div class="filter-col">
       <app-searchable-select
-        label="👨‍🏫 Filter by Teacher"
+        label=" Filter by Teacher"
         placeholder="Select Teacher..."
         searchPlaceholder="Type teacher name..."
         [options]="filterTeacherOptions()"
@@ -37,7 +37,7 @@
 
     <div class="filter-col">
       <app-searchable-select
-        label="📚 Filter by Course"
+        label=" Filter by Course"
         placeholder="Select Course..."
         searchPlaceholder="Type course name..."
         [options]="filterCourseOptions()"
@@ -85,14 +85,14 @@
               </td>
               <td>
                 <div class="course-chip">
-                  <span>📚 {{ item.courseName }}</span>
+                  <span> {{ item.courseName }}</span>
                 </div>
               </td>
               <td>
                 @if (item.classGroupName) {
-                  <span class="group-pill">👥 {{ item.classGroupName }}</span>
+                  <span class="group-pill"> {{ item.classGroupName }}</span>
                 } @else {
-                  <span class="group-pill all">🌐 Entire Course</span>
+                  <span class="group-pill all"> Entire Course</span>
                 }
               </td>
               <td>
@@ -107,7 +107,7 @@
                       (click)="openEditModal(item)"
                       title="Edit Allocation Details"
                     >
-                      ✏️
+                      <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg>
                     </button>
                     <button
                       type="button"
@@ -115,7 +115,7 @@
                       (click)="onRemove(item)"
                       title="Remove Allocation"
                     >
-                      🗑️
+                      <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>
                     </button>
                   </div>
                 </td>
@@ -125,7 +125,7 @@
             <tr>
               <td colspan="5" class="empty-cell">
                 <div class="empty-state">
-                  <span class="empty-icon">👨‍🏫</span>
+                  <span class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg></span>
                   <p>No teacher assignments found matching your filters.</p>
                 </div>
               </td>
@@ -144,9 +144,9 @@
       <div class="modal-header">
         <h3>
           @if (isEditMode()) {
-            ✏️ Edit Teacher Allocation
+            <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Edit Teacher Allocation
           } @else {
-            👨‍🏫 Assign Teacher to Course & Group
+             Assign Teacher to Course & Group
           }
         </h3>
         <button type="button" class="close-btn" (click)="closeAssignModal()">&times;</button>
@@ -155,7 +155,7 @@
       <form (ngSubmit)="submitAssignment()" class="modal-form">
         <div class="form-group z-3">
           <app-searchable-select
-            label="👨‍🏫 Select Teacher"
+            label=" Select Teacher"
             placeholder="Choose Teacher..."
             searchPlaceholder="Type teacher name..."
             [options]="modalTeacherOptions()"
@@ -166,7 +166,7 @@
 
         <div class="form-group z-2">
           <app-searchable-select
-            label="📚 Select Course"
+            label=" Select Course"
             placeholder="Choose Course..."
             searchPlaceholder="Type course name..."
             [options]="modalCourseOptions()"
@@ -177,7 +177,7 @@
 
         <div class="form-group z-1">
           <app-searchable-select
-            label="👥 Select Class Group (Optional)"
+            label=" Select Class Group (Optional)"
             placeholder="Whole Course / All Sections..."
             searchPlaceholder="Type class group..."
             [options]="modalGroupOptions()"
@@ -188,7 +188,7 @@
 
         @if (modalError()) {
           <div class="alert alert-danger mt-3">
-            <span class="icon">⚠</span>
+            <span class="icon"></span>
             <span>{{ modalError() }}</span>
           </div>
         }

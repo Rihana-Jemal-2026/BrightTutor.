@@ -2,14 +2,19 @@
   <h1>Daily Attendance Overview</h1>
 
   <div class="search-bar">
-    <div class="field"><label>Date</label><input type="date" [(ngModel)]="date" name="date" /></div>
-    <button type="button" (click)="search()">Search</button>
+    <div class="field"><label>Date</label><input type="date" [(ngModel)]="date" (ngModelChange)="filtersTouched.set(true)" name="date" /></div>
   </div>
 
-  @if (overviewResource.isLoading()) {
+  
+  @if (optionsError()) { <p class="report-filter-error" role="alert">{{ optionsError() }}</p> }
+  @if ((!filtersTouched() || !canSearch()) && !optionsError()) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>Choose a date to view attendance</h2><p>Choose a date above to see student and teacher attendance for that day automatically.</p></section>
+  } @else if (overviewResource.isLoading()) {
     <div class="spinner">Loading...</div>
   } @else if (overviewResource.error()) {
-    <div class="error">Could not load. Make sure the backend is running.</div>
+    <div class="error">We couldn’t load this report. Try again or change your filters. If the problem continues, contact your administrator. <button type="button" class="btn-secondary" (click)="search()">Try again</button></div>
+  } @else if (overviewResource.hasValue() && overviewResource.value()?.totalStudentRecords === 0 && overviewResource.value()?.teacherRecordsCount === 0) {
+    <section class="report-state" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 3h10l4 4v14H5V3Z M14 3v5h5 M8 12h8 M8 16h5"/></svg><h2>No attendance records found</h2><p>There are no attendance records for these filters. Choose another date or selection to update the report automatically.</p></section>
   } @else if (overviewResource.value(); as o) {
     <h2>Students</h2>
     <div class="summary-cards">

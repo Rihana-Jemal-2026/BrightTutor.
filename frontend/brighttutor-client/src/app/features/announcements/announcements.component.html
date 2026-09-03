@@ -27,7 +27,7 @@
       @if (authService.isTeacher()) {
         <button type="button" class="btn-toggle-availability" [class.avail-open]="isTeacherMessagingEnabled()" [class.avail-closed]="!isTeacherMessagingEnabled()" (click)="toggleTeacherMessagingAvailability()" title="Toggle whether students can send you direct messages">
           <span class="toggle-dot"></span>
-          <span>{{ isTeacherMessagingEnabled() ? '🟢 Student Messages: ON' : '🔴 Student Messages: OFF' }}</span>
+          <span>{{ isTeacherMessagingEnabled() ? ' Student Messages: ON' : ' Student Messages: OFF' }}</span>
         </button>
       }
 
@@ -47,7 +47,7 @@
       [class.active]="activeTab() === 'bulletin'"
       (click)="activeTab.set('bulletin')"
     >
-      📢 {{ authService.isTeacher() ? 'Campus & Class Notices' : 'Campus Bulletins' }} ({{ announcements().length }})
+       {{ authService.isTeacher() ? 'Campus & Class Notices' : 'Campus Bulletins' }} ({{ announcements().length }})
     </button>
 
     @if (authService.isAdmin()) {
@@ -57,7 +57,7 @@
         [class.active]="activeTab() === 'direct'"
         (click)="activeTab.set('direct')"
       >
-        🔔 Direct User Push Dispatcher
+         Direct User Push Dispatcher
       </button>
     } @else if (authService.isTeacher()) {
       <button
@@ -66,7 +66,7 @@
         [class.active]="activeTab() === 'inquiries'"
         (click)="activeTab.set('inquiries')"
       >
-        💬 Student Inquiries & Messages ({{ teacherInquiries().length }})
+         Student Inquiries & Messages ({{ teacherInquiries().length }})
       </button>
     } @else if (authService.isStudent()) {
       <button
@@ -75,7 +75,7 @@
         [class.active]="activeTab() === 'contact-tutor'"
         (click)="activeTab.set('contact-tutor')"
       >
-        👨‍🏫 Message My Teachers ({{ assignedTeachers().length }})
+         Message My Teachers ({{ assignedTeachers().length }})
       </button>
     }
   </div>
@@ -85,13 +85,13 @@
     <!-- Filter Audience Bar (Admin Only) -->
     @if (authService.isAdmin()) {
       <div class="filter-audience-card">
-        <span class="filter-title">🎯 Target Audience:</span>
+        <span class="filter-title"> Target Audience:</span>
         <div class="audience-chips">
           <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === ''" (click)="onFilterChange('')">All Notices</button>
-          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '2'" (click)="onFilterChange('2')">👨‍🏫 Teachers</button>
-          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '3'" (click)="onFilterChange('3')">🎓 Students</button>
-          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '4'" (click)="onFilterChange('4')">👨‍👩‍👧 Parents</button>
-          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '1'" (click)="onFilterChange('1')">👑 Admins</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '2'" (click)="onFilterChange('2')"> Teachers</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '3'" (click)="onFilterChange('3')"> Students</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '4'" (click)="onFilterChange('4')"> Parents</button>
+          <button type="button" class="audience-chip" [class.active]="selectedTargetFilter() === '1'" (click)="onFilterChange('1')"> Admins</button>
         </div>
       </div>
     }
@@ -113,7 +113,7 @@
                 </span>
               } @else {
                 <span class="audience-badge role-all">
-                  📢 Notice
+                   Notice
                 </span>
               }
               <span class="date-badge">{{ item.createdAt | date:'mediumDate' }}</span>
@@ -131,7 +131,7 @@
           </div>
         } @empty {
           <div class="empty-state-full">
-            <span class="empty-icon">📢</span>
+            <span class="empty-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l-2 2V11.5A8.5 8.5 0 0 1 10.5 3H21v8.5Z"/><path d="M7 8h9M7 12h6"/></svg></span>
             <p>No active announcements posted for your role.</p>
           </div>
         }
@@ -144,7 +144,7 @@
     <div class="direct-dispatcher-container">
       <div class="dispatcher-card">
         <div class="dispatcher-header">
-          <div class="dispatcher-icon">🔔</div>
+          <div class="dispatcher-icon"></div>
           <div>
             <h2>Dispatch Direct User Push Notification</h2>
             <p>Send an instant priority notification directly to a student, teacher, or parent account inbox.</p>
@@ -154,7 +154,7 @@
         <form (ngSubmit)="submitSendNotification()" class="dispatcher-form">
           <div class="form-group z-3">
             <app-searchable-select
-              label="👤 Target Recipient User"
+              label=" Target Recipient User"
               placeholder="Choose Student, Teacher or Parent..."
               searchPlaceholder="Type name or email to search..."
               [options]="userOptions()"
@@ -166,10 +166,10 @@
           <div class="form-group">
             <label class="form-label" for="directNotifType">Alert Category</label>
             <select id="directNotifType" [(ngModel)]="notifForm.type" name="type" class="form-control">
-              <option [ngValue]="1">ℹ️ General Information</option>
-              <option [ngValue]="2">⚠️ Attendance Reminder / Warning</option>
-              <option [ngValue]="3">📚 Course & Schedule Update</option>
-              <option [ngValue]="4">🚨 Urgent Alert</option>
+              <option [ngValue]="1"> General Information</option>
+              <option [ngValue]="2"> Attendance Reminder / Warning</option>
+              <option [ngValue]="3"> Course & Schedule Update</option>
+              <option [ngValue]="4"> Urgent Alert</option>
             </select>
           </div>
 
@@ -190,13 +190,13 @@
           }
           @if (notifError()) {
             <div class="alert alert-danger">
-              <span class="icon">⚠</span> {{ notifError() }}
+              <span class="icon"></span> {{ notifError() }}
             </div>
           }
 
           <div class="form-actions">
             <button type="submit" class="btn-dispatch" [disabled]="sendingNotif()">
-              @if (sendingNotif()) { Sending Alert... } @else { 🚀 Dispatch Notification }
+              @if (sendingNotif()) { Sending Alert... } @else {  Dispatch Notification }
             </button>
           </div>
         </form>
@@ -209,11 +209,11 @@
     <div class="teacher-inquiries-container">
       <div class="inquiries-header-card">
         <div class="inq-info">
-          <h3>💬 Student Inquiries Inbox</h3>
+          <h3>Student Inquiries Inbox</h3>
           <p>Questions and messages sent by students enrolled in your active courses.</p>
         </div>
         <div class="inq-status-badge" [class.badge-open]="isTeacherMessagingEnabled()" [class.badge-closed]="!isTeacherMessagingEnabled()">
-          {{ isTeacherMessagingEnabled() ? '🟢 Direct Inquiries Enabled' : '🔴 Direct Inquiries Closed' }}
+          {{ isTeacherMessagingEnabled() ? ' Direct Inquiries Enabled' : ' Direct Inquiries Closed' }}
         </div>
       </div>
 
@@ -231,7 +231,7 @@
 
               <div class="inq-time-badge">
                 <span class="status-pill" [class.pill-replied]="inq.status === 'replied'" [class.pill-pending]="inq.status === 'pending'">
-                  {{ inq.status === 'replied' ? '✅ Replied' : '⏳ Pending Response' }}
+                  {{ inq.status === 'replied' ? ' Replied' : ' Pending Response' }}
                 </span>
                 <span class="time-text">{{ inq.sentAt | date:'short' }}</span>
               </div>
@@ -243,7 +243,7 @@
             @if (inq.replyText) {
               <div class="reply-bubble">
                 <div class="reply-header">
-                  <strong>👨‍🏫 Your Reply:</strong>
+                  <strong> Your Reply:</strong>
                 </div>
                 <p>{{ inq.replyText }}</p>
               </div>
@@ -251,13 +251,13 @@
 
             <div class="inq-card-actions">
               <button type="button" class="btn btn-sm btn-reply" (click)="openReplyModal(inq)">
-                ✏️ {{ inq.status === 'replied' ? 'Send Another Reply' : 'Reply to Student' }}
+                <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> {{ inq.status === 'replied' ? 'Send Another Reply' : 'Reply to Student' }}
               </button>
             </div>
           </div>
         } @empty {
           <div class="empty-state-full">
-            <span class="empty-icon">💬</span>
+            <span class="empty-icon"></span>
             <p>No student inquiries received yet.</p>
           </div>
         }
@@ -270,7 +270,7 @@
     <div class="student-contact-container">
       <div class="student-contact-header">
         <div>
-          <h3>👨‍🏫 My Assigned Course Teachers</h3>
+          <h3>My Assigned Course Teachers</h3>
           <p>Send questions, schedule clarifications, or homework inquiries directly to your instructors.</p>
         </div>
       </div>
@@ -285,12 +285,12 @@
 
             <div class="teacher-info">
               <h4>{{ t.name }}</h4>
-              <span class="t-course">📚 {{ t.courseName }}</span>
-              <span class="t-email">✉️ {{ t.email }}</span>
+              <span class="t-course"> {{ t.courseName }}</span>
+              <span class="t-email"> {{ t.email }}</span>
             </div>
 
             <div class="teacher-avail-tag" [class.tag-open]="t.isAcceptingMessages" [class.tag-closed]="!t.isAcceptingMessages">
-              {{ t.isAcceptingMessages ? '🟢 Available for Messages' : '🔴 Direct Messaging Closed' }}
+              {{ t.isAcceptingMessages ? ' Available for Messages' : ' Direct Messaging Closed' }}
             </div>
 
             <button
@@ -299,7 +299,7 @@
               [disabled]="!t.isAcceptingMessages"
               (click)="openContactTeacherModal(t)"
             >
-              ✉️ Send Inquiry
+               Send Inquiry
             </button>
           </div>
         }
@@ -308,7 +308,7 @@
       <!-- Sent Inquiries Section -->
       @if (sentInquiries().length > 0) {
         <div class="sent-inquiries-section">
-          <h3>📤 My Sent Inquiries ({{ sentInquiries().length }})</h3>
+          <h3>My Sent Inquiries ({{ sentInquiries().length }})</h3>
           <div class="sent-list">
             @for (sent of sentInquiries(); track sent.id) {
               <div class="sent-item-card">
@@ -319,7 +319,7 @@
                 <p class="sent-text">{{ sent.message }}</p>
                 <div class="sent-footer">
                   <span class="sent-date">{{ sent.sentAt | date:'medium' }}</span>
-                  <span class="sent-status">✅ Delivered to Tutor</span>
+                  <span class="sent-status"> Delivered to Tutor</span>
                 </div>
               </div>
             }
@@ -337,7 +337,7 @@
   <div class="modal-overlay" (click)="closeCreateModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>📢 {{ authService.isTeacher() ? 'Post Class Notice' : 'Post Campus Announcement' }}</h3>
+        <h3>{{ authService.isTeacher() ? 'Post Class Notice' : 'Post Campus Announcement' }}</h3>
         <button type="button" class="close-btn" (click)="closeCreateModal()">&times;</button>
       </div>
 
@@ -351,11 +351,11 @@
           <div class="form-group">
             <label class="form-label">Target Audience</label>
             <select class="form-select" [(ngModel)]="announcementForm.targetRole" name="targetRole">
-              <option [ngValue]="null">🌐 All Users (Public Notice)</option>
-              <option [ngValue]="2">👨‍🏫 Teachers Only</option>
-              <option [ngValue]="3">🎓 Students Only</option>
-              <option [ngValue]="4">👨‍👩‍👧 Parents Only</option>
-              <option [ngValue]="1">👑 Administrators Only</option>
+              <option [ngValue]="null"> All Users (Public Notice)</option>
+              <option [ngValue]="2"> Teachers Only</option>
+              <option [ngValue]="3"> Students Only</option>
+              <option [ngValue]="4"> Parents Only</option>
+              <option [ngValue]="1"> Administrators Only</option>
             </select>
           </div>
         }
@@ -367,7 +367,7 @@
 
         @if (modalError()) {
           <div class="alert alert-danger mt-3">
-            <span class="icon">⚠</span>
+            <span class="icon"></span>
             <span>{{ modalError() }}</span>
           </div>
         }
@@ -390,7 +390,7 @@
   <div class="modal-overlay" (click)="closeReplyModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>✏️ Reply to {{ activeInquiryToReply()?.studentName }}</h3>
+        <h3>Reply to {{ activeInquiryToReply()?.studentName }}</h3>
         <button type="button" class="close-btn" (click)="closeReplyModal()">&times;</button>
       </div>
 
@@ -408,7 +408,7 @@
         <div class="modal-footer">
           <button type="button" class="btn-cancel" (click)="closeReplyModal()">Cancel</button>
           <button type="submit" class="btn-save">
-            🚀 Send Reply to Student
+             Send Reply to Student
           </button>
         </div>
       </form>
@@ -423,7 +423,7 @@
   <div class="modal-overlay" (click)="closeContactTeacherModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h3>✉️ Message Instructor: {{ selectedTeacherToContact()?.name }}</h3>
+        <h3>Message Instructor: {{ selectedTeacherToContact()?.name }}</h3>
         <button type="button" class="close-btn" (click)="closeContactTeacherModal()">&times;</button>
       </div>
 
@@ -443,7 +443,7 @@
         <div class="modal-footer">
           <button type="button" class="btn-cancel" (click)="closeContactTeacherModal()">Cancel</button>
           <button type="submit" class="btn-save" [disabled]="sendingStudentMessage()">
-            @if (sendingStudentMessage()) { Sending... } @else { 🚀 Send to Instructor }
+            @if (sendingStudentMessage()) { Sending... } @else {  Send to Instructor }
           </button>
         </div>
       </form>

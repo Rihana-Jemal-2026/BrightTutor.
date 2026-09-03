@@ -13,7 +13,7 @@ import { ToastService } from '../../services/toast.service';
     <div class="users-page">
       <div class="page-header">
         <div>
-          <h1>👥 System Users Management</h1>
+          <h1>System Users Management</h1>
           <p>Manage Admin, Teacher, Student, and Parent accounts.</p>
         </div>
         <button type="button" class="btn-create-user" (click)="openCreateModal()">
@@ -59,12 +59,12 @@ import { ToastService } from '../../services/toast.service';
                         title="Edit User Details"
                         (click)="openEditModal(user)"
                       >
-                        ✏️
+                        <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg>
                       </button>
                     }
 
                     @if (isSuperAdmin(user)) {
-                      <span class="protected-pill" title="Super Admin Account - Protected System Record">🛡️ Super Admin</span>
+                      <span class="protected-pill" title="Super Admin Account - Protected System Record"> Super Admin</span>
                     } @else {
                       <button
                         type="button"
@@ -73,7 +73,7 @@ import { ToastService } from '../../services/toast.service';
                         [title]="isUserActive(user) ? 'Deactivate User Account' : 'Activate User Account'"
                         (click)="toggleUserStatus(user)"
                       >
-                        {{ isUserActive(user) ? '⏸️' : '▶️' }}
+                        <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="isUserActive(user) ? 'M8 5v14M16 5v14' : 'm8 5 11 7-11 7V5Z'"/></svg>
                       </button>
                     }
                   </td>
@@ -130,7 +130,7 @@ import { ToastService } from '../../services/toast.service';
                       (click)="showNewUserPassword.set(!showNewUserPassword())"
                       title="Toggle Password Visibility"
                     >
-                      {{ showNewUserPassword() ? '🙈' : '👁️' }}
+                      {{ showNewUserPassword() ? 'Hide' : 'Show' }}
                     </button>
                   </div>
                 </div>
@@ -167,7 +167,7 @@ import { ToastService } from '../../services/toast.service';
         <div class="modal-overlay" (click)="closeEditModal()">
           <div class="modal-card" (click)="$event.stopPropagation()">
             <div class="modal-header">
-              <h3>✏️ Edit User Details</h3>
+              <h3>Edit User Details</h3>
               <button type="button" class="close-btn" (click)="closeEditModal()">&times;</button>
             </div>
 
@@ -220,9 +220,9 @@ import { ToastService } from '../../services/toast.service';
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
     .page-header h1 { font-size: 1.75rem; color: var(--color-primary); margin-bottom: 0.25rem; }
     .page-header p { color: var(--color-muted); margin: 0; }
-    .btn-create-user { background: var(--color-accent); color: white; border: none; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .btn-create-user:hover { background: var(--color-primary-light); }
-    .table-card { background: var(--color-surface); border-radius: 12px; padding: 1rem; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); }
+    .btn-create-user { background: var(--color-action); color: white; border: none; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .btn-create-user:hover { background: var(--color-action); }
+    .table-card { background: var(--color-surface); border-radius: var(--radius-lg); padding: 1rem; box-shadow: var(--shadow-card); border: 1px solid var(--color-border); }
     .data-table { width: 100%; border-collapse: collapse; text-align: left; }
     .data-table th, .data-table td { padding: 0.875rem 1rem; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
     .data-table th { background: var(--color-bg); font-weight: 600; color: var(--color-muted); font-size: 0.85rem; text-transform: uppercase; }
@@ -233,12 +233,12 @@ import { ToastService } from '../../services/toast.service';
     .role-badge.student { background: var(--color-success-bg); color: var(--color-success); }
     .role-badge.parent { background: var(--status-late-bg); color: var(--status-late); }
     .status-badge { padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; background: var(--color-error-bg); color: var(--color-error); font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .status-badge.active { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-badge.active { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(var(--color-accent-rgb), 0.3); }
     .text-right { text-align: right; }
     .actions-cell { display: flex; justify-content: flex-end; gap: 0.4rem; align-items: center; }
     .icon-action-btn { border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); padding: 0.4rem 0.65rem; border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
     .icon-action-btn:hover { background: var(--color-surface); transform: scale(1.05); }
-    .icon-action-btn.edit { border-color: var(--color-accent-bright); background: rgba(16, 185, 129, 0.1); }
+    .icon-action-btn.edit { border-color: var(--color-accent-bright); background: rgba(var(--color-accent-rgb), 0.1); }
     .icon-action-btn.toggle { border-color: var(--color-border); }
     .icon-action-btn.toggle.deactivate { border-color: rgba(239, 68, 68, 0.4); background: var(--color-error-bg); color: var(--color-error); }
     .protected-pill { font-size: 0.75rem; background: var(--color-bg); color: var(--color-muted); padding: 0.25rem 0.6rem; border-radius: 20px; font-weight: 600; border: 1px solid var(--color-border); }
@@ -246,7 +246,7 @@ import { ToastService } from '../../services/toast.service';
 
     /* Modal Styles */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; backdrop-filter: blur(4px); }
-    .modal-card { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); border-radius: 14px; width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-card-hover); }
+    .modal-card { background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); border-radius: var(--radius-lg); width: 100%; max-width: 500px; padding: 1.75rem; box-shadow: var(--shadow-card-hover); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
     .modal-header h3 { margin: 0; font-size: 1.25rem; color: var(--color-text); }
     .close-btn { background: none; border: none; font-size: 1.5rem; color: var(--color-muted); cursor: pointer; }
@@ -259,8 +259,8 @@ import { ToastService } from '../../services/toast.service';
     .btn-toggle-pass { position: absolute; right: 6px; background: none; border: none; font-size: 0.9rem; cursor: pointer; padding: 2px 4px; border-radius: 4px; color: var(--color-muted); }
     .modal-footer { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
     .btn-cancel { background: var(--color-bg); color: var(--color-muted); border: 1px solid var(--color-border); padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
-    .btn-save { background: var(--color-accent); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
-    .btn-save:hover { background: var(--color-primary-light); }
+    .btn-save { background: var(--color-action); color: white; border: none; padding: 0.6rem 1.25rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+    .btn-save:hover { background: var(--color-action); }
   `]
 })
 export class UsersComponent implements OnInit {

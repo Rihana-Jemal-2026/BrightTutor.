@@ -17,7 +17,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       </div>
 
       <div class="page-header">
-        <h1>👨‍🏫 Join BrightTutor as a Certified Educator</h1>
+        <h1>Join BrightTutor as a Certified Educator</h1>
         <p>Submit your academic background, specialization, CV, and work credentials for screening.</p>
       </div>
 
@@ -93,7 +93,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
           </form>
         } @else {
           <div class="success-box">
-            <h2>🎉 Application Submitted Successfully!</h2>
+            <h2>Application Submitted Successfully!</h2>
             <p>Your application status is <strong>Pending Document Screening</strong>.</p>
             <p>Our academic board will review your CV and credentials. You will receive an email update at <strong>{{ form.email }}</strong> with your login credentials once approved.</p>
           </div>
@@ -126,7 +126,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       background: var(--color-surface);
       border: 1.5px solid var(--color-border);
       padding: 1.75rem;
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       box-shadow: var(--shadow-card);
       width: 100%;
       box-sizing: border-box;
@@ -214,7 +214,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #0B3D2E, #059669);
+      background: var(--color-action);
       color: #fff;
       padding: 0.75rem 1.5rem;
       border: none;
@@ -235,7 +235,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
     .header-nav-row { margin-bottom: 1rem; }
     .btn-back-login { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--color-surface); color: var(--color-primary); border: 1.5px solid var(--color-border); padding: 0.55rem 1.1rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: var(--shadow-card); transition: all 0.2s; }
-    .btn-back-login:hover { background: var(--color-primary); color: white; border-color: var(--color-primary); transform: translateX(-3px); }
+    .btn-back-login:hover { background: var(--color-action); color: white; border-color: var(--color-primary); transform: translateX(-3px); }
 
     @media (max-width: 768px) {
       .teacher-apply-page { padding: 1rem 0.5rem; }
