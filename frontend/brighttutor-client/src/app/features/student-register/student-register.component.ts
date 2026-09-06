@@ -85,12 +85,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
               <div class="form-row">
                 <div class="form-group">
-                  <label>Insert Your Grade Level *</label>
-                  <input type="text" [(ngModel)]="form.gradeLevel" name="gradeLevel" placeholder="Insert your grade level (e.g. Grade 9, Grade 10, Grade 11, Grade 12, University)" required />
+                  <label>Insert Your Educational Status</label>
+                  <select [(ngModel)]="form.gradeLevel" name="gradeLevel">
+                    <option value="">-- Choose Educational Status (Optional) --</option>
+                    @for (s of educationalStatusOptions; track s) {
+                      <option [value]="s">{{ s }}</option>
+                    }
+                  </select>
                 </div>
                 <div class="form-group">
-                  <label>Home Address / Subcity *</label>
-                  <input type="text" [(ngModel)]="form.address" name="address" placeholder="Bole Subcity, Woreda 03, Addis Ababa" required />
+                  <label>Home Address / GPS *</label>
+                  <div class="address-input-wrapper">
+                    <input type="text" [(ngModel)]="form.address" name="address" placeholder="Bole Subcity, Woreda 03, Addis Ababa" required />
+                    <button type="button" class="btn-gps-inline" (click)="detectGpsLocation()" [disabled]="detectingGps()" [title]="'Detect GPS Coordinates'">
+                      📍 {{ detectingGps() ? 'Locating...' : (gpsCaptured() ? 'GPS Captured' : 'Get GPS') }}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -115,6 +125,49 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   </select>
                 </div>
               </div>
+
+              <!-- SPECIFIC GRADE PROMPT FOR KG-UNIVERSITY TUTORING -->
+              @if (isKgUnivSelected()) {
+                <div class="kg-univ-prompt-box">
+                  <label class="kg-univ-label">
+                    <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    Specify Target Grade & Subjects for KG-University Tutoring *
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="kgUnivGradeDetail"
+                    name="kgUnivGradeDetailInput"
+                    placeholder="Specify target grade/subject (e.g. Grade 7 Math & Physics, KG2 Phonics, Grade 11 Chemistry)"
+                    required
+                  />
+                  <span class="field-hint">Please enter the exact grade level and subject focus so we can assign the best tutor.</span>
+                </div>
+              }
+
+              <!-- GPS REQUIREMENT BANNER FOR HOME-TO-HOME VISIT -->
+              @if (form.desiredServiceType === 3) {
+                <div class="home-gps-notice">
+                  <div class="notice-header">
+                    <span class="pulse-icon">📍</span>
+                    <strong>Home-to-Home Tutoring GPS Location Requirement</strong>
+                  </div>
+                  <p>
+                    We capture your exact home GPS location automatically for Home-to-Home tutoring so your assigned tutor can navigate directly to your house. 
+                    <strong>Please make sure you are currently at home when registering.</strong>
+                  </p>
+                  @if (gpsCaptured()) {
+                    <div class="gps-status-badge success">
+                      <svg class="ui-icon check-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><polyline points="20 6 9 17 4 12"/></svg>
+                      Exact Home GPS Recorded: Lat {{ form.gpsLatitude?.toFixed(4) }}, Lng {{ form.gpsLongitude?.toFixed(4) }}
+                    </div>
+                  } @else {
+                    <button type="button" class="btn-detect-gps-banner" (click)="detectGpsLocation()" [disabled]="detectingGps()">
+                      <svg class="ui-icon gps-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+                      {{ detectingGps() ? 'Detecting Location...' : '📍 Click to Detect & Lock My Home GPS Location' }}
+                    </button>
+                  }
+                </div>
+              }
 
               <!-- DEDICATED PERMANENT PLACE FOR CUSTOM REQUESTED COURSE -->
               <div class="form-group custom-course-box">
@@ -566,6 +619,32 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       }
     }
 
+    .address-input-wrapper { display: flex; gap: 0.35rem; align-items: center; width: 100%; box-sizing: border-box; }
+    .address-input-wrapper input { flex: 1; min-width: 0; }
+    .btn-gps-inline {
+      white-space: nowrap; flex-shrink: 0; padding: 0 0.65rem; height: 42px;
+      background: rgba(16, 185, 129, 0.12); border: 1.5px solid rgba(16, 185, 129, 0.4);
+      color: #059669; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;
+      &:hover { background: rgba(16, 185, 129, 0.25); border-color: #059669; }
+    }
+    .home-gps-notice {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+      border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1rem;
+      .notice-header { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; font-weight: 700; color: #065f46; margin-bottom: 0.35rem; }
+      p { font-size: 0.82rem; color: var(--color-text); margin: 0 0 0.65rem 0; line-height: 1.4; }
+    }
+    .btn-detect-gps-banner {
+      display: inline-flex; align-items: center; gap: 0.4rem; background: #059669; color: white;
+      border: none; padding: 0.5rem 0.9rem; border-radius: 6px; font-size: 0.84rem; font-weight: 700; cursor: pointer;
+      &:hover { background: #047857; }
+    }
+    .gps-status-badge.success {
+      display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(16, 185, 129, 0.2);
+      color: #065f46; border: 1px solid rgba(16, 185, 129, 0.5); padding: 0.35rem 0.75rem; border-radius: 6px;
+      font-size: 0.82rem; font-weight: 700;
+    }
+
     .custom-course-box {
       background: rgba(var(--color-accent-rgb), 0.08);
       border: 1.5px dashed var(--color-accent);
@@ -1013,6 +1092,15 @@ export class StudentRegisterComponent implements OnInit {
 
   selectedCourseOption = '';
   customCourseInput = '';
+  kgUnivGradeDetail = '';
+
+  isKgUnivSelected(): boolean {
+    if (!this.selectedCourseOption || this.selectedCourseOption === 'OTHER') return false;
+    const course = this.courses().find(c => c.id === this.selectedCourseOption);
+    if (!course) return false;
+    const name = course.name.toLowerCase();
+    return name.includes('kg-university') || name.includes('kg - university') || (name.includes('kg') && name.includes('university'));
+  }
 
   // Face ID Biometric Profile Enrollment
   @ViewChild('enrollVideo') enrollVideo?: ElementRef<HTMLVideoElement>;
@@ -1021,7 +1109,32 @@ export class StudentRegisterComponent implements OnInit {
   enrollCameraActive = signal<boolean>(false);
   private enrollMediaStream: MediaStream | null = null;
 
-  form = {
+  readonly educationalStatusOptions: string[] = [
+    'Elementary',
+    'High School',
+    'Preparatory',
+    'University Student',
+    'Bachelor Degree',
+    "Master's Degree",
+    'PhD / Doctorate',
+    'Other'
+  ];
+
+  detectingGps = signal<boolean>(false);
+  gpsCaptured = signal<boolean>(false);
+
+  form: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    gradeLevel: string;
+    address: string;
+    gpsLatitude?: number;
+    gpsLongitude?: number;
+    desiredServiceType: number;
+    courseId: string;
+  } = {
     firstName: '',
     lastName: '',
     email: '',
@@ -1031,6 +1144,62 @@ export class StudentRegisterComponent implements OnInit {
     desiredServiceType: 1,
     courseId: ''
   };
+
+  detectGpsLocation(): void {
+    if (!navigator.geolocation) {
+      this.toastService.show('Geolocation is not supported by your browser.', 'error');
+      return;
+    }
+    this.detectingGps.set(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        this.form.gpsLatitude = lat;
+        this.form.gpsLongitude = lng;
+        this.gpsCaptured.set(true);
+
+        // Perform Reverse Geocoding to get Village / Neighborhood / Subcity Name
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+          .then(res => res.json())
+          .then(data => {
+            this.detectingGps.set(false);
+            const a = data?.address || {};
+            const villageOrArea = a.village || a.suburb || a.neighbourhood || a.quarter || a.city_district || a.town || a.hamlet || a.road;
+            const city = a.city || a.county || a.state || '';
+            const country = a.country || '';
+
+            let placeName = '';
+            if (villageOrArea) placeName += villageOrArea;
+            if (city && city !== villageOrArea) placeName += (placeName ? ', ' : '') + city;
+            if (country) placeName += (placeName ? ', ' : '') + country;
+
+            if (!placeName && data?.display_name) {
+              placeName = data.display_name.split(',').slice(0, 3).join(', ');
+            }
+
+            const formattedAddress = placeName ? `${placeName} (GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)})` : `GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            this.form.address = formattedAddress;
+            this.toastService.show(`📍 Traced Village/Location: ${placeName || 'GPS Captured'}`, 'success');
+          })
+          .catch(() => {
+            this.detectingGps.set(false);
+            const coordsStr = `GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            if (!this.form.address) {
+              this.form.address = coordsStr;
+            } else if (!this.form.address.includes('GPS:')) {
+              this.form.address = `${this.form.address.trim()} (${coordsStr})`;
+            }
+            this.toastService.show(`📍 GPS Location Captured! (Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)})`, 'success');
+          });
+      },
+      (error) => {
+        this.detectingGps.set(false);
+        this.toastService.show('Could not detect exact GPS location. Please check location permissions or enter address manually.', 'error');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
 
   receiptForm = {
     paymentChannel: 'CBE Birr',
@@ -1052,6 +1221,9 @@ export class StudentRegisterComponent implements OnInit {
   onServiceTypeChange(): void {
     if (this.form.desiredServiceType === 3) {
       this.receiptForm.amountPaid = 4500; // 4000 tuition + 500 admission fee
+      if (!this.gpsCaptured() && navigator.geolocation) {
+        this.detectGpsLocation();
+      }
     } else if (this.form.desiredServiceType === 1) {
       this.receiptForm.amountPaid = 4000; // 3500 tuition + 500 admission fee
     } else {
@@ -1181,12 +1353,20 @@ export class StudentRegisterComponent implements OnInit {
   }
 
   onSubmitRegistration(): void {
-    if (!this.form.firstName || !this.form.email || (!this.selectedCourseOption && !this.customCourseInput) || !this.phoneNumberInput || !this.form.gradeLevel) {
-      this.toastService.show('Please fill in all required fields including grade level, phone number, and selected/custom course.', 'error');
+    if (!this.form.firstName || !this.form.email || (!this.selectedCourseOption && !this.customCourseInput) || !this.phoneNumberInput) {
+      this.toastService.show('Please fill in all required fields including phone number and selected/custom course.', 'error');
       return;
     }
 
-    let finalGradeLevel = this.form.gradeLevel.trim();
+    let finalGradeLevel = this.form.gradeLevel ? this.form.gradeLevel.trim() : 'Educational Status: Not Specified';
+
+    if (this.isKgUnivSelected()) {
+      if (!this.kgUnivGradeDetail || !this.kgUnivGradeDetail.trim()) {
+        this.toastService.show('Please specify the exact target grade level and subject focus for KG-University Tutoring.', 'error');
+        return;
+      }
+      finalGradeLevel += ` | Target Grade/Subject Request: ${this.kgUnivGradeDetail.trim()}`;
+    }
 
     if (this.form.desiredServiceType === 1 || this.form.desiredServiceType === 3) {
       if (this.selectedDays.length === 0 || !this.wantedTimeFrom || !this.wantedTimeTo) {

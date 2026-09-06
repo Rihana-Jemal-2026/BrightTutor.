@@ -71,12 +71,24 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
             <div class="form-row">
               <div class="form-group">
-                <label>CV / Resume Document URL *</label>
-                <input type="url" [(ngModel)]="form.cvDocumentUrl" name="cvDocumentUrl" placeholder="https://drive.google.com/your-cv.pdf" required />
+                <label>Upload CV / Resume Document (PDF or Photo Document) *</label>
+                <input type="file" (change)="onCvSelected($event)" accept=".pdf,image/*" required />
+                @if (cvFileName()) {
+                  <div class="file-attached-badge">
+                    <svg class="ui-icon file-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Attached CV: <strong>{{ cvFileName() }}</strong></span>
+                  </div>
+                }
               </div>
               <div class="form-group">
-                <label>Background Certificate / Degree Document URL</label>
-                <input type="url" [(ngModel)]="form.backgroundDocUrl" name="backgroundDocUrl" placeholder="https://drive.google.com/your-degree.pdf" />
+                <label>Background Certificate / Degree Document (PDF or Photo)</label>
+                <input type="file" (change)="onBackgroundDocSelected($event)" accept=".pdf,image/*" />
+                @if (bgDocFileName()) {
+                  <div class="file-attached-badge">
+                    <svg class="ui-icon file-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Attached Degree: <strong>{{ bgDocFileName() }}</strong></span>
+                  </div>
+                }
               </div>
             </div>
 
@@ -163,6 +175,19 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       background: var(--color-surface);
       color: var(--color-text);
       font-size: 0.95rem;
+    }
+
+    .file-attached-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #047857;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      margin-top: 0.35rem;
     }
 
     .phone-input-container {
@@ -264,6 +289,9 @@ export class TeacherApplyComponent {
   selectedCountryCode = '+251';
   phoneNumberInput = '';
 
+  cvFileName = signal<string>('');
+  bgDocFileName = signal<string>('');
+
   submitting = signal<boolean>(false);
   submitted = signal<boolean>(false);
 
@@ -287,9 +315,38 @@ export class TeacherApplyComponent {
     return item ? item.flagUrl : 'https://flagcdn.com/w40/et.png';
   }
 
+  onCvSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.cvFileName.set(file.name);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.form.cvDocumentUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onBackgroundDocSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.bgDocFileName.set(file.name);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.form.backgroundDocUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onSubmitApplication(): void {
     if (!this.form.firstName || !this.form.email || !this.form.specialization || !this.phoneNumberInput) {
       this.toastService.show('Please fill in required fields including phone number.', 'error');
+      return;
+    }
+
+    if (!this.form.cvDocumentUrl) {
+      this.toastService.show('Please attach your CV / Resume document (PDF or Photo).', 'error');
       return;
     }
 

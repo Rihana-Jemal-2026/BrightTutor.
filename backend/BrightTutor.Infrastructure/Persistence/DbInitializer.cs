@@ -231,6 +231,10 @@ public static class DbInitializer
             new Course { Name = "Database Engineering & SQL Mastery", Description = "3-Month Intensive: Relational Data Modeling, Complex SQL Queries, Performance Tuning.", ServiceType = ServiceType.Online, IsActive = true },
             new Course { Name = "Kids Coding & Scratch Robotics", Description = "3-Month Fun Track: Visual block programming, Game Development, Logic Building.", ServiceType = ServiceType.HomeToHome, IsActive = true },
             new Course { Name = "Digital Marketing & Social Media Strategy", Description = "3-Month Professional Track: SEO, Content Creation, Ad Campaigns, Analytics.", ServiceType = ServiceType.Online, IsActive = true },
+            new Course { Name = "KG-University Regular Tutoring", Description = "Comprehensive Regular Academic Support & One-on-One Tutoring for KG through University Level.", ServiceType = ServiceType.HomeToHome, IsActive = true },
+            new Course { Name = "G6 National Exam Preparation", Description = "Intensive Preparation & Practice Exams for Grade 6 National/Ministry Examination.", ServiceType = ServiceType.HomeToHome, IsActive = true },
+            new Course { Name = "G8 National Exam Preparation", Description = "Comprehensive Regional Exam Coaching, Mock Tests & Revision for Grade 8 Students.", ServiceType = ServiceType.HomeToHome, IsActive = true },
+            new Course { Name = "G12 National Exam Preparation", Description = "High-Impact Ethiopian University Entrance Examination (EUEE) Prep for Grade 12 Students.", ServiceType = ServiceType.HomeToHome, IsActive = true },
             new Course { Name = "Custom / Requested Subject Specialization", Description = "Personalized Tutoring: Custom academic or professional course requested by student.", ServiceType = ServiceType.Online, IsActive = true }
         };
 

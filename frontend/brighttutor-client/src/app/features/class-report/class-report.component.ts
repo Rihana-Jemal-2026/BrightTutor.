@@ -40,12 +40,10 @@ export class ClassReportComponent implements OnInit {
       const teacherId = this.authService.isTeacher() && user ? user.userId : undefined;
 
       if (this.authService.isTeacher() && this.noAssignedClasses()) {
-        return of({
+        return of<ClassAttendanceReport>({
           classGroupId: '',
-          classGroupName: 'No Assigned Classes',
           startDate: params.startDate,
           endDate: params.endDate,
-          totalSessions: 0,
           totalRecords: 0,
           presentCount: 0,
           absentCount: 0,
