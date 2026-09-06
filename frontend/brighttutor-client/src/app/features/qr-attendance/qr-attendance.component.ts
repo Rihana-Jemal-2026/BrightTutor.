@@ -1,5 +1,9 @@
 import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { LivenessCheck } from '../../services/liveness-check';
+import * as QRCode from 'qrcode';
 import { FormsModule } from '@angular/forms';
 import { QrAttendanceService, QrSessionDto, LiveAttendeeDto } from '../../services/qr-attendance.service';
 import { CourseService, ClassGroupDto } from '../../services/course.service';
@@ -10,12 +14,12 @@ import { ToastService } from '../../services/toast.service';
 @Component({
   selector: 'app-qr-attendance',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="qr-page">
       <div class="page-header">
-        <h1>Dynamic QR + Biometric Face Recognition</h1>
-        <p>1:1 AI Biometric Matching & Classroom Anti-Proxy Attendance System.</p>
+        <h1>QR Attendance & Camera Check</h1>
+        <p>Use the classroom QR token and follow a short camera check to record attendance.</p>
       </div>
 
       <!-- View Selector -->
@@ -23,7 +27,7 @@ import { ToastService } from '../../services/toast.service';
         <button
           type="button"
           class="switch-btn"
-          [class.active]="viewMode() === 'projector'"
+          [hidden]="!canManage()" [class.active]="viewMode() === 'projector'"
           (click)="setViewMode('projector')"
         >
            Classroom Projector Display & Live Roll Call
@@ -76,10 +80,11 @@ import { ToastService } from '../../services/toast.service';
                   <code class="nonce-code">{{ qrSession()?.qrNonce }}</code>
                 </p>
                 <p class="timestamp-tag"> Live Session Time: {{ qrSession()?.timestamp | date:'mediumTime' }}</p>
+                <p class="timestamp-tag">Expires at {{ qrSession()?.expiresAt | date:'mediumTime' }}. Refresh to issue a new token.</p>
               </div>
 
               <div class="qr-actions-row">
-                <button type="button" class="btn-refresh-qr" (click)="onGroupSelected()">
+                <button type="button" class="btn-refresh-qr" (click)="onGroupSelected(true)">
                    Refresh QR Nonce
                 </button>
                 <button type="button" class="btn-quick-scan" (click)="useNonceForScanner()">
@@ -119,7 +124,7 @@ import { ToastService } from '../../services/toast.service';
                         <span class="student-code-text">{{ att.studentCode }}</span>
                         <div class="checkin-meta-row">
                           <span class="time-text"> {{ att.checkInTime }}</span>
-                          <span class="confidence-badge"> {{ att.matchConfidence | number:'1.0-1' }}% Match</span>
+                          @if (att.matchConfidence !== null) { <span class="confidence-badge">{{ att.matchConfidence | number:'1.0-0' }}% face similarity</span> }
                         </div>
                       </div>
                     </div>
@@ -144,8 +149,8 @@ import { ToastService } from '../../services/toast.service';
       @if (viewMode() === 'scanner') {
         <div class="scanner-card">
           <div class="scanner-header">
-            <h3>Student Anti-Proxy Biometric Check-In</h3>
-            <p>Select your student account, align your face in the camera viewport, and verify 1:1 biometric identity.</p>
+            <h3>Student Camera Check-In</h3>
+            <p>Select your class, enter the classroom token, and follow the camera instructions.</p>
           </div>
 
           <!-- Verified Success Banner if checked in -->
@@ -162,7 +167,10 @@ import { ToastService } from '../../services/toast.service';
               <div class="success-details-grid">
                 <div><strong>Status:</strong> <span class="badge-present">{{ verifiedResult()?.status }}</span></div>
                 <div><strong>Check-In Time:</strong> {{ verifiedResult()?.checkInTime }}</div>
-                <div><strong>AI Match Confidence:</strong> <span class="badge-match">{{ biometricConfidence() }}% Biometric Match</span></div>
+                <div><strong>Camera check:</strong> <span class="badge-match">Completed</span></div>
+                @if (verifiedResult()?.faceConfidence != null) {
+                  <div><strong>Face similarity:</strong> <span class="badge-match">{{ verifiedResult().faceConfidence | number:'1.0-0' }}%</span></div>
+                }
               </div>
 
               <div class="side-by-side-proof">
@@ -199,7 +207,7 @@ import { ToastService } from '../../services/toast.service';
 
                 <div class="form-group">
                   <label>Select Target Class Group *</label>
-                  <select [(ngModel)]="scannerForm.classGroupId" name="classGroupId" required class="form-control">
+                  <select [(ngModel)]="scannerForm.classGroupId" (ngModelChange)="invalidateCheck()" name="classGroupId" required class="form-control">
                     <option value="">-- Select Class Group --</option>
                     @for (group of classGroups(); track group.id) {
                       <option [value]="group.id">{{ group.name }}</option>
@@ -226,12 +234,12 @@ import { ToastService } from '../../services/toast.service';
                         <div class="master-pending-badge">
                           <span class="badge-icon"></span> No Master Face ID Enrolled Yet
                         </div>
-                        <p class="profile-student-title">Align your face in the camera to enroll this student's master profile.</p>
+                        <p class="profile-student-title">Ask an administrator to enroll your face before using camera check-in.</p>
                       </div>
                     }
                   </div>
 
-                  <div class="profile-card-actions">
+                  <div class="profile-card-actions" [hidden]="!auth.isAdmin()">
                     <button type="button" class="btn-enroll-live" (click)="enrollCurrentFaceAsMaster()">
                        {{ selectedStudent()?.profilePhotoUrl ? 'Update Master Face Photo' : 'Save Camera as Master Face ID' }}
                     </button>
@@ -245,12 +253,15 @@ import { ToastService } from '../../services/toast.service';
 
               <div class="form-group">
                 <label>Classroom QR Token Nonce *</label>
+                @if (canManage()) {
+                  <button type="button" class="btn-refresh-qr" [disabled]="startingChallenge() || checkingIn() || !scannerForm.classGroupId" (click)="refreshScannerToken()">Get current classroom token</button>
+                }
                 <div class="nonce-input-group">
                   <input
                     type="text"
-                    [(ngModel)]="scannerForm.qrNonce"
+                    [(ngModel)]="scannerForm.qrNonce" (ngModelChange)="invalidateCheck()"
                     name="qrNonce"
-                    placeholder="Scan QR or enter 8-character token (e.g. 8f473c43)"
+                    placeholder="Enter the current classroom QR token"
                     required
                     class="form-control nonce-input"
                   />
@@ -265,9 +276,8 @@ import { ToastService } from '../../services/toast.service';
 
                   <!-- Fallback Face Radar Canvas if Camera is not supported / blocked -->
                   @if (!cameraActive()) {
-                    <div class="camera-simulation-mesh">
-                      <div class="mesh-grid"></div>
-                      <div class="simulated-face-silhouette"></div>
+                    <div class="camera-simulation-mesh" style="display:flex;align-items:center;justify-content:center;color:white;">
+                      <p>Camera off. Start your camera to begin.</p>
                     </div>
                   }
 
@@ -288,19 +298,19 @@ import { ToastService } from '../../services/toast.service';
                   <div class="camera-status-overlay">
                     @if (biometricStatus() === 'MATCHED') {
                       <span class="status-pill status-verified">
-                        <span class="pulse-dot-green"></span>  Biometric Match Confirmed: {{ biometricConfidence() }}% Similarity
+                        <span class="pulse-dot-green"></span>  Camera check complete
                       </span>
                     } @else if (biometricStatus() === 'MISMATCH') {
                       <span class="status-pill status-mismatch">
-                        <span class="pulse-dot-red"></span>  Biometric Mismatch ({{ biometricConfidence() }}%): Proxy Attempt Blocked!
+                        <span class="pulse-dot-red"></span>  Camera check needs attention
                       </span>
                     } @else if (biometricStatus() === 'ENROLLED') {
                       <span class="status-pill status-enrolled">
-                        <span class="pulse-dot-green"></span>  Biometric Profile Ready (Auto-Enroll on Check-In)
+                        <span class="pulse-dot-green"></span>  Face profile registered. Start the camera check.
                       </span>
                     } @else {
                       <span class="status-pill status-scanning">
-                        <span class="pulse-dot-yellow"></span>  Align Face in Frame for Biometric Matching...
+                        <span class="pulse-dot-yellow"></span> {{ identityMatched() ? 'Face matched · Complete the liveness check' : 'Face matching · Look straight at the camera' }}
                       </span>
                     }
                   </div>
@@ -311,21 +321,29 @@ import { ToastService } from '../../services/toast.service';
                   <button type="button" class="btn-camera-toggle" (click)="toggleCamera()">
                     {{ cameraActive() ? ' Turn Off Camera' : ' Start Live Web Camera' }}
                   </button>
-                  <button type="button" class="btn-verify-face" (click)="scanAndVerifyFace()">
-                     Run Instant AI Face Match
+                  <button type="button" class="btn-verify-face" (click)="startLivenessCheck()" [disabled]="!cameraActive() || startingChallenge() || checkingIn()">
+                     {{ startingChallenge() ? 'Starting…' : 'Start / Restart Camera Check' }}
                   </button>
                 </div>
               </div>
 
               <div class="biometric-feedback-notice" [ngClass]="biometricStatusClass()">
-                <p>{{ biometricNotice() }}</p>
+                <p><strong>1. Face matching:</strong> {{ identityMatched() ? 'Passed' : matchingFace() || startingChallenge() ? 'Checking…' : 'Waiting to start' }}</p>
+                <p><strong>2. Liveness check:</strong> {{ livenessComplete() ? 'Passed' : identityMatched() ? 'Follow the head-turn instructions below' : 'Starts automatically after your face matches' }}</p>
+                @if (identityMatched() && liveDescriptorJson()) {
+                  <p><strong>Face similarity: {{ biometricConfidence() }}%</strong> · Compared with the enrolled profile</p>
+                }
+                <p role="status" aria-live="polite">{{ biometricNotice() }}</p>
+                @if (challengeSeconds() > 0) { <p>{{ challengeSeconds() }} seconds remaining</p> }
+                <p>Having trouble with the camera or movements? Ask your teacher to mark attendance manually.</p>
+                @if (canManage()) { <a routerLink="/mark-group-attendance">Open teacher attendance</a> }
               </div>
 
               <!-- Submit Check-in button -->
               <button
                 type="submit"
                 class="btn-checkin"
-                [disabled]="checkingIn() || biometricStatus() === 'MISMATCH'"
+                [disabled]="checkingIn() || !livenessComplete()"
               >
                 @if (checkingIn()) {
                    Verifying Biometrics & Marking Attendance...
@@ -342,7 +360,10 @@ import { ToastService } from '../../services/toast.service';
     </div>
   `,
   styles: [`
+    :host { display: block; width: 100%; min-width: 0; }
     .qr-page {
+      width: 100%;
+      box-sizing: border-box;
       padding: 1.5rem;
       max-width: 1050px;
       margin: 0 auto;
@@ -369,6 +390,8 @@ import { ToastService } from '../../services/toast.service';
       margin-bottom: 1.5rem;
 
       .switch-btn {
+        min-width: 0;
+        white-space: normal;
         flex: 1;
         padding: 0.85rem 1.25rem;
         border-radius: 10px;
@@ -390,6 +413,7 @@ import { ToastService } from '../../services/toast.service';
     }
 
     .projector-card, .scanner-card {
+      min-width: 0;
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: 16px;
@@ -915,13 +939,14 @@ import { ToastService } from '../../services/toast.service';
 
     .form-grid-2 {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1.25rem;
       margin-bottom: 1.25rem;
       @media (max-width: 650px) { grid-template-columns: 1fr; }
     }
 
     .form-group {
+      min-width: 0;
       margin-bottom: 1.25rem;
       label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem; color: var(--color-text); }
       .form-control { width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1.5px solid var(--color-border); font-size: 0.95rem; }
@@ -1033,8 +1058,10 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
 
   selectedStudent = signal<StudentDto | null>(null);
   biometricStatus = signal<'SCANNING' | 'MATCHED' | 'MISMATCH' | 'ENROLLED'>('SCANNING');
-  biometricConfidence = signal<number>(95);
-  biometricNotice = signal<string>('Align your face directly into the camera frame for automated biometric identity verification.');
+  biometricConfidence = signal<number>(0);
+  identityMatched = signal(false);
+  matchingFace = signal(false);
+  biometricNotice = signal<string>('Start your camera, center your face, then start the camera check.');
   liveDescriptorJson = signal<string>('');
 
   capturedSnapshot = signal<string | null>(null);
@@ -1049,12 +1076,25 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
     studentId: '',
     classGroupId: '',
     qrNonce: '',
-    faceVerified: true,
+    faceVerified: false,
     faceSnapshotBase64: '',
-    faceMatchConfidence: 95.0,
+    faceMatchConfidence: 0,
     faceDescriptorJson: ''
   };
 
+  auth = inject(AuthService);
+  canManage = () => this.auth.isAdmin() || this.auth.isTeacher();
+  livenessComplete = signal(false);
+  startingChallenge = signal(false);
+  challengeSeconds = signal(0);
+  qrImage = signal('');
+  private check: LivenessCheck | null = null;
+  private checkStarted = 0;
+  private deadline = 0;
+  private revision = 0;
+  private scanning = false;
+  private destroyed = false;
+  private cameraStarting = false;
   private qrService = inject(QrAttendanceService);
   private courseService = inject(CourseService);
   private studentService = inject(StudentService);
@@ -1062,17 +1102,19 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
 
   ngOnInit(): void {
+    if (!this.canManage()) this.viewMode.set('scanner');
     this.faceService.loadModels().catch(() => {});
 
     this.courseService.getClassGroups().subscribe((res: ClassGroupDto[]) => {
       this.classGroups.set(res);
       if (res.length > 0) {
         this.selectedClassGroupId = res[0].id;
-        this.onGroupSelected();
+        if (this.canManage()) this.onGroupSelected();
       }
     });
 
     this.studentService.getStudents().subscribe((res: StudentDto[]) => {
+      res = this.canManage() ? res : res.filter(s => s.userId === this.auth.currentUser()?.userId || s.id === this.auth.currentUser()?.userId);
       this.students.set(res);
       if (res.length > 0) {
         this.scannerForm.studentId = res[0].id;
@@ -1082,19 +1124,21 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
 
     // Start live roll-call polling for the projector screen
     this.pollTimer = setInterval(() => {
-      if (this.viewMode() === 'projector' && this.selectedClassGroupId) {
+      if (this.canManage() && this.viewMode() === 'projector' && this.selectedClassGroupId) {
         this.loadLiveAttendees();
       }
     }, 4000);
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.stopCamera();
     if (this.pollTimer) clearInterval(this.pollTimer);
     if (this.faceScanInterval) clearInterval(this.faceScanInterval);
   }
 
   onStudentSelected(): void {
+    this.invalidateCheck();
     const s = this.students().find(item => item.id === this.scannerForm.studentId || item.studentId === this.scannerForm.studentId);
     this.selectedStudent.set(s || null);
     this.biometricStatus.set('SCANNING');
@@ -1110,6 +1154,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
   }
 
   setViewMode(mode: 'projector' | 'scanner'): void {
+    if (mode === 'projector' && !this.canManage()) return;
     this.viewMode.set(mode);
     if (mode === 'scanner') {
       this.startCamera();
@@ -1119,27 +1164,24 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
     }
   }
 
-  qrImageUrl(): string {
-    const session = this.qrSession();
-    if (!session) return '';
-    const payload = JSON.stringify({
-      classGroupId: session.classGroupId,
-      qrNonce: session.qrNonce,
-      timestamp: session.timestamp,
-      location: session.location
-    });
-    return `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(payload)}&margin=10`;
-  }
+  qrImageUrl(): string { return this.qrImage(); }
 
-  onGroupSelected(): void {
+  onGroupSelected(refresh = false): void {
     if (!this.selectedClassGroupId) return;
-    this.qrService.generateSessionQr(this.selectedClassGroupId).subscribe({
+    const groupId = this.selectedClassGroupId;
+    this.qrService.generateSessionQr(groupId, refresh).subscribe({
       next: (res) => {
+        if (this.destroyed || groupId !== this.selectedClassGroupId) return;
+        this.invalidateCheck();
         this.qrSession.set(res);
+        QRCode.toDataURL(JSON.stringify({ classGroupId: res.classGroupId, qrNonce: res.qrNonce }), { width: 240, margin: 2 })
+          .then(url => { if (this.qrSession() === res) this.qrImage.set(url); })
+          .catch(() => this.toastService.show('Could not draw the QR code. Use the displayed token.', 'error'));
         this.scannerForm.qrNonce = res.qrNonce;
         this.scannerForm.classGroupId = res.classGroupId;
         this.loadLiveAttendees();
-      }
+      },
+      error: (err) => this.toastService.show(err.error?.message || 'Could not create classroom QR.', 'error')
     });
   }
 
@@ -1153,101 +1195,148 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
     this.toastService.show('QR Nonce loaded into scanner! Align face to check in.', 'success');
   }
 
-  async startCamera(): Promise<void> {
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
-        });
-        this.mediaStream = stream;
-        this.cameraActive.set(true);
+  invalidateCheck(message = 'Start the camera check when you are ready.'): void {
+    this.revision++;
+    this.check = null;
+    this.livenessComplete.set(false);
+    this.startingChallenge.set(false);
+    this.challengeSeconds.set(0);
+    this.liveDescriptorJson.set('');
+    this.biometricConfidence.set(0);
+    this.identityMatched.set(false);
+    this.matchingFace.set(false);
+    this.biometricStatus.set('SCANNING');
+    this.biometricNotice.set(message);
+  }
 
-        setTimeout(() => {
-          if (this.videoElement && this.videoElement.nativeElement) {
-            this.videoElement.nativeElement.srcObject = stream;
-            this.startFaceVerificationLoop();
-          }
-        }, 100);
+  async startCamera(): Promise<void> {
+    if (this.cameraStarting || this.cameraActive() || this.destroyed) return;
+    this.cameraStarting = true;
+    const revision = this.revision;
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera unavailable');
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } });
+      if (this.destroyed || this.viewMode() !== 'scanner' || revision !== this.revision) {
+        stream.getTracks().forEach(t => t.stop()); return;
       }
-    } catch (err) {
-      this.cameraActive.set(false);
-      this.biometricStatus.set('MATCHED');
-      this.biometricConfidence.set(96);
-      this.biometricNotice.set(' Simulation Mode: Camera unavailable. Verified position test active.');
-    }
+      this.mediaStream = stream;
+      this.cameraActive.set(true);
+      const video = this.videoElement?.nativeElement;
+      if (!video) throw new Error('Camera view unavailable');
+      video.srcObject = stream;
+      await video.play();
+      if (this.destroyed || this.mediaStream !== stream) return;
+      stream.getVideoTracks().forEach(t => t.addEventListener('ended', () => this.stopCamera()));
+      this.startFaceVerificationLoop();
+    } catch {
+      this.stopCamera();
+      this.biometricNotice.set('Camera unavailable. Allow camera access and retry, or ask your teacher to mark attendance manually.');
+    } finally { this.cameraStarting = false; }
   }
 
   stopCamera(): void {
-    if (this.mediaStream) {
-      this.mediaStream.getTracks().forEach(track => track.stop());
-      this.mediaStream = null;
-    }
-    if (this.faceScanInterval) {
-      clearInterval(this.faceScanInterval);
-      this.faceScanInterval = null;
-    }
+    this.invalidateCheck('Camera stopped. Restart it to complete a new check.');
+    this.mediaStream?.getTracks().forEach(track => track.stop());
+    this.mediaStream = null;
+    if (this.faceScanInterval) clearInterval(this.faceScanInterval);
+    this.faceScanInterval = null;
     this.cameraActive.set(false);
   }
 
-  toggleCamera(): void {
-    if (this.cameraActive()) {
-      this.stopCamera();
-    } else {
-      this.startCamera();
+  toggleCamera(): void { if (this.cameraActive()) this.stopCamera(); else void this.startCamera(); }
+
+  refreshScannerToken(retry = false): void {
+    if (!this.canManage() || !this.scannerForm.classGroupId) return;
+    this.invalidateCheck('Getting the current classroom token…');
+    const revision = this.revision;
+    const groupId = this.scannerForm.classGroupId;
+    this.startingChallenge.set(true);
+    this.qrService.generateSessionQr(groupId).subscribe({
+      next: session => {
+        if (this.destroyed || revision !== this.revision || groupId !== this.scannerForm.classGroupId) return;
+        this.scannerForm.qrNonce = session.qrNonce;
+        if (this.selectedClassGroupId === groupId) {
+          this.qrSession.set(session);
+          QRCode.toDataURL(JSON.stringify({ classGroupId: session.classGroupId, qrNonce: session.qrNonce }), { width: 240, margin: 2 })
+            .then(url => { if (this.qrSession() === session) this.qrImage.set(url); })
+            .catch(() => this.qrImage.set(''));
+        }
+        this.startingChallenge.set(false);
+        this.biometricNotice.set('Current classroom token loaded. Start the camera check.');
+        if (retry) this.startLivenessCheck(false);
+      },
+      error: err => {
+        if (revision === this.revision) this.invalidateCheck(err.error?.message || 'Could not retrieve this class token. Ask the assigned teacher to refresh the classroom QR.');
+      }
+    });
+  }
+
+  startLivenessCheck(recoverToken = true): void {
+    this.invalidateCheck();
+    if (!this.cameraActive() || !this.selectedStudent()?.faceDescriptorJson) {
+      this.biometricNotice.set('Start the camera and use a profile enrolled by an administrator. Your teacher can help with manual attendance.');
+      return;
     }
+    if (!this.scannerForm.classGroupId || !this.scannerForm.qrNonce.trim()) {
+      this.biometricNotice.set('Choose your class group and enter its current QR token first.'); return;
+    }
+    const revision = this.revision;
+    this.startingChallenge.set(true);
+    this.qrService.startChallenge(this.scannerForm.studentId, this.scannerForm.classGroupId, this.scannerForm.qrNonce.trim()).subscribe({
+      next: challenge => {
+        if (revision !== this.revision || this.destroyed) return;
+        this.startingChallenge.set(false);
+        try {
+          this.check = new LivenessCheck(challenge, JSON.parse(this.selectedStudent()!.faceDescriptorJson!));
+          this.matchingFace.set(true);
+          this.checkStarted = performance.now();
+          this.deadline = this.checkStarted + Math.min(60000, Date.parse(challenge.expiresAt) - Date.parse(challenge.issuedAt));
+          this.biometricNotice.set(this.check.instruction);
+        } catch { this.invalidateCheck('Face profile is invalid. Ask an administrator to enroll it again.'); }
+      },
+      error: err => {
+        if (revision !== this.revision) return;
+        if (recoverToken && this.canManage() && err.error?.code === 'QR_SESSION_INVALID') {
+          this.refreshScannerToken(true);
+          return;
+        }
+        this.invalidateCheck(err.error?.message || 'Could not start the check. Check your enrollment and classroom token, then retry.');
+      }
+    });
   }
 
   startFaceVerificationLoop(): void {
     if (this.faceScanInterval) clearInterval(this.faceScanInterval);
-
     this.faceScanInterval = setInterval(() => {
-      if (this.cameraActive() && this.videoElement?.nativeElement) {
-        this.scanAndVerifyFace();
+      if (this.check) {
+        this.challengeSeconds.set(Math.max(0, Math.ceil((this.deadline - performance.now()) / 1000)));
+        if (performance.now() >= this.deadline) { this.invalidateCheck('Camera check expired. Start a new check.'); return; }
       }
-    }, 1500);
+      void this.scanAndVerifyFace();
+    }, 200);
   }
 
   async scanAndVerifyFace(): Promise<void> {
-    if (!this.videoElement?.nativeElement || !this.cameraActive()) return;
-
+    if (this.scanning || !this.check || this.checkingIn() || !this.cameraActive() || !this.videoElement?.nativeElement) return;
+    const check = this.check;
+    const revision = this.revision;
+    this.scanning = true;
     try {
       const detection = await this.faceService.extractFaceDescriptor(this.videoElement.nativeElement);
-      if (!detection) {
-        this.biometricStatus.set('SCANNING');
-        this.biometricNotice.set(' Looking for face... Please center your face in the viewport.');
-        return;
-      }
-
+      if (revision !== this.revision) return;
+      if (!detection) throw new Error('Keep exactly one face in the camera. Start the check again.');
+      if (performance.now() >= this.deadline) throw new Error('Camera check expired. Start again.');
+      check.add({ at: performance.now() - this.checkStarted, eye: detection.eye, yaw: detection.yaw, descriptor: detection.descriptorArray });
+      this.biometricConfidence.set(check.similarityPercent ?? 0);
+      this.identityMatched.set(check.identityMatched);
+      this.matchingFace.set(!check.identityMatched);
       this.liveDescriptorJson.set(JSON.stringify(detection.descriptorArray));
-      const student = this.selectedStudent();
-
-      if (student && student.faceDescriptorJson) {
-        try {
-          const registeredDescriptor = JSON.parse(student.faceDescriptorJson);
-          const comparison = this.faceService.compareDescriptors(detection.descriptor, registeredDescriptor);
-
-          this.biometricConfidence.set(comparison.confidencePercent);
-
-          if (comparison.isMatch) {
-            this.biometricStatus.set('MATCHED');
-            this.biometricNotice.set(` Biometric Match: ${comparison.confidencePercent}% Confidence! (Identity matches ${student.firstName})`);
-          } else {
-            this.biometricStatus.set('MISMATCH');
-            this.biometricNotice.set(` Biometric Mismatch (${comparison.confidencePercent}%): Live face does NOT match ${student.firstName}'s registered profile! Anti-Proxy Lock Active.`);
-          }
-        } catch {
-          this.biometricStatus.set('MATCHED');
-          this.biometricConfidence.set(95);
-        }
-      } else {
-        // First-time enrollment for this student
-        this.biometricStatus.set('ENROLLED');
-        this.biometricConfidence.set(98);
-        this.biometricNotice.set(` Clear Face Captured (${detection.score}% Quality). Biometric profile will be enrolled on check-in.`);
-      }
-    } catch {
-      // Fallback
-    }
+      this.livenessComplete.set(check.complete && check.samples.at(-1)!.at >= 1500);
+      this.biometricStatus.set(this.livenessComplete() ? 'MATCHED' : 'SCANNING');
+      this.biometricNotice.set(check.instruction);
+    } catch (err) {
+      if (revision === this.revision) this.invalidateCheck(err instanceof Error ? err.message : 'Camera check failed. Please retry.');
+    } finally { this.scanning = false; }
   }
 
   captureSelfieSnapshot(): string | null {
@@ -1268,11 +1357,13 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
   resetVerification(): void {
     this.verifiedResult.set(null);
     this.capturedSnapshot.set(null);
-    this.biometricStatus.set('SCANNING');
-    this.startCamera();
+    this.invalidateCheck();
+    void this.startCamera();
   }
 
   async enrollCurrentFaceAsMaster(): Promise<void> {
+    if (!this.auth.isAdmin()) return;
+    this.invalidateCheck();
     const student = this.selectedStudent();
     if (!student) {
       this.toastService.show('Please select a student profile first.', 'error');
@@ -1299,8 +1390,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
           student.profilePhotoUrl = photoBase64;
           student.faceDescriptorJson = descriptorJson;
           this.selectedStudent.set({ ...student });
-          this.biometricStatus.set('MATCHED');
-          this.biometricConfidence.set(98);
+          this.invalidateCheck('Face enrolled. Start a new camera check.');
           this.biometricNotice.set(` Master Face Profile Enrolled for ${student.firstName}! Real-time 1:1 matching is now active.`);
           this.toastService.show(` Master Face ID Enrolled for ${student.firstName} ${student.lastName}!`, 'success');
         },
@@ -1314,6 +1404,8 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
   }
 
   async onUploadMasterFace(event: any): Promise<void> {
+    if (!this.auth.isAdmin()) return;
+    this.invalidateCheck();
     const student = this.selectedStudent();
     if (!student) {
       this.toastService.show('Please select a student profile first.', 'error');
@@ -1337,8 +1429,7 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
                   student.profilePhotoUrl = photoBase64;
                   student.faceDescriptorJson = descriptorJson;
                   this.selectedStudent.set({ ...student });
-                  this.biometricStatus.set('MATCHED');
-                  this.biometricConfidence.set(98);
+                  this.invalidateCheck('Face enrolled. Start a new camera check.');
                   this.toastService.show(` Master Face ID Enrolled for ${student.firstName} ${student.lastName}!`, 'success');
                 },
                 error: (err) => {
@@ -1366,33 +1457,27 @@ export class QrAttendanceComponent implements OnInit, OnDestroy {
   }
 
   onScanSubmit(): void {
-    if (!this.scannerForm.studentId || !this.scannerForm.classGroupId) {
-      this.toastService.show('Please select student profile and class group.', 'error');
-      return;
+    const check = this.check;
+    const last = check?.samples.at(-1);
+    if (this.checkingIn() || !this.cameraActive() || !this.livenessComplete() || !check || !last ||
+        performance.now() >= this.deadline || performance.now() - this.checkStarted - last.at > 2000) {
+      this.invalidateCheck('Complete a fresh camera check before submitting attendance.'); return;
     }
-
-    if (this.biometricStatus() === 'MISMATCH') {
-      this.toastService.show(' Anti-Proxy Block: Live face does not match selected student record!', 'error');
-      return;
-    }
-
-    // Capture real live camera selfie snapshot
     const selfie = this.captureSelfieSnapshot();
+    if (!selfie) { this.invalidateCheck('Camera snapshot unavailable. Please retry.'); return; }
     this.capturedSnapshot.set(selfie);
-    this.scannerForm.faceSnapshotBase64 = selfie || '';
-    this.scannerForm.faceMatchConfidence = this.biometricConfidence();
-    this.scannerForm.faceDescriptorJson = this.liveDescriptorJson();
-
     this.checkingIn.set(true);
-    this.qrService.scanCheckIn(this.scannerForm).subscribe({
-      next: (res) => {
+    this.qrService.scanCheckIn({ ...this.scannerForm, qrNonce: this.scannerForm.qrNonce.trim(), faceSnapshotBase64: selfie,
+      challengeId: check.challenge.id, samples: [...check.samples] }).subscribe({
+      next: res => {
         this.checkingIn.set(false);
         this.verifiedResult.set(res);
-        this.toastService.show(res.message || 'Check-in verified successfully via AI Face Recognition & QR Nonce.', 'success');
+        this.stopCamera();
+        this.toastService.show(res.message || 'Attendance recorded.', 'success');
       },
-      error: (err) => {
+      error: err => {
         this.checkingIn.set(false);
-        this.toastService.show(err.error?.message || 'Check-in failed.', 'error');
+        this.invalidateCheck(err.error?.message || 'Check-in failed. Start a new camera check.');
       }
     });
   }

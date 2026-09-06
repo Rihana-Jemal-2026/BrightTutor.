@@ -11,6 +11,8 @@ export interface FaceDetectionResult {
     height: number;
   };
   score: number;
+  eye: number;
+  yaw: number;
 }
 
 export interface FaceComparisonResult {
@@ -26,10 +28,16 @@ export interface FaceComparisonResult {
 export class FaceRecognitionService {
   modelsLoaded = signal<boolean>(false);
   loadingModels = signal<boolean>(false);
+  private modelLoad: Promise<void> | null = null;
 
   async loadModels(): Promise<void> {
-    if (this.modelsLoaded() || this.loadingModels()) return;
+    if (this.modelsLoaded()) return;
+    if (this.modelLoad) return this.modelLoad;
+    this.modelLoad = this.initializeModels();
+    try { await this.modelLoad; } finally { this.modelLoad = null; }
+  }
 
+  private async initializeModels(): Promise<void> {
     try {
       this.loadingModels.set(true);
       const MODEL_URL = '/models';
@@ -57,23 +65,33 @@ export class FaceRecognitionService {
 
     const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
     const result = await faceapi
-      .detectSingleFace(input, options)
+      .detectAllFaces(input, options)
       .withFaceLandmarks()
-      .withFaceDescriptor();
+      .withFaceDescriptors();
 
-    if (!result) return null;
+    if (result.length !== 1) return null;
 
-    const box = result.detection.box;
+    const face = result[0];
+    const points = face.landmarks.positions;
+    const distance = (a: number, b: number) => Math.hypot(points[a].x - points[b].x, points[a].y - points[b].y);
+    const eyeRatio = (offset: number) => (distance(offset + 1, offset + 5) + distance(offset + 2, offset + 4)) / (2 * distance(offset, offset + 3));
+    const leftX = (points[36].x + points[39].x) / 2;
+    const rightX = (points[42].x + points[45].x) / 2;
+
+    const box = face.detection.box;
     return {
-      descriptor: result.descriptor,
-      descriptorArray: Array.from(result.descriptor),
+      descriptor: face.descriptor,
+      descriptorArray: Array.from(face.descriptor),
+      eye: (eyeRatio(36) + eyeRatio(42)) / 2,
+      // Raw camera pixels are not mirrored: the person's left is image-right.
+      yaw: ((leftX + rightX) / 2 - points[30].x) / Math.abs(rightX - leftX),
       detectionBox: {
         x: box.x,
         y: box.y,
         width: box.width,
         height: box.height
       },
-      score: Math.round(result.detection.score * 100)
+      score: Math.round(face.detection.score * 100)
     };
   }
 

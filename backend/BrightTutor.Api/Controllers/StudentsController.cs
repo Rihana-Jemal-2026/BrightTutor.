@@ -47,8 +47,11 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/enroll-face")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
     public async Task<IActionResult> EnrollStudentFace(Guid id, [FromBody] EnrollStudentFaceDto dto, [FromServices] BrightTutor.Application.Abstractions.Persistence.IApplicationDbContext context)
     {
+        if (BrightTutor.Api.Services.AttendanceLiveness.ParseDescriptor(dto.FaceDescriptorJson) == null)
+            return BadRequest(new { message = "A valid face descriptor is required." });
         var student = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(
             context.Students.Include(s => s.User), 
             s => s.Id == id || s.UserId == id);

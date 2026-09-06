@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { LivenessChallenge, LivenessSample } from './liveness-check';
 
 export interface QrSessionDto {
   classGroupId: string;
@@ -9,6 +10,7 @@ export interface QrSessionDto {
   timestamp: string;
   location: string;
   qrNonce: string;
+  expiresAt: string;
 }
 
 export interface LiveAttendeeDto {
@@ -18,12 +20,14 @@ export interface LiveAttendeeDto {
   studentCode: string;
   referencePhotoUrl?: string;
   liveSnapshotUrl?: string;
-  matchConfidence: number;
+  matchConfidence: number | null;
   checkInTime: string;
   status: string;
 }
 
 export interface QrScanCheckInDto {
+  challengeId: string;
+  samples: LivenessSample[];
   studentId: string;
   classGroupId: string;
   qrNonce: string;
@@ -41,8 +45,12 @@ export class QrAttendanceService {
 
   constructor(private http: HttpClient) {}
 
-  generateSessionQr(classGroupId: string): Observable<QrSessionDto> {
-    return this.http.get<QrSessionDto>(`${this.apiUrl}/generate-session-qr?classGroupId=${classGroupId}`);
+  startChallenge(studentId: string, classGroupId: string, qrNonce: string): Observable<LivenessChallenge> {
+    return this.http.post<LivenessChallenge>(`${this.apiUrl}/liveness-challenge`, { studentId, classGroupId, qrNonce });
+  }
+
+  generateSessionQr(classGroupId: string, refresh = false): Observable<QrSessionDto> {
+    return this.http.get<QrSessionDto>(`${this.apiUrl}/generate-session-qr?classGroupId=${classGroupId}&refresh=${refresh}`);
   }
 
   scanCheckIn(dto: QrScanCheckInDto): Observable<any> {

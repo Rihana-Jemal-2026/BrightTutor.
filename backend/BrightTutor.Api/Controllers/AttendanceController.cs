@@ -25,9 +25,20 @@ public class AttendanceController : ControllerBase
     }
 
     [HttpPost("group")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin,Teacher")]
     public async Task<ActionResult<MarkGroupAttendanceResponse>> MarkGroupAttendance(
-        [FromBody] MarkGroupAttendanceCommand command)
+        [FromBody] MarkGroupAttendanceCommand command,
+        [FromServices] BrightTutor.Application.Abstractions.Authentication.ICurrentUserService user,
+        [FromServices] BrightTutor.Application.Abstractions.Persistence.IApplicationDbContext context)
     {
+        if (user.Role == BrightTutor.Domain.Enums.UserRole.Teacher)
+        {
+            var allowed = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync(
+                context.TeacherAssignments, a => a.ClassGroupId == command.ClassGroupId &&
+                a.Teacher.UserId == user.UserId && (a.TeacherId == command.TeacherId || a.Teacher.UserId == command.TeacherId) &&
+                a.StartDate <= DateTime.UtcNow && (a.EndDate == null || a.EndDate > DateTime.UtcNow));
+            if (!allowed) return Forbid();
+        }
         try
         {
             var result = await _mediator.Send(command);

@@ -18,6 +18,8 @@ builder.Services.AddScoped<BrightTutor.Application.Abstractions.Persistence.IApp
 
 // HttpContext & Authentication Services
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<BrightTutor.Api.Services.AttendanceChallengeStore>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
