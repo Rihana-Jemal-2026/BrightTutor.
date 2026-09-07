@@ -3108,26 +3108,59 @@ export class AssessmentsComponent implements OnInit, OnDestroy {
   loadStudents(): void {
     this.studentService.getStudents().subscribe({
       next: (res) => {
-        this.students.set(res);
-        if (res.length > 0) {
-          const user = this.authService.currentUser();
-          if (this.authService.isStudent() && user) {
-            const myStudent = res.find(s => s.userId === user.userId || s.id === user.userId || (s.email && s.email.toLowerCase() === user.email?.toLowerCase()));
-            this.currentStudentId = myStudent ? myStudent.id : res[0].id;
-            this.hwSubmissionStudentId = this.currentStudentId;
+        const user = this.authService.currentUser();
+        if (this.authService.isStudent() && user) {
+          const myStudent = res.find(s => s.userId === user.userId || s.id === user.userId || (s.email && s.email.toLowerCase() === user.email?.toLowerCase()));
+          if (myStudent) {
+            this.students.set([myStudent]);
+            this.currentStudentId = myStudent.id;
+            this.hwSubmissionStudentId = myStudent.id;
           } else {
+            const selfStudent: any = {
+              id: user.userId,
+              userId: user.userId,
+              studentCode: 'STU-PROFILE',
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              gradeLevel: 'Enrolled Course',
+              isActive: true,
+              enrollmentDate: new Date().toISOString()
+            };
+            this.students.set([selfStudent]);
+            this.currentStudentId = user.userId;
+            this.hwSubmissionStudentId = user.userId;
+          }
+        } else {
+          this.students.set(res);
+          if (res.length > 0) {
             this.currentStudentId = res[0].id;
             this.hwSubmissionStudentId = res[0].id;
           }
-          this.loadAssessments();
         }
+        this.loadAssessments();
       }
     });
   }
 
   getSelectedStudent(): StudentDto | undefined {
     const user = this.authService.currentUser();
-    return this.students().find(s => s.id === this.currentStudentId || (user && s.userId === user.userId));
+    if (this.authService.isStudent() && user) {
+      const found = this.students().find(s => s.id === this.currentStudentId || s.userId === user.userId || (s.email && s.email.toLowerCase() === user.email.toLowerCase()));
+      if (found) return found;
+      return {
+        id: user.userId,
+        userId: user.userId,
+        studentCode: 'STU-PROFILE',
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        gradeLevel: 'Enrolled Course',
+        isActive: true,
+        enrollmentDate: new Date().toISOString()
+      } as StudentDto;
+    }
+    return this.students().find(s => s.id === this.currentStudentId);
   }
 
   loadAssessments(): void {

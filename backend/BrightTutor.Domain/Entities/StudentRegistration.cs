@@ -34,6 +34,10 @@ public class StudentRegistration : BaseEntity
     public RegistrationStatus Status { get; set; } = RegistrationStatus.PendingTeacherCheck;
     public string? AdminNotes { get; set; }
 
+    // Calculated Payment & Hourly Rate
+    public decimal? HourlyRate { get; set; }
+    public decimal? MonthlyFee { get; set; }
+
     // Payment Slip Details (Telebirr / CBE Birr)
     public string? PaymentChannel { get; set; } // "CBE Birr", "Telebirr", "Bank Transfer"
     public string? TransactionId { get; set; }

@@ -32,6 +32,7 @@ export class AuthService {
 
   currentUser = signal<LoginResponse | null>(this.getStoredUser());
   userPermissions = signal<string[]>([]);
+  isStudentApproved = signal<boolean>(true);
   isAuthenticated = computed(() => !!this.currentUser());
 
   isSuperAdmin = computed(() => {
@@ -95,6 +96,25 @@ export class AuthService {
 
   constructor(private http: HttpClient) {
     this.loadUserPermissions();
+    this.checkStudentApprovalStatus();
+  }
+
+  checkStudentApprovalStatus(): void {
+    const user = this.currentUser();
+    if (user && this.isStudent()) {
+      this.http.get<any>(`http://localhost:5198/api/studentregistration/track/${encodeURIComponent(user.email)}`).subscribe({
+        next: (track) => {
+          const isApproved = track && (track.statusCode === 4 || track.status === 'VerifiedAndEnrolled');
+          this.isStudentApproved.set(!!isApproved);
+        },
+        error: () => {
+          // Default to true if track endpoint unavailable or student is already fully provisioned
+          this.isStudentApproved.set(true);
+        }
+      });
+    } else {
+      this.isStudentApproved.set(true);
+    }
   }
 
   loadUserPermissions(): void {
@@ -119,6 +139,7 @@ export class AuthService {
         localStorage.setItem('bt_jwt_token', user.token);
         this.currentUser.set(user);
         this.loadUserPermissions();
+        this.checkStudentApprovalStatus();
       })
     );
   }

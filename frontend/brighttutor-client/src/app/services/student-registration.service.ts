@@ -39,6 +39,8 @@ export interface StudentRegistrationDto {
   courseId: string;
   assignedTeacherId?: string;
   assignedTeacherName?: string;
+  hourlyRate?: number;
+  monthlyFee?: number;
   status: number; // 1=PendingTeacherCheck, 2=ApprovedPendingPayment, 3=PaymentSubmitted, 4=VerifiedAndEnrolled, 5=Rejected
   adminNotes?: string;
   paymentChannel?: string;
@@ -59,6 +61,8 @@ export interface RegistrationTrackDto {
   gradeLevel: string;
   courseName: string;
   assignedTeacherName?: string;
+  hourlyRate?: number;
+  monthlyFee?: number;
   status: string;
   statusCode: number;
   statusText: string;
@@ -94,8 +98,8 @@ export class StudentRegistrationService {
     return this.http.get<StudentRegistrationDto[]>(`${this.apiUrl}/pending-approvals`);
   }
 
-  assignTeacher(id: string, teacherId: string, adminNotes?: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/assign-teacher`, { teacherId, adminNotes });
+  assignTeacher(id: string, teacherId: string, adminNotes?: string, hourlyRate?: number, monthlyFee?: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/assign-teacher`, { teacherId, adminNotes, hourlyRate, monthlyFee });
   }
 
   approveRegistration(id: string): Observable<any> {

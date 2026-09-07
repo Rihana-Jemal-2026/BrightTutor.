@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { TeacherApplicationService, TeacherApplicationDto } from '../../services/teacher-application.service';
 import { ToastService } from '../../services/toast.service';
 
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-teacher-screening',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="screening-page">
       <div class="page-header">
@@ -57,7 +59,7 @@ import { ToastService } from '../../services/toast.service';
             <div class="card-actions">
               @if (isStatusPending(item.status)) {
                 <button type="button" class="btn-approve" (click)="approveTeacher(item.id)">Approve Credentials & Generate Teacher Code</button>
-                <button type="button" class="btn-reject" (click)="rejectTeacher(item.id)">Reject Application</button>
+                <button type="button" class="btn-reject" (click)="openRejectModal(item)">Reject Application</button>
               }
               @if (isStatusApproved(item.status)) {
                 <span class="approved-text"> Approved Educator (Active for Class Assignment)</span>
@@ -68,6 +70,33 @@ import { ToastService } from '../../services/toast.service';
           <div class="empty-state">No teacher candidate applications found.</div>
         }
       </div>
+
+      <!-- REJECT TEACHER MODAL -->
+      @if (rejectModalItem(); as targetItem) {
+        <div class="modal-overlay" (click)="rejectModalItem.set(null)">
+          <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h3>Reject Teacher Application</h3>
+              <button type="button" class="close-btn" (click)="rejectModalItem.set(null)">&times;</button>
+            </div>
+
+            <div class="modal-body">
+              <p style="margin-bottom: 0.75rem;">Applicant: <strong>{{ targetItem.firstName }} {{ targetItem.lastName }}</strong> ({{ targetItem.email }})</p>
+              <div class="form-group">
+                <label style="font-weight: 600; font-size: 0.88rem; display: block; margin-bottom: 0.4rem;">Enter Rejection Reason / Feedback *</label>
+                <textarea [(ngModel)]="rejectionReasonInput" rows="4" style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); font-family: inherit; box-sizing: border-box;" placeholder="Please state why this application is rejected (e.g. CV credentials unverified, experience criteria unmet)..." required></textarea>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem; border-top: 1px solid var(--color-border); padding-top: 0.75rem;">
+              <button type="button" style="padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--color-border); background: var(--color-bg); cursor: pointer;" (click)="rejectModalItem.set(null)">Cancel</button>
+              <button type="button" class="btn-reject" (click)="submitRejection(targetItem.id)" [disabled]="!rejectionReasonInput.trim()">
+                Confirm Rejection & Notify Applicant
+              </button>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -95,10 +124,16 @@ import { ToastService } from '../../services/toast.service';
     .status-approved { background: var(--color-success-bg); color: var(--color-success); }
     .status-rejected { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
     .empty-state { text-align: center; padding: 3rem; color: var(--color-muted); background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border); }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-card { background: var(--color-surface); width: 90%; max-width: 500px; border-radius: var(--radius-lg); padding: 1.25rem; border: 1px solid var(--color-border); box-shadow: var(--shadow-card); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem; }
+    .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-muted); }
   `]
 })
 export class TeacherScreeningComponent implements OnInit {
   applications = signal<TeacherApplicationDto[]>([]);
+  rejectModalItem = signal<TeacherApplicationDto | null>(null);
+  rejectionReasonInput = '';
 
   private teacherService = inject(TeacherApplicationService);
   private toastService = inject(ToastService);
@@ -120,12 +155,25 @@ export class TeacherScreeningComponent implements OnInit {
     });
   }
 
-  rejectTeacher(id: string): void {
-    const reason = prompt('Enter rejection reason for candidate:') || 'Qualifications incomplete';
-    this.teacherService.rejectTeacher(id, reason).subscribe({
+  openRejectModal(item: TeacherApplicationDto): void {
+    this.rejectModalItem.set(item);
+    this.rejectionReasonInput = '';
+  }
+
+  submitRejection(id: string): void {
+    if (!this.rejectionReasonInput.trim()) {
+      this.toastService.show('Please enter a rejection reason.', 'error');
+      return;
+    }
+
+    this.teacherService.rejectTeacher(id, this.rejectionReasonInput.trim()).subscribe({
       next: (res) => {
         this.toastService.show(res.message, 'success');
+        this.rejectModalItem.set(null);
         this.loadApplications();
+      },
+      error: (err) => {
+        this.toastService.show(err.error?.message || 'Failed to reject application.', 'error');
       }
     });
   }

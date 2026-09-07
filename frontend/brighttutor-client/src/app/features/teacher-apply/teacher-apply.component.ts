@@ -104,10 +104,24 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
             </div>
           </form>
         } @else {
-          <div class="success-box">
-            <h2>Application Submitted Successfully!</h2>
-            <p>Your application status is <strong>Pending Document Screening</strong>.</p>
-            <p>Our academic board will review your CV and credentials. You will receive an email update at <strong>{{ form.email }}</strong> with your login credentials once approved.</p>
+          <div class="success-box" style="background: rgba(4, 120, 87, 0.05); border: 1.5px solid var(--color-success); border-radius: 12px; padding: 1.5rem; text-align: center;">
+            <h2 style="color: var(--color-success); margin-bottom: 0.5rem;">Application Submitted Successfully!</h2>
+            <p style="font-size: 1rem; color: var(--color-text); margin-bottom: 1rem;">
+              Your application status is <strong>Pending Document Screening</strong> (SLA: 3 to 5 working hours).
+            </p>
+
+            <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1rem; margin: 1rem 0; text-align: left;">
+              <h4 style="margin: 0 0 0.5rem 0; color: var(--color-success); font-size: 0.95rem;"> Your Educator Account Login Credentials</h4>
+              <p style="margin: 0 0 0.4rem 0; font-size: 0.88rem;"><strong>Registered Email:</strong> <code>{{ form.email }}</code></p>
+              <p style="margin: 0 0 0.4rem 0; font-size: 0.88rem;"><strong>Default Password:</strong> <code style="background: rgba(59,130,246,0.15); color: #3b82f6; padding: 0.2rem 0.4rem; border-radius: 4px; font-weight: 700;">TeacherPass123!</code></p>
+              <p style="margin: 0.5rem 0 0 0; font-size: 0.82rem; color: var(--color-muted);">
+                You can log in to your Teacher Dashboard right now to track your document screening status, view admin feedback decisions, or update your profile.
+              </p>
+            </div>
+
+            <a routerLink="/login" class="btn-primary" style="display: inline-block; text-decoration: none; padding: 0.65rem 1.5rem; margin-top: 0.5rem; border-radius: 6px; font-weight: 600;">
+              Go to Login Page
+            </a>
           </div>
         }
       </div>

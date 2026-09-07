@@ -85,18 +85,18 @@ public class GetTeacherPayrollHandler : IRequestHandler<GetTeacherPayrollQuery, 
                 switch (serviceType)
                 {
                     case ServiceType.Online:
-                        rate = 30.00m; // $30/hr
+                        rate = 200.00m; // ETB 200/hr
                         pay = hours * rate;
                         payroll.OnlineEarnings += pay;
                         break;
                     case ServiceType.Group:
-                        rate = 40.00m; // $40/hr
+                        rate = 250.00m; // ETB 250/hr
                         pay = hours * rate;
                         payroll.GroupEarnings += pay;
                         break;
                     case ServiceType.HomeToHome:
-                        rate = 50.00m; // $50/visit
-                        travel = 10.00m; // $10 travel fee
+                        rate = 350.00m; // ETB 350/visit
+                        travel = 100.00m; // ETB 100 travel allowance
                         pay = rate + travel;
                         payroll.HomeVisitEarnings += rate;
                         payroll.TravelAllowance += travel;

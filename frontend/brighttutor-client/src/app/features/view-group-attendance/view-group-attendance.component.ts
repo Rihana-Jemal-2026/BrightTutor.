@@ -46,10 +46,11 @@ export class ViewGroupAttendanceComponent implements OnInit {
       return this.api.getGroupAttendance(id, params.attendanceDate, teacherId).pipe(
         map(records => {
           if (this.authService.isStudent() || this.authService.isParent()) {
-            if (!currentUser) return records;
+            if (!currentUser) return [];
+            const userFullName = `${currentUser.firstName} ${currentUser.lastName}`.trim().toLowerCase();
             return records.filter(r => 
               r.studentId === currentUser.userId || 
-              r.studentName?.toLowerCase().includes(currentUser.firstName.toLowerCase())
+              (r.studentName && r.studentName.trim().toLowerCase() === userFullName)
             );
           }
           return records;

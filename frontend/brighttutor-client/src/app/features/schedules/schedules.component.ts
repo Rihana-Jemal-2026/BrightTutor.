@@ -126,6 +126,17 @@ export class SchedulesComponent implements OnInit {
       status: statusVal
     }).subscribe({
       next: (data) => {
+        if (this.authService.isStudent()) {
+          const user = this.authService.currentUser();
+          if (user) {
+            const userFullName = `${user.firstName} ${user.lastName}`.trim().toLowerCase();
+            data = data.filter(s => 
+              s.studentId === user.userId || 
+              (s.studentName && s.studentName.trim().toLowerCase() === userFullName) ||
+              (s.classGroupId && s.classGroupId.length > 0)
+            );
+          }
+        }
         this.schedules.set(data);
         this.loading.set(false);
       },

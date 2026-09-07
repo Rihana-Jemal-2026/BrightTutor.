@@ -85,17 +85,17 @@ public class GetStudentInvoicesHandler : IRequestHandler<GetStudentInvoicesQuery
                 switch (serviceType)
                 {
                     case ServiceType.Online:
-                        rate = 45.00m; // $45/hr for 1-on-1 Online
+                        rate = 300.00m; // ETB 300/hr for 1-on-1 Online
                         amount = hours * rate;
                         invoice.OnlineTotal += amount;
                         break;
                     case ServiceType.Group:
-                        rate = 25.00m; // $25/hr per student for Group Session
+                        rate = 200.00m; // ETB 200/hr per student for Group Session
                         amount = hours * rate;
                         invoice.GroupTotal += amount;
                         break;
                     case ServiceType.HomeToHome:
-                        rate = 75.00m; // $75 per Home Visit Session
+                        rate = 500.00m; // ETB 500 per Home Visit Session
                         amount = rate;
                         invoice.HomeVisitTotal += amount;
                         break;

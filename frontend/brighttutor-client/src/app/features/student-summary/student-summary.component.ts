@@ -49,7 +49,7 @@ export class StudentSummaryComponent implements OnInit {
         name: `${user.firstName} ${user.lastName}`,
         subtext: user.email
       }]);
-
+      this.filtersTouched.set(true);
     } else {
       this.userService.getUsers(3).subscribe({
         next: (students) => {

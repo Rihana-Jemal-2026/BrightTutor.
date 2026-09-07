@@ -32,21 +32,21 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
           <span class="icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></span>
           <div>
             <strong>Online 1-on-1</strong>
-            <p>Teacher: $30/hr | Student: $45/hr</p>
+            <p>Teacher: ETB 200/hr | Student: ETB 300/hr</p>
           </div>
         </div>
         <div class="rate-badge-item">
           <span class="icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/></svg></span>
           <div>
             <strong>Group Sessions</strong>
-            <p>Teacher: $40/hr | Student: $25/student/hr</p>
+            <p>Teacher: ETB 250/hr | Student: ETB 200/student/hr</p>
           </div>
         </div>
         <div class="rate-badge-item">
           <span class="icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v11h-7v-7h-4v7H3V10Z"/></svg></span>
           <div>
             <strong>Home-to-Home Visit</strong>
-            <p>Teacher: $50/visit + $10 travel | Student: $75/visit</p>
+            <p>Teacher: ETB 350/visit + ETB 100 travel | Student: ETB 500/visit</p>
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
                   <h3>{{ payout.teacherName }}</h3>
                   <span class="sub-text">{{ payout.specialization }}</span>
                 </div>
-                <div class="total-pay-pill">\${{ formatCurrency(payout.totalEarnings) }}</div>
+                <div class="total-pay-pill">ETB {{ formatCurrency(payout.totalEarnings) }}</div>
               </div>
 
               <div class="metrics-row">
@@ -75,7 +75,7 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
                 </div>
                 <div class="metric-box">
                   <span class="label">Travel Allowance</span>
-                  <span class="value">\${{ formatCurrency(payout.travelAllowance) }}</span>
+                  <span class="value">ETB {{ formatCurrency(payout.travelAllowance) }}</span>
                 </div>
               </div>
 
@@ -83,15 +83,15 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
                 <h4>Earnings Breakdown by Delivery Method</h4>
                 <div class="breakdown-item">
                   <span> Online Sessions</span>
-                  <span>\${{ formatCurrency(payout.onlineEarnings) }}</span>
+                  <span>ETB {{ formatCurrency(payout.onlineEarnings) }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span> Group Classes</span>
-                  <span>\${{ formatCurrency(payout.groupEarnings) }}</span>
+                  <span>ETB {{ formatCurrency(payout.groupEarnings) }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span> Home Visits</span>
-                  <span>\${{ formatCurrency(payout.homeVisitEarnings) }}</span>
+                  <span>ETB {{ formatCurrency(payout.homeVisitEarnings) }}</span>
                 </div>
               </div>
             </div>
@@ -111,7 +111,7 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
                   <h3>{{ invoice.studentName }}</h3>
                   <span class="sub-text">Code: {{ invoice.studentCode }} | {{ invoice.gradeLevel }}</span>
                 </div>
-                <div class="total-pay-pill invoice-pill">\${{ formatCurrency(invoice.totalAmountDue) }}</div>
+                <div class="total-pay-pill invoice-pill">ETB {{ formatCurrency(invoice.totalAmountDue) }}</div>
               </div>
 
               <div class="metrics-row">
@@ -129,15 +129,15 @@ import { PayrollService, TeacherPayrollDto, StudentInvoiceDto } from '../../serv
                 <h4>Invoice Charge Summary</h4>
                 <div class="breakdown-item">
                   <span> Online Sessions</span>
-                  <span>\${{ formatCurrency(invoice.onlineTotal) }}</span>
+                  <span>ETB {{ formatCurrency(invoice.onlineTotal) }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span> Group Sessions</span>
-                  <span>\${{ formatCurrency(invoice.groupTotal) }}</span>
+                  <span>ETB {{ formatCurrency(invoice.groupTotal) }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span> Home Visits</span>
-                  <span>\${{ formatCurrency(invoice.homeVisitTotal) }}</span>
+                  <span>ETB {{ formatCurrency(invoice.homeVisitTotal) }}</span>
                 </div>
               </div>
             </div>

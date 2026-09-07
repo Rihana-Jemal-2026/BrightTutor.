@@ -17,13 +17,11 @@ import { ToastService } from '../../services/toast.service';
       <div class="page-header">
         <div>
           <h1>Course, Group & Class Management</h1>
-          <p>Manage courses, online 1-on-1 classes, group sessions, home visits, student enrollments, and teacher assignments.</p>
+          <p>Manage courses, online 1-on-1 classes, group sessions, home visits, and class group rosters.</p>
         </div>
         <div class="header-actions">
           <button type="button" class="btn-create" (click)="openCourseModal()">+ Add Course</button>
           <button type="button" class="btn-create secondary" (click)="openGroupModal()">+ Add Class Group</button>
-          <button type="button" class="btn-create accent" (click)="openEnrollModal()">+ Enroll Student</button>
-          <button type="button" class="btn-create teacher-btn" (click)="openAssignTeacherModal()">+ Assign Teacher</button>
         </div>
       </div>
 
@@ -34,12 +32,6 @@ import { ToastService } from '../../services/toast.service';
         </button>
         <button type="button" class="tab-btn" [class.active]="activeTab() === 'groups'" (click)="activeTab.set('groups')">
           Class Groups ({{ classGroups().length }})
-        </button>
-        <button type="button" class="tab-btn" [class.active]="activeTab() === 'enrollments'" (click)="activeTab.set('enrollments')">
-          Student Enrollments ({{ enrollments().length }})
-        </button>
-        <button type="button" class="tab-btn" [class.active]="activeTab() === 'assignments'" (click)="activeTab.set('assignments')">
-          Teacher Assignments ({{ teacherAssignments().length }})
         </button>
       </div>
 
@@ -147,50 +139,6 @@ import { ToastService } from '../../services/toast.service';
         </div>
       }
 
-      <!-- 3. Student Enrollments View -->
-      @if (activeTab() === 'enrollments') {
-        <div class="table-card">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Course Name</th>
-                <th>Class Group / Room</th>
-                <th>Delivery Method</th>
-                <th>Enrolled Date</th>
-                <th class="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (enrollment of enrollments(); track enrollment.id) {
-                <tr>
-                  <td class="group-name">{{ enrollment.studentName }}</td>
-                  <td>{{ enrollment.courseName }}</td>
-                  <td>{{ enrollment.classGroupName || '1-on-1 Direct' }}</td>
-                  <td>
-                    <span class="service-pill" [class]="getServiceClass(enrollment.serviceType)">
-                      {{ getServiceName(enrollment.serviceType) }}
-                    </span>
-                  </td>
-                  <td>{{ enrollment.enrollmentDate | date:'mediumDate' }}</td>
-                  <td class="text-right actions-cell">
-                    <button
-                      type="button"
-                      class="icon-action-btn toggle deactivate"
-                      title="Unenroll Student"
-                      (click)="unenrollStudent(enrollment)"
-                    >
-                       Unenroll
-                    </button>
-                  </td>
-                </tr>
-              } @empty {
-                <tr><td colspan="6" class="empty-state">No student enrollments found. Click "+ Enroll Student" above to assign a student to a class.</td></tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
 
       <!-- 4. Teacher Assignments View -->
       @if (activeTab() === 'assignments') {

@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, inject, ElementRef, HostListener, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { ToastService } from './services/toast.service';
 import { NotificationService, NotificationDto } from './services/notification.service';
 import { AuthService } from './services/auth.service';
@@ -88,6 +88,18 @@ export class App implements OnInit {
       const user = this.authService.currentUser();
       if (user?.userId) {
         this.fetchUserNotifications(user.userId);
+      }
+    });
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects || event.url;
+        if (this.authService.isStudent() && !this.authService.isStudentApproved()) {
+          if (!url.startsWith('/dashboard') && !url.startsWith('/login')) {
+            this.router.navigate(['/dashboard']);
+            this.toastService.showInfo('Your registration is currently pending approval. Access is restricted to the Dashboard.');
+          }
+        }
       }
     });
   }

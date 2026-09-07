@@ -58,13 +58,16 @@ import { ToastService } from '../../services/toast.service';
             @if (item.assignedTeacherName) {
               <div class="assigned-teacher-banner">
                  <strong>Assigned Tutor:</strong> {{ item.assignedTeacherName }}
+                 @if (item.monthlyFee) {
+                   | <strong>Required Monthly Fee:</strong> ETB {{ item.monthlyFee | number:'1.2-2' }} (at {{ item.hourlyRate || 0 }} ETB/hr rate)
+                 }
               </div>
             }
 
             @if (item.transactionId || item.receiptImageBase64) {
               <div class="receipt-section">
                 <h4> Payment Slip Details</h4>
-                <p><strong>Channel:</strong> {{ item.paymentChannel }} | <strong>Txn ID:</strong> <code class="txn-code">{{ item.transactionId }}</code> | <strong>Amount:</strong> ETB {{ item.amountPaid }}</p>
+                <p><strong>Channel:</strong> {{ item.paymentChannel }} | <strong>Txn ID:</strong> <code class="txn-code">{{ item.transactionId }}</code> | <strong>Amount Paid:</strong> ETB {{ item.amountPaid }}</p>
 
                 @if (item.receiptImageBase64) {
                   <div class="receipt-thumbnail" (click)="selectedItemForReceipt.set(item)">
@@ -104,7 +107,7 @@ import { ToastService } from '../../services/toast.service';
         }
       </div>
 
-      <!-- ASSIGN TEACHER MODAL -->
+      <!-- ASSIGN TEACHER MODAL WITH AUTOMATED MONTHLY FEE CALCULATOR -->
       @if (assignModalItem(); as targetItem) {
         <div class="modal-overlay" (click)="assignModalItem.set(null)">
           <div class="modal-card" (click)="$event.stopPropagation()">
@@ -125,6 +128,29 @@ import { ToastService } from '../../services/toast.service';
                     <option [value]="t.id">{{ t.firstName }} {{ t.lastName }} ({{ t.specialization || 'General Tutor' }})</option>
                   }
                 </select>
+              </div>
+
+              <!-- Automated Monthly Fee Calculation Panel -->
+              <div style="background: rgba(4, 120, 87, 0.06); border: 1px solid rgba(4, 120, 87, 0.25); border-radius: 8px; padding: 0.85rem; margin-top: 1rem;">
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #047857;"> Automated Monthly Fee Calculator</h4>
+                <p style="margin: 0 0 0.5rem 0; font-size: 0.82rem; color: #475569;">
+                  Based on student request: <strong>{{ parsedDaysPerWeek() }} Days/Wk</strong> | <strong>{{ parsedHoursPerSession() }} Hrs/Session</strong> (&approx; {{ totalHoursPerMonth() }} total hrs/month).
+                </p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                  <div class="form-group">
+                    <label>1 HR Rate (ETB) *</label>
+                    <input type="number" [(ngModel)]="hourlyRateInput" (ngModelChange)="onHourlyRateChange()" placeholder="200" required />
+                  </div>
+                  <div class="form-group">
+                    <label>Total Monthly Fee (ETB) *</label>
+                    <input type="number" [(ngModel)]="monthlyFeeInput" placeholder="Calculated Monthly Fee" required />
+                  </div>
+                </div>
+
+                <div style="margin-top: 0.5rem; font-size: 0.85rem; font-weight: 700; color: #047857;">
+                   Calculated: {{ totalHoursPerMonth() }} hrs/mo &times; {{ hourlyRateInput || 0 }} ETB/hr = ETB {{ monthlyFeeInput || 0 | number:'1.2-2' }}/month
+                </div>
               </div>
 
               <div class="form-group margin-top">
@@ -243,6 +269,8 @@ export class PaymentApprovalsComponent implements OnInit {
   assignModalItem = signal<StudentRegistrationDto | null>(null);
   selectedTeacherId = '';
   assignAdminNotes = '';
+  hourlyRateInput = 200;
+  monthlyFeeInput = 0;
 
   selectedItemForReceipt = signal<StudentRegistrationDto | null>(null);
 
@@ -297,10 +325,59 @@ export class PaymentApprovalsComponent implements OnInit {
     return 0;
   }
 
+  parseSessionHours(str?: string): number {
+    if (!str) return 2.0;
+    const match = str.match(/(\d{1,2}):(\d{2})\s*(?:to|-)\s*(\d{1,2}):(\d{2})/i);
+    if (match) {
+      const startH = parseInt(match[1], 10);
+      const startM = parseInt(match[2], 10);
+      const endH = parseInt(match[3], 10);
+      const endM = parseInt(match[4], 10);
+      let diffHours = (endH + endM / 60) - (startH + startM / 60);
+      if (diffHours <= 0) diffHours += 12;
+      return Math.max(0.5, Math.round(diffHours * 10) / 10);
+    }
+    return 2.0;
+  }
+
+  parseWeeklyDays(str?: string): number {
+    if (!str) return 3;
+    let count = 0;
+    const daysKeywords = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const lowerStr = str.toLowerCase();
+    for (const kw of daysKeywords) {
+      if (lowerStr.includes(kw)) count++;
+    }
+    return count > 0 ? count : 3;
+  }
+
+  parsedHoursPerSession(): number {
+    const item = this.assignModalItem();
+    return item ? this.parseSessionHours(item.gradeLevel) : 2.0;
+  }
+
+  parsedDaysPerWeek(): number {
+    const item = this.assignModalItem();
+    return item ? this.parseWeeklyDays(item.gradeLevel) : 3;
+  }
+
+  totalHoursPerMonth(): number {
+    return this.parsedHoursPerSession() * this.parsedDaysPerWeek() * 4;
+  }
+
+  onHourlyRateChange(): void {
+    const totalHrs = this.totalHoursPerMonth();
+    this.monthlyFeeInput = (this.hourlyRateInput || 0) * totalHrs;
+  }
+
   openAssignModal(item: StudentRegistrationDto): void {
     this.assignModalItem.set(item);
     this.selectedTeacherId = '';
     this.assignAdminNotes = '';
+    this.hourlyRateInput = item.hourlyRate || 200;
+    const hrs = this.parseSessionHours(item.gradeLevel);
+    const days = this.parseWeeklyDays(item.gradeLevel);
+    this.monthlyFeeInput = item.monthlyFee || (hrs * days * 4 * this.hourlyRateInput);
   }
 
   submitTeacherAssignment(id: string): void {
@@ -309,7 +386,13 @@ export class PaymentApprovalsComponent implements OnInit {
       return;
     }
 
-    this.regService.assignTeacher(id, this.selectedTeacherId, this.assignAdminNotes).subscribe({
+    this.regService.assignTeacher(
+      id,
+      this.selectedTeacherId,
+      this.assignAdminNotes,
+      this.hourlyRateInput,
+      this.monthlyFeeInput
+    ).subscribe({
       next: (res) => {
         this.toastService.show(res.message, 'success');
         this.assignModalItem.set(null);

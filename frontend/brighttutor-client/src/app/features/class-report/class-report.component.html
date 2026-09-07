@@ -1,7 +1,12 @@
 <div class="page">
   <h1>Class Attendance Report</h1>
 
-  @if (noAssignedClasses()) {
+  @if (authService.isStudent()) {
+    <div class="alert alert-warning" style="margin: 1.5rem 0; padding: 1.5rem; border-radius: 12px; background: #fffbe6; border: 1.5px solid #ffe58f; color: #873800;">
+      <h3 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 700;">Class Reports Access Restricted</h3>
+      <p style="margin-bottom: 0; line-height: 1.5; font-size: 0.95rem;">Class Attendance Reports are reserved for Teachers and Administrators to monitor group performance. To view your individual attendance history, please navigate to your <strong>Student Summary</strong> or <strong>Student Calendar</strong> page.</p>
+    </div>
+  } @else if (noAssignedClasses()) {
     <div class="alert alert-warning" style="margin-bottom: 1.5rem; padding: 1.2rem; background: #fffbe6; border: 1.5px solid #ffe58f; border-radius: 10px; color: #873800;">
       <strong> No Assigned Class Groups Found</strong>
       <p style="margin-top: 0.35rem; margin-bottom: 0;">You currently have no class groups assigned to your educator profile. Please contact Academy Admin to assign your teacher profile to a class group.</p>

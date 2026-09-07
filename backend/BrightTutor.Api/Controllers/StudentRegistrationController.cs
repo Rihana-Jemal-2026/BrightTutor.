@@ -140,7 +140,9 @@ public class StudentRegistrationController : ControllerBase
         string notice = reg.Status switch
         {
             RegistrationStatus.PendingTeacherCheck => "Your registration request is under review. Our academic coordinator is checking tutor availability for your course and location. This takes 3-5 working hours.",
-            RegistrationStatus.ApprovedPendingPayment => $"Great news! Tutor '{reg.AssignedTeacherName ?? "Assigned Tutor"}' has been matched with your profile. Please complete payment via Telebirr or CBE Birr and upload your receipt screenshot & transaction number.",
+            RegistrationStatus.ApprovedPendingPayment => $"Great news! Tutor '{reg.AssignedTeacherName ?? "Assigned Tutor"}' has been matched with your profile. " +
+                (reg.MonthlyFee.HasValue && reg.MonthlyFee.Value > 0 ? $"Calculated Monthly Tuition Fee: ETB {reg.MonthlyFee.Value:N2}. " : "") +
+                "Please complete payment via Telebirr or CBE Birr and upload your receipt screenshot & transaction number.",
             RegistrationStatus.PaymentSubmitted => "Your payment slip and transaction ID have been received. An admin is cross-checking your screenshot. Verification takes 1-3 business hours.",
             RegistrationStatus.VerifiedAndEnrolled => $"Your account is active! Your Student ID is '{reg.IssuedStudentCode}'. You may log in to access your course dashboard.",
             RegistrationStatus.Rejected => $"Registration rejected. Reason: {reg.AdminNotes ?? "Not specified"}.",
@@ -156,6 +158,8 @@ public class StudentRegistrationController : ControllerBase
             gradeLevel = reg.GradeLevel,
             courseName = course?.Name ?? "Selected Course",
             assignedTeacherName = reg.AssignedTeacherName,
+            hourlyRate = reg.HourlyRate,
+            monthlyFee = reg.MonthlyFee,
             status = reg.Status.ToString(),
             statusCode = (int)reg.Status,
             statusText,
@@ -209,6 +213,8 @@ public class StudentRegistrationController : ControllerBase
     {
         public Guid TeacherId { get; set; }
         public string? AdminNotes { get; set; }
+        public decimal? HourlyRate { get; set; }
+        public decimal? MonthlyFee { get; set; }
     }
 
     [HttpPost("{id}/assign-teacher")]
@@ -225,6 +231,9 @@ public class StudentRegistrationController : ControllerBase
 
         reg.AssignedTeacherId = teacher.Id;
         reg.AssignedTeacherName = $"{teacher.User.FirstName} {teacher.User.LastName}";
+        if (dto.HourlyRate.HasValue) reg.HourlyRate = dto.HourlyRate.Value;
+        if (dto.MonthlyFee.HasValue) reg.MonthlyFee = dto.MonthlyFee.Value;
+
         if (!string.IsNullOrWhiteSpace(dto.AdminNotes))
         {
             reg.AdminNotes = dto.AdminNotes;

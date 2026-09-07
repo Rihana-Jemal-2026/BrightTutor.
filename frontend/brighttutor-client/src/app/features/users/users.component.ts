@@ -146,8 +146,6 @@ import { ToastService } from '../../services/toast.service';
                 <select id="role" name="role" [(ngModel)]="newUser.role" class="form-control">
                   <option [ngValue]="1">Admin</option>
                   <option [ngValue]="2">Teacher</option>
-                  <option [ngValue]="3">Student</option>
-                  <option [ngValue]="4">Parent</option>
                 </select>
               </div>
 

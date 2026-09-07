@@ -31,12 +31,26 @@ export class ClassReportComponent implements OnInit {
 
   filtersTouched = signal(false);
   optionsError = signal('');
-  canSearch = computed(() => !!this.startDate() && !!this.endDate() && this.startDate() <= this.endDate() && !this.noAssignedClasses() && (!this.authService.isTeacher() || !!this.classGroupId()) && !this.optionsError());
+  canSearch = computed(() => !this.authService.isStudent() && !!this.startDate() && !!this.endDate() && this.startDate() <= this.endDate() && !this.noAssignedClasses() && (!this.authService.isTeacher() || !!this.classGroupId()) && !this.optionsError());
 
   reportResource = rxResource({
     params: () => this.filtersTouched() && this.canSearch() ? { classGroupId: this.classGroupId(), startDate: this.startDate(), endDate: this.endDate() } : undefined,
     stream: ({ params }) => {
       const user = this.authService.currentUser();
+      if (this.authService.isStudent()) {
+        return of<ClassAttendanceReport>({
+          classGroupId: '',
+          startDate: params.startDate,
+          endDate: params.endDate,
+          totalRecords: 0,
+          presentCount: 0,
+          absentCount: 0,
+          lateCount: 0,
+          excusedCount: 0,
+          overallAttendancePercentage: 0,
+          studentBreakdown: []
+        });
+      }
       const teacherId = this.authService.isTeacher() && user ? user.userId : undefined;
 
       if (this.authService.isTeacher() && this.noAssignedClasses()) {

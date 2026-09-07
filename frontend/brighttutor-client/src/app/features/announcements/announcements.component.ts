@@ -9,6 +9,7 @@ import { EnrollmentService, EnrollmentDto } from '../../services/enrollment.serv
 import { StudentService, StudentDto } from '../../services/student.service';
 import { TeacherService, TeacherDto } from '../../services/teacher.service';
 import { TeacherAssignmentService, TeacherAssignmentDto } from '../../services/teacher-assignment.service';
+import { StudentRegistrationService, RegistrationTrackDto } from '../../services/student-registration.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
 import { AnnouncementDto, CreateAnnouncementRequest } from '../../models/announcement.model';
@@ -52,6 +53,7 @@ export class AnnouncementsComponent implements OnInit {
   private studentService = inject(StudentService);
   private teacherService = inject(TeacherService);
   private teacherAssignmentService = inject(TeacherAssignmentService);
+  private studentRegistrationService = inject(StudentRegistrationService);
   private toast = inject(ToastService);
   public authService = inject(AuthService);
 
@@ -243,87 +245,93 @@ export class AnnouncementsComponent implements OnInit {
   // ==========================================
   initStudentState(): void {
     const user = this.authService.currentUser();
+    if (!user) {
+      this.assignedTeachers.set([]);
+      return;
+    }
 
-    // 1. Fetch real teachers from backend (Dawit Haile, sara jenkins)
     this.teacherService.getTeachers().subscribe({
       next: (realTeachers) => {
-        // 2. Fetch real student entities
-        this.studentService.getStudents().subscribe({
-          next: (students) => {
-            const student = students.find(s => 
-              s.userId === user?.userId || 
-              s.id === user?.userId || 
-              (s.email && s.email.toLowerCase() === user?.email?.toLowerCase())
-            ) || (students.length > 0 ? students[0] : null);
+        // First check registration tracking for explicitly assigned tutor name
+        this.studentRegistrationService.trackRegistration(user.email).subscribe({
+          next: (track) => {
+            const assignedList: AssignedTeacherCard[] = [];
 
-            // 3. Fetch real active enrollments for this student
-            this.enrollmentService.getEnrollments(undefined, undefined, student?.id).subscribe({
-              next: (enrollments) => {
-                const activeEnrollments = enrollments.filter(e => e.isActive);
+            if (track && track.assignedTeacherName) {
+              const matchedTeacher = realTeachers.find(t => 
+                `${t.firstName} ${t.lastName}`.trim().toLowerCase() === track.assignedTeacherName?.trim().toLowerCase() ||
+                t.email.toLowerCase() === track.assignedTeacherName?.trim().toLowerCase()
+              );
 
-                // 4. Fetch real teacher allocations for these courses
-                this.teacherAssignmentService.getTeacherAssignments().subscribe({
-                  next: (assignments) => {
-                    const teachersList: AssignedTeacherCard[] = [];
-                    const addedKeys = new Set<string>();
+              assignedList.push({
+                teacherId: matchedTeacher ? matchedTeacher.id : 'assigned-tutor-id',
+                userId: matchedTeacher ? (matchedTeacher.userId || matchedTeacher.id) : 'assigned-user-id',
+                name: track.assignedTeacherName,
+                email: matchedTeacher ? matchedTeacher.email : 'tutor@brighttutor.com',
+                courseName: track.courseName || 'Assigned Academic Course',
+                isAcceptingMessages: true
+              });
+            }
 
-                    for (const enroll of activeEnrollments) {
-                      const matchingAssignments = assignments.filter(a => a.courseId === enroll.courseId);
-                      
-                      if (matchingAssignments.length > 0) {
-                        for (const assign of matchingAssignments) {
-                          const key = assign.teacherId + '_' + assign.courseId;
-                          if (!addedKeys.has(key)) {
-                            addedKeys.add(key);
-                            const matchedTeacher = realTeachers.find(t => t.id === assign.teacherId || t.teacherId === assign.teacherId || t.userId === assign.teacherId);
-                            const tName = assign.teacherName || (matchedTeacher ? `${matchedTeacher.firstName} ${matchedTeacher.lastName}` : 'Assigned Instructor');
-                            const tEmail = matchedTeacher?.email || `${assign.teacherCode ? assign.teacherCode.toLowerCase() : 'tutor'}@brighttutor.com`;
-                            const tUserId = matchedTeacher?.userId || assign.teacherId;
+            if (assignedList.length > 0) {
+              this.assignedTeachers.set(assignedList);
+            } else {
+              // Try finding teacher allocations for enrolled student
+              this.studentService.getStudents().subscribe({
+                next: (students) => {
+                  const student = students.find(s => 
+                    s.userId === user.userId || 
+                    s.id === user.userId || 
+                    (s.email && s.email.toLowerCase() === user.email.toLowerCase())
+                  );
 
-                            teachersList.push({
-                              teacherId: assign.teacherId,
-                              userId: tUserId,
-                              name: tName,
-                              email: tEmail,
-                              courseName: assign.courseName || enroll.courseName || 'Enrolled Course',
-                              isAcceptingMessages: this.isTeacherAvailable(assign.teacherId, tUserId, tEmail, tName)
-                            });
-                          }
-                        }
-                      } else if (realTeachers.length > 0) {
-                        // Match enrolled course with real registered teachers
-                        const teacherIndex = teachersList.length % realTeachers.length;
-                        const t = realTeachers[teacherIndex];
-                        const key = t.id + '_' + enroll.courseId;
-                        if (!addedKeys.has(key)) {
-                          addedKeys.add(key);
-                          const tName = `${t.firstName} ${t.lastName}`.trim();
-                          teachersList.push({
-                            teacherId: t.id,
-                            userId: t.userId || t.id,
-                            name: tName,
-                            email: t.email,
-                            courseName: enroll.courseName,
-                            isAcceptingMessages: this.isTeacherAvailable(t.id, t.userId, t.email, tName)
-                          });
-                        }
-                      }
-                    }
+                  if (student) {
+                    this.enrollmentService.getEnrollments(undefined, undefined, student.id).subscribe({
+                      next: (enrollments) => {
+                        const activeEnrollments = enrollments.filter(e => e.isActive);
+                        this.teacherAssignmentService.getTeacherAssignments().subscribe({
+                          next: (assignments) => {
+                            const teachersList: AssignedTeacherCard[] = [];
+                            const addedKeys = new Set<string>();
 
-                    // If student has courses mapped to real teachers, use them!
-                    if (teachersList.length > 0) {
-                      this.assignedTeachers.set(teachersList);
-                    } else {
-                      this.mapRealTeachersFallback(realTeachers);
-                    }
-                  },
-                  error: () => this.mapRealTeachersFallback(realTeachers)
-                });
-              },
-              error: () => this.mapRealTeachersFallback(realTeachers)
-            });
+                            for (const enroll of activeEnrollments) {
+                              const matchingAssignments = assignments.filter(a => a.courseId === enroll.courseId);
+                              for (const assign of matchingAssignments) {
+                                const key = assign.teacherId + '_' + assign.courseId;
+                                if (!addedKeys.has(key)) {
+                                  addedKeys.add(key);
+                                  const matchedTeacher = realTeachers.find(t => t.id === assign.teacherId || t.teacherId === assign.teacherId || t.userId === assign.teacherId);
+                                  const tName = assign.teacherName || (matchedTeacher ? `${matchedTeacher.firstName} ${matchedTeacher.lastName}` : 'Assigned Instructor');
+                                  const tEmail = matchedTeacher?.email || 'tutor@brighttutor.com';
+                                  const tUserId = matchedTeacher?.userId || assign.teacherId;
+
+                                  teachersList.push({
+                                    teacherId: assign.teacherId,
+                                    userId: tUserId,
+                                    name: tName,
+                                    email: tEmail,
+                                    courseName: assign.courseName || enroll.courseName || 'Enrolled Course',
+                                    isAcceptingMessages: this.isTeacherAvailable(assign.teacherId, tUserId, tEmail, tName)
+                                  });
+                                }
+                              }
+                            }
+                            this.assignedTeachers.set(teachersList);
+                          },
+                          error: () => this.assignedTeachers.set([])
+                        });
+                      },
+                      error: () => this.assignedTeachers.set([])
+                    });
+                  } else {
+                    this.assignedTeachers.set([]);
+                  }
+                },
+                error: () => this.assignedTeachers.set([])
+              });
+            }
           },
-          error: () => this.mapRealTeachersFallback(realTeachers)
+          error: () => this.assignedTeachers.set([])
         });
       },
       error: () => this.assignedTeachers.set([])

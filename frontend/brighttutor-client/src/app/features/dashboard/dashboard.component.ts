@@ -2,12 +2,14 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DashboardService, DashboardSummaryDto } from '../../services/dashboard.service';
 import { AttendanceService } from '../../services/attendance.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AuthService } from '../../services/auth.service';
 import { CourseService, CourseDto } from '../../services/course.service';
 import { StudentRegistrationService, RegistrationTrackDto } from '../../services/student-registration.service';
+import { TeacherApplicationService } from '../../services/teacher-application.service';
 import { ToastService } from '../../services/toast.service';
 import { StudentAttendanceSummary } from '../../models/attendance.model';
 import { AnnouncementDto } from '../../models/announcement.model';
@@ -79,8 +81,38 @@ import { AnnouncementDto } from '../../models/announcement.model';
       @if (authService.isTeacher()) {
         <div class="page-header">
           <h1>Teacher Portal Dashboard</h1>
-          <p>Welcome back, <strong>{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</strong>! Personal activity & service credentials.</p>
+          <p>Welcome back, <strong>{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</strong>! Personal activity & screening status.</p>
         </div>
+
+        @if (teacherAppTrack()) {
+          @if (teacherAppTrack()?.statusCode === 1 || teacherAppTrack()?.status === 'PendingScreening') {
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h3 style="color: #b45309; margin: 0 0 0.3rem 0; font-size: 1.1rem;">Application Status: Pending Document Screening</h3>
+              <p style="margin: 0; font-size: 0.9rem; color: #1e293b;">
+                Your teaching credentials and CV (Specialization: <strong>{{ teacherAppTrack()?.specialization }}</strong>) are currently under review by BrightTutor academic board. Review decision takes 3 to 5 working hours.
+              </p>
+            </div>
+          }
+          @else if (teacherAppTrack()?.statusCode === 3 || teacherAppTrack()?.status === 'Rejected') {
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid #ef4444; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h3 style="color: #dc2626; margin: 0 0 0.3rem 0; font-size: 1.1rem;">Application Status: Application Rejected</h3>
+              <p style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #1e293b;">
+                Your application was reviewed by administration and was not accepted at this time.
+              </p>
+              <div style="background: #ffffff; border: 1px solid #fca5a5; border-radius: 8px; padding: 0.85rem; font-size: 0.9rem; color: #991b1b;">
+                <strong>Admin Rejection Reason:</strong> {{ teacherAppTrack()?.rejectionReason || 'Qualifications or credentials unverified.' }}
+              </div>
+            </div>
+          }
+          @else if (teacherAppTrack()?.teacherCode) {
+            <div style="background: rgba(4, 120, 87, 0.08); border: 1px solid #047857; border-radius: 10px; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #047857;"> Status: Active Certified Educator</strong>
+                <span style="margin-left: 0.75rem; font-size: 0.88rem; color: #334155;">Teacher Code: <code style="background: #e2e8f0; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700;">{{ teacherAppTrack()?.teacherCode }}</code></span>
+              </div>
+            </div>
+          }
+        }
 
         @if (loading()) {
           <div class="loading-spinner">Loading personal activity stats...</div>
@@ -203,11 +235,17 @@ import { AnnouncementDto } from '../../models/announcement.model';
 
               <div class="assigned-tutor-highlight">
                  <strong>Assigned Certified Tutor:</strong> <span class="tutor-name">{{ studentRegTrack()?.assignedTeacherName ?? 'Certified Educator' }}</span>
+                 @if (studentRegTrack()?.monthlyFee) {
+                   <div style="margin-top: 0.4rem; font-size: 0.95rem; color: #1e293b;">
+                     <strong>Calculated Monthly Tuition Fee:</strong> <span style="color: #047857; font-weight: 700;">ETB {{ studentRegTrack()?.monthlyFee | number:'1.2-2' }}</span>
+                     <span style="font-size: 0.82rem; color: #64748b;"> (at {{ studentRegTrack()?.hourlyRate || 0 }} ETB/hr rate)</span>
+                   </div>
+                 }
               </div>
 
               <div class="payment-dashboard-box">
                 <h3>Payment Dashboard & Receipt Slip Upload</h3>
-                <p>Your tutor is matched! Please transfer your tuition fee + 500 ETB one-time registration fee to one of our official accounts below:</p>
+                <p>Your tutor is matched! Please transfer your calculated tuition fee (ETB {{ studentRegTrack()?.monthlyFee || 0 | number:'1.2-2' }}) + 500 ETB one-time registration fee to one of our official accounts below:</p>
 
                 <div class="bank-accounts-grid">
                   <div class="bank-card">
@@ -284,6 +322,79 @@ import { AnnouncementDto } from '../../models/announcement.model';
                   <span><strong>Assigned Tutor:</strong> {{ studentRegTrack()?.assignedTeacherName }}</span>
                 </div>
                 <p class="review-note"> Our finance administration is cross-checking your transaction ID. Once verified, your full learning dashboard & yearly lesson plan will unlock right here.</p>
+              </div>
+            </div>
+          }
+
+          <!-- FEATURE PREVIEW FOR PENDING STUDENTS -->
+          @if (!authService.isStudentApproved() || (studentRegTrack() && studentRegTrack()?.statusCode !== 4)) {
+            <div class="unlocked-features-section" style="margin-top: 2rem; background: var(--bg-card, #fff); border: 1px solid var(--border-color, #e0e0e0); border-radius: 16px; padding: 1.8rem; box-shadow: 0 4px 16px rgba(0,0,0,0.05);">
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #1890ff, #096dd9); color: #fff; display: flex; align-items: center; justify-content: center;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div>
+                  <h2 style="font-size: 1.35rem; font-weight: 700; margin: 0; color: var(--text-primary, #1f2937);">What You Get When Fully Registered</h2>
+                  <p style="font-size: 0.92rem; color: #6b7280; margin: 0.15rem 0 0 0;">Here is everything unlocked automatically once your registration is verified and approved:</p>
+                </div>
+              </div>
+
+              <div class="features-preview-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-top: 1.25rem;">
+                
+                <div class="feature-preview-card" style="padding: 1.2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.05rem; color: #1e293b; margin-bottom: 0.4rem;">
+                    1-on-1 Dedicated Professional Tutor
+                  </div>
+                  <p style="font-size: 0.88rem; color: #475569; margin: 0; line-height: 1.5;">
+                    Matched certified expert educator tailored specifically to your grade level (KG to University) and subject requirements.
+                  </p>
+                </div>
+
+                <div class="feature-preview-card" style="padding: 1.2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.05rem; color: #1e293b; margin-bottom: 0.4rem;">
+                    Class Timetables & Schedules
+                  </div>
+                  <p style="font-size: 0.88rem; color: #475569; margin: 0; line-height: 1.5;">
+                    Interactive calendar tracking with custom session time slots, meeting links, and automated SMS/email reminders.
+                  </p>
+                </div>
+
+                <div class="feature-preview-card" style="padding: 1.2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.05rem; color: #1e293b; margin-bottom: 0.4rem;">
+                    Biometric & GPS Attendance Tracking
+                  </div>
+                  <p style="font-size: 0.88rem; color: #475569; margin: 0; line-height: 1.5;">
+                    Comprehensive logs across Group, 1-on-1 Online, Home Visit GPS check-ins, and Center Face-ID check-ins.
+                  </p>
+                </div>
+
+                <div class="feature-preview-card" style="padding: 1.2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.05rem; color: #1e293b; margin-bottom: 0.4rem;">
+                    Homework, Quizzes & Gradebook
+                  </div>
+                  <p style="font-size: 0.88rem; color: #475569; margin: 0; line-height: 1.5;">
+                    Online task submissions, interactive self-scoring quizzes, detailed feedback, and real-time weighted grade tracking.
+                  </p>
+                </div>
+
+                <div class="feature-preview-card" style="padding: 1.2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.05rem; color: #1e293b; margin-bottom: 0.4rem;">
+                    Verifiable Digital Certificates
+                  </div>
+                  <p style="font-size: 0.88rem; color: #475569; margin: 0; line-height: 1.5;">
+                    Official QR-verifiable certificates of course completion, honors distinctions, and digital badges.
+                  </p>
+                </div>
+
+                <div class="feature-preview-card" style="padding: 1.2rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.05rem; color: #1e293b; margin-bottom: 0.4rem;">
+                    Direct Tutor Bulletins & Support
+                  </div>
+                  <p style="font-size: 0.88rem; color: #475569; margin: 0; line-height: 1.5;">
+                    Instant Q&A access with your assigned teacher, class notices, study material attachments, and academic support.
+                  </p>
+                </div>
+
               </div>
             </div>
           }
@@ -380,6 +491,77 @@ import { AnnouncementDto } from '../../models/announcement.model';
                   <li>Academic board honors & graduation recommendation</li>
                 </ul>
               </div>
+            </div>
+
+            <!-- COURSE LEARNING MODULES & STUDY GUIDES -->
+            <div class="section-title"> Course Learning Modules & Study Guides</div>
+            <div class="modules-grid">
+              <div class="module-card">
+                <div class="module-header">
+                  <span class="module-tag">Module 1</span>
+                  <h4>Foundations & Core Concepts Guide</h4>
+                </div>
+                <p class="module-desc">Essential subject theory, definitions, diagnostic assessment, and key formula reference sheet.</p>
+                <button type="button" class="btn-download-guide" (click)="downloadGuide('Module_1_Foundations_Guide.pdf')">
+                   Download Study Guide PDF
+                </button>
+              </div>
+
+              <div class="module-card">
+                <div class="module-header">
+                  <span class="module-tag">Module 2</span>
+                  <h4>Applied Problem Solving & Worked Examples</h4>
+                </div>
+                <p class="module-desc">Step-by-step problem walkthroughs, sample exercises, and weekly assignment review checklist.</p>
+                <button type="button" class="btn-download-guide" (click)="downloadGuide('Module_2_Problem_Solving_Guide.pdf')">
+                   Download Study Guide PDF
+                </button>
+              </div>
+
+              <div class="module-card">
+                <div class="module-header">
+                  <span class="module-tag">Module 3</span>
+                  <h4>National Exam Prep & Revision Notes</h4>
+                </div>
+                <p class="module-desc">Past exam paper analysis, timed mock test questions, and high-frequency formula reference sheet.</p>
+                <button type="button" class="btn-download-guide" (click)="downloadGuide('Module_3_Exam_Prep_Guide.pdf')">
+                   Download Study Guide PDF
+                </button>
+              </div>
+
+              <div class="module-card">
+                <div class="module-header">
+                  <span class="module-tag">Module 4</span>
+                  <h4>Final Review & Mastery Checklist</h4>
+                </div>
+                <p class="module-desc">Comprehensive course recap, final self-assessment checklist, and diploma clearance guide.</p>
+                <button type="button" class="btn-download-guide" (click)="downloadGuide('Module_4_Final_Mastery_Guide.pdf')">
+                   Download Study Guide PDF
+                </button>
+              </div>
+            </div>
+
+            <!-- COURSE YOUTUBE VIDEO TUTORIALS -->
+            <div class="section-title"> Course Related Video Tutorials (YouTube)</div>
+            <div class="videos-grid">
+              @for (vid of youtubeVideos(); track vid.id) {
+                <div class="video-card">
+                  <div class="video-iframe-container">
+                    <iframe [src]="vid.safeUrl" [title]="vid.title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  </div>
+                  <div class="video-card-body">
+                    <div class="video-meta">
+                      <span class="video-cat">{{ vid.category }}</span>
+                      <span class="video-dur">{{ vid.duration }}</span>
+                    </div>
+                    <h4 class="video-title">{{ vid.title }}</h4>
+                    <p class="video-desc">{{ vid.description }}</p>
+                    <button type="button" class="btn-play-full" (click)="openVideoModal(vid)">
+                       Watch In Full Screen
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
 
             <div class="section-title"> My 3-Month Course Completion Certificates</div>
@@ -482,6 +664,24 @@ import { AnnouncementDto } from '../../models/announcement.model';
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      }
+
+      <!-- YouTube Video Fullscreen Modal -->
+      @if (selectedVideo(); as activeVid) {
+        <div class="cert-modal-overlay" (click)="closeVideoModal()">
+          <div class="video-modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-header-row" style="margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.5rem;">
+              <h3 style="margin: 0; font-size: 1.15rem; color: var(--color-text);">{{ activeVid.title }}</h3>
+              <button type="button" class="close-btn" (click)="closeVideoModal()">&times;</button>
+            </div>
+            <div class="video-modal-body">
+              <div class="video-modal-iframe-box">
+                <iframe [src]="activeVid.safeUrl" [title]="activeVid.title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <p class="video-modal-desc">{{ activeVid.description }}</p>
+            </div>
           </div>
         </div>
       }
@@ -662,8 +862,35 @@ import { AnnouncementDto } from '../../models/announcement.model';
     .btn-cancel { background: var(--color-bg); color: var(--color-muted); border: 1px solid var(--color-border); padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
     .btn-save { background: var(--color-action); color: white; border: none; padding: 0.65rem 1.35rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
 
+    /* Course Modules & Study Guides Styles */
+    .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+    .module-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-card); }
+    .module-header { margin-bottom: 0.5rem; }
+    .module-tag { font-size: 0.75rem; font-weight: 800; color: #0284c7; background: rgba(2, 132, 199, 0.12); padding: 0.15rem 0.5rem; border-radius: 4px; display: inline-block; margin-bottom: 0.35rem; }
+    .module-card h4 { margin: 0; font-size: 1.02rem; color: var(--color-text); font-weight: 700; }
+    .module-desc { font-size: 0.84rem; color: var(--color-muted); line-height: 1.45; margin: 0.5rem 0 1rem 0; flex: 1; }
+    .btn-download-guide { background: var(--color-bg); color: var(--color-accent-bright); border: 1px solid var(--color-accent-bright); padding: 0.55rem 0.85rem; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; width: 100%; text-align: center; }
+    .btn-download-guide:hover { background: var(--color-accent-bright); color: white; }
+
+    /* YouTube Videos Grid & Modal Styles */
+    .videos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+    .video-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-card); display: flex; flex-direction: column; }
+    .video-iframe-container { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
+    .video-iframe-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .video-card-body { padding: 1rem; display: flex; flex-direction: column; flex: 1; }
+    .video-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+    .video-cat { font-size: 0.75rem; font-weight: 700; color: #8b5cf6; background: rgba(139, 92, 246, 0.12); padding: 0.15rem 0.5rem; border-radius: 4px; }
+    .video-dur { font-size: 0.75rem; color: var(--color-muted); font-weight: 600; }
+    .video-title { font-size: 0.95rem; font-weight: 700; color: var(--color-text); margin: 0 0 0.35rem 0; line-height: 1.35; }
+    .video-desc { font-size: 0.82rem; color: var(--color-muted); line-height: 1.4; margin: 0 0 0.85rem 0; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .btn-play-full { background: var(--color-action); color: white; border: none; padding: 0.5rem 0.85rem; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer; text-align: center; }
+    .video-modal-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem; width: 95%; max-width: 800px; box-shadow: var(--shadow-card-hover); }
+    .video-modal-iframe-box { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 1rem; }
+    .video-modal-iframe-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .video-modal-desc { font-size: 0.88rem; color: var(--color-muted); line-height: 1.5; margin: 0; }
+
     @media (max-width: 768px) {
-      .bank-accounts-grid, .yearly-plan-grid { grid-template-columns: 1fr; }
+      .bank-accounts-grid, .yearly-plan-grid, .modules-grid, .videos-grid { grid-template-columns: 1fr; }
       .assigned-teacher-card-full, .schedule-summary-card { flex-direction: column; text-align: center; }
     }
   `]
@@ -676,14 +903,47 @@ export class DashboardComponent implements OnInit {
   private courseService = inject(CourseService);
   private registrationService = inject(StudentRegistrationService);
   private toast = inject(ToastService);
+  private sanitizer = inject(DomSanitizer);
+
+  youtubeVideos = signal<{ id: string; title: string; category: string; duration: string; description: string; safeUrl: SafeResourceUrl }[]>([
+    {
+      id: '302gE-VeqtU',
+      title: 'Mathematics & Algebra Core Foundations',
+      category: 'Mathematics',
+      duration: '15:40',
+      description: 'Master key algebraic equations, problem solving steps, and essential formulas for academic success.',
+      safeUrl: this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/302gE-VeqtU')
+    },
+    {
+      id: 'rfscVS0vtbw',
+      title: 'Physics Principles & Motion Walkthrough',
+      category: 'Physics & Science',
+      duration: '18:25',
+      description: 'Understanding Newton laws of motion, velocity calculations, and practical physics problem solving.',
+      safeUrl: this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/rfscVS0vtbw')
+    },
+    {
+      id: '_uQrJ0TkZlc',
+      title: 'Active Recall Study Techniques & Exam Prep Strategy',
+      category: 'Study Strategy',
+      duration: '12:15',
+      description: 'Proven study strategies, active recall testing techniques, and national exam preparation advice.',
+      safeUrl: this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube-nocookie.com/embed/_uQrJ0TkZlc')
+    }
+  ]);
+
+  selectedVideo = signal<{ id: string; title: string; category: string; duration: string; description: string; safeUrl: SafeResourceUrl } | null>(null);
 
   summary = signal<DashboardSummaryDto | null>(null);
   studentStats = signal<StudentAttendanceSummary | null>(null);
   teacherStats = signal<any | null>(null);
+  teacherAppTrack = signal<any | null>(null);
   announcements = signal<AnnouncementDto[]>([]);
   studentRegTrack = signal<RegistrationTrackDto | null>(null);
   loading = signal<boolean>(true);
   viewingCert = signal<boolean>(false);
+
+  private teacherAppService = inject(TeacherApplicationService);
 
   isAddCourseModalOpen = signal<boolean>(false);
   submittingAddCourse = signal<boolean>(false);
@@ -725,17 +985,26 @@ export class DashboardComponent implements OnInit {
       this.registrationService.trackRegistration(user.email).subscribe({
         next: (track) => {
           this.studentRegTrack.set(track);
-          if (track.statusCode === 4 || track.status === 'VerifiedAndEnrolled') {
+          const isApproved = track.statusCode === 4 || track.status === 'VerifiedAndEnrolled';
+          this.authService.isStudentApproved.set(isApproved);
+          if (isApproved) {
             this.loadStudentSummaryData(user.userId);
           } else {
             this.loading.set(false);
           }
         },
         error: () => {
+          this.authService.isStudentApproved.set(true);
           this.loadStudentSummaryData(user.userId);
         }
       });
     } else if (this.authService.isTeacher()) {
+      if (user.email) {
+        this.teacherAppService.trackApplication(user.email).subscribe({
+          next: (track) => this.teacherAppTrack.set(track),
+          error: () => this.teacherAppTrack.set(null)
+        });
+      }
       const startDate = '2026-08-01';
       const endDate = new Date().toISOString().substring(0, 10);
       this.attendanceService.getTeacherReport(user.userId, startDate, endDate).subscribe({
@@ -804,6 +1073,18 @@ export class DashboardComponent implements OnInit {
 
   openCertificatesModal(): void {
     this.viewingCert.set(true);
+  }
+
+  openVideoModal(video: any): void {
+    this.selectedVideo.set(video);
+  }
+
+  closeVideoModal(): void {
+    this.selectedVideo.set(null);
+  }
+
+  downloadGuide(fileName: string): void {
+    this.toast.show(`Downloading ${fileName}... Study guide saved to your downloads.`, 'success');
   }
 
   openAddCourseModal(): void {

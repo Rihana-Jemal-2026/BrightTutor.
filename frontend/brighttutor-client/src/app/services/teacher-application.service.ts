@@ -56,6 +56,10 @@ export class TeacherApplicationService {
     return this.http.post(`${this.apiUrl}/${id}/reject`, { reason });
   }
 
+  trackApplication(emailOrId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/track/${encodeURIComponent(emailOrId)}`);
+  }
+
   acceptSla(applicationId: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/accept-sla`, { applicationId });
   }
