@@ -54,22 +54,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               <div class="form-row">
                 <div class="form-group">
                   <label>First Name *</label>
-                  <input type="text" [(ngModel)]="form.firstName" name="firstName" placeholder="e.g. Samuel" required />
+                  <input type="text" [(ngModel)]="form.firstName" name="firstName" placeholder="e.g. Samuel" [class.is-invalid]="isFieldInvalid('firstName')" required />
                 </div>
                 <div class="form-group">
                   <label>Last Name *</label>
-                  <input type="text" [(ngModel)]="form.lastName" name="lastName" placeholder="e.g. Bekele" required />
+                  <input type="text" [(ngModel)]="form.lastName" name="lastName" placeholder="e.g. Bekele" [class.is-invalid]="isFieldInvalid('lastName')" required />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
                   <label>Email Address *</label>
-                  <input type="email" [(ngModel)]="form.email" name="email" placeholder="samuel@gmail.com" required />
+                  <input type="email" [(ngModel)]="form.email" name="email" placeholder="samuel@gmail.com" [class.is-invalid]="isFieldInvalid('email')" required />
                 </div>
                 <div class="form-group">
                   <label>Insert Your Phone Number *</label>
-                  <div class="phone-input-container">
+                  <div class="phone-input-container" [class.is-invalid]="isFieldInvalid('phoneNumber')">
                     <div class="flag-badge" title="Selected Country Flag">
                       <img [src]="getSelectedCountryFlagUrl(selectedCountryCode)" [alt]="selectedCountryCode" class="flag-img" />
                     </div>
@@ -78,7 +78,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                         <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
                       }
                     </select>
-                    <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="Insert your phone number (e.g. 911 000 000)" required />
+                    <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="Insert your phone number (e.g. 911 000 000)" [class.is-invalid]="isFieldInvalid('phoneNumber')" required />
                   </div>
                 </div>
               </div>
@@ -96,7 +96,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <div class="form-group">
                   <label>Home Address / GPS *</label>
                   <div class="address-input-wrapper">
-                    <input type="text" [(ngModel)]="form.address" name="address" placeholder="Bole Subcity, Woreda 03, Addis Ababa" required />
+                    <input type="text" [(ngModel)]="form.address" name="address" placeholder="Bole Subcity, Woreda 03, Addis Ababa" [class.is-invalid]="isFieldInvalid('address')" required />
                     <button type="button" class="btn-gps-inline" (click)="detectGpsLocation()" [disabled]="detectingGps()" [title]="'Detect GPS Coordinates'">
                       📍 {{ detectingGps() ? 'Locating...' : (gpsCaptured() ? 'GPS Captured' : 'Get GPS') }}
                     </button>
@@ -116,7 +116,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
                 <div class="form-group">
                   <label>Select Course Catalog *</label>
-                  <select [(ngModel)]="selectedCourseOption" name="selectedCourseOption" (change)="onCourseSelectedChange()">
+                  <select [(ngModel)]="selectedCourseOption" name="selectedCourseOption" (change)="onCourseSelectedChange()" [class.is-invalid]="isFieldInvalid('course')">
                     <option value="">-- Choose From Available Course Catalog --</option>
                     @for (course of courses(); track course.id) {
                       <option [value]="course.id">{{ course.name }}</option>
@@ -128,7 +128,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
               <!-- SPECIFIC GRADE PROMPT FOR KG-UNIVERSITY TUTORING -->
               @if (isKgUnivSelected()) {
-                <div class="kg-univ-prompt-box">
+                <div class="kg-univ-prompt-box" [class.is-invalid]="isFieldInvalid('kgUnivGradeDetail')">
                   <label class="kg-univ-label">
                     <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                     Specify Target Grade & Subjects for KG-University Tutoring *
@@ -138,6 +138,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                     [(ngModel)]="kgUnivGradeDetail"
                     name="kgUnivGradeDetailInput"
                     placeholder="Specify target grade/subject (e.g. Grade 7 Math & Physics, KG2 Phonics, Grade 11 Chemistry)"
+                    [class.is-invalid]="isFieldInvalid('kgUnivGradeDetail')"
                     required
                   />
                   <span class="field-hint">Please enter the exact grade level and subject focus so we can assign the best tutor.</span>
@@ -170,13 +171,14 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
               }
 
               <!-- DEDICATED PERMANENT PLACE FOR CUSTOM REQUESTED COURSE -->
-              <div class="form-group custom-course-box">
+              <div class="form-group custom-course-box" [class.is-invalid]="isFieldInvalid('course')">
                 <label class="custom-label"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Can't find your course above? Insert your requested course or subject here:</label>
                 <input
                   type="text"
                   [(ngModel)]="customCourseInput"
                   name="customCourseInput"
                   placeholder="Insert the custom course name or subject you want to learn (e.g. Python for Data Science, SAT Chemistry, Amharic Literature)"
+                  [class.is-invalid]="isFieldInvalid('course')"
                 />
               </div>
 
@@ -205,11 +207,11 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   <div class="form-row">
                     <div class="form-group">
                       <label>Wanted Learning Time (From) *</label>
-                      <input type="time" [(ngModel)]="wantedTimeFrom" name="wantedTimeFrom" class="form-control" required />
+                      <input type="time" [(ngModel)]="wantedTimeFrom" name="wantedTimeFrom" class="form-control" [class.is-invalid]="isFieldInvalid('wantedTimeFrom')" required />
                     </div>
                     <div class="form-group">
                       <label>Wanted Learning Time (To) *</label>
-                      <input type="time" [(ngModel)]="wantedTimeTo" name="wantedTimeTo" class="form-control" required />
+                      <input type="time" [(ngModel)]="wantedTimeTo" name="wantedTimeTo" class="form-control" [class.is-invalid]="isFieldInvalid('wantedTimeTo')" required />
                     </div>
                   </div>
 
@@ -574,6 +576,17 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       background: var(--color-surface);
       color: var(--color-text);
       font-size: 0.95rem;
+    }
+
+    .is-invalid, input.is-invalid, select.is-invalid, textarea.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+    }
+
+    .kg-univ-prompt-box.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
     }
 
     .phone-input-container {
@@ -1109,6 +1122,8 @@ export class StudentRegisterComponent implements OnInit {
   enrollCameraActive = signal<boolean>(false);
   private enrollMediaStream: MediaStream | null = null;
 
+  formSubmitted = signal<boolean>(false);
+
   readonly educationalStatusOptions: string[] = [
     'Elementary',
     'High School',
@@ -1144,6 +1159,23 @@ export class StudentRegisterComponent implements OnInit {
     desiredServiceType: 1,
     courseId: ''
   };
+
+  isFieldInvalid(fieldName: string): boolean {
+    if (!this.formSubmitted()) return false;
+    switch (fieldName) {
+      case 'firstName': return !this.form.firstName || !this.form.firstName.trim();
+      case 'lastName': return !this.form.lastName || !this.form.lastName.trim();
+      case 'email': return !this.form.email || !this.form.email.trim();
+      case 'phoneNumber': return !this.phoneNumberInput || !this.phoneNumberInput.trim();
+      case 'address': return !this.form.address || !this.form.address.trim();
+      case 'course': return !this.selectedCourseOption && (!this.customCourseInput || !this.customCourseInput.trim());
+      case 'kgUnivGradeDetail': return this.isKgUnivSelected() && (!this.kgUnivGradeDetail || !this.kgUnivGradeDetail.trim());
+      case 'days': return (this.form.desiredServiceType === 1 || this.form.desiredServiceType === 3) && this.selectedDays.length === 0;
+      case 'wantedTimeFrom': return (this.form.desiredServiceType === 1 || this.form.desiredServiceType === 3) && !this.wantedTimeFrom;
+      case 'wantedTimeTo': return (this.form.desiredServiceType === 1 || this.form.desiredServiceType === 3) && !this.wantedTimeTo;
+      default: return false;
+    }
+  }
 
   detectGpsLocation(): void {
     if (!navigator.geolocation) {
@@ -1353,26 +1385,40 @@ export class StudentRegisterComponent implements OnInit {
   }
 
   onSubmitRegistration(): void {
-    if (!this.form.firstName || !this.form.email || (!this.selectedCourseOption && !this.customCourseInput) || !this.phoneNumberInput) {
-      this.toastService.show('Please fill in all required fields including phone number and selected/custom course.', 'error');
+    this.formSubmitted.set(true);
+    const missing: string[] = [];
+
+    if (!this.form.firstName || !this.form.firstName.trim()) missing.push('First Name');
+    if (!this.form.lastName || !this.form.lastName.trim()) missing.push('Last Name');
+    if (!this.form.email || !this.form.email.trim()) missing.push('Email Address');
+    if (!this.phoneNumberInput || !this.phoneNumberInput.trim()) missing.push('Phone Number');
+    if (!this.form.address || !this.form.address.trim()) missing.push('Home Address / GPS');
+    if (!this.selectedCourseOption && (!this.customCourseInput || !this.customCourseInput.trim())) missing.push('Course Selection');
+
+    if (this.isKgUnivSelected()) {
+      if (!this.kgUnivGradeDetail || !this.kgUnivGradeDetail.trim()) {
+        missing.push('Target Grade & Subject details for KG-University');
+      }
+    }
+
+    if (this.form.desiredServiceType === 1 || this.form.desiredServiceType === 3) {
+      if (this.selectedDays.length === 0) missing.push('Preferred Learning Days');
+      if (!this.wantedTimeFrom || !this.wantedTimeTo) missing.push('Preferred Learning Time Window (From - To)');
+    }
+
+    if (missing.length > 0) {
+      const msg = `You did not fill: ${missing.join(', ')}. Please complete these required fields before submitting.`;
+      this.toastService.show(msg, 'error');
       return;
     }
 
     let finalGradeLevel = this.form.gradeLevel ? this.form.gradeLevel.trim() : 'Educational Status: Not Specified';
 
     if (this.isKgUnivSelected()) {
-      if (!this.kgUnivGradeDetail || !this.kgUnivGradeDetail.trim()) {
-        this.toastService.show('Please specify the exact target grade level and subject focus for KG-University Tutoring.', 'error');
-        return;
-      }
       finalGradeLevel += ` | Target Grade/Subject Request: ${this.kgUnivGradeDetail.trim()}`;
     }
 
     if (this.form.desiredServiceType === 1 || this.form.desiredServiceType === 3) {
-      if (this.selectedDays.length === 0 || !this.wantedTimeFrom || !this.wantedTimeTo) {
-        this.toastService.show('Please select your preferred learning days and time window (From - To).', 'error');
-        return;
-      }
       finalGradeLevel += ` | Preferred Schedule: ${this.selectedDays.join(', ')} (${this.wantedTimeFrom} to ${this.wantedTimeTo})`;
     } else {
       finalGradeLevel += ` | Group Class Schedule: Mon, Wed, Fri (10:00 AM - 12:00 PM)`;
@@ -1462,6 +1508,7 @@ export class StudentRegisterComponent implements OnInit {
 
   resetForm(): void {
     this.currentStep.set(1);
+    this.formSubmitted.set(false);
     this.selectedCourseOption = '';
     this.customCourseInput = '';
     this.phoneNumberInput = '';

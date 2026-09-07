@@ -29,22 +29,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
             <div class="form-row">
               <div class="form-group">
                 <label>First Name *</label>
-                <input type="text" [(ngModel)]="form.firstName" name="firstName" placeholder="e.g. Abebe" required />
+                <input type="text" [(ngModel)]="form.firstName" name="firstName" placeholder="e.g. Abebe" [class.is-invalid]="isFieldInvalid('firstName')" required />
               </div>
               <div class="form-group">
                 <label>Last Name *</label>
-                <input type="text" [(ngModel)]="form.lastName" name="lastName" placeholder="e.g. Kebede" required />
+                <input type="text" [(ngModel)]="form.lastName" name="lastName" placeholder="e.g. Kebede" [class.is-invalid]="isFieldInvalid('lastName')" required />
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label>Email Address *</label>
-                <input type="email" [(ngModel)]="form.email" name="email" placeholder="abebe@gmail.com" required />
+                <input type="email" [(ngModel)]="form.email" name="email" placeholder="abebe@gmail.com" [class.is-invalid]="isFieldInvalid('email')" required />
               </div>
               <div class="form-group">
                 <label>Insert Your Phone Number *</label>
-                <div class="phone-input-container">
+                <div class="phone-input-container" [class.is-invalid]="isFieldInvalid('phoneNumber')">
                   <div class="flag-badge" title="Selected Country Flag">
                     <img [src]="getSelectedCountryFlagUrl(selectedCountryCode)" [alt]="selectedCountryCode" class="flag-img" />
                   </div>
@@ -53,7 +53,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                       <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
                     }
                   </select>
-                  <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="Insert your phone number (e.g. 911 222 333)" required />
+                  <input type="tel" [(ngModel)]="phoneNumberInput" name="phoneNumberInput" placeholder="Insert your phone number (e.g. 911 222 333)" [class.is-invalid]="isFieldInvalid('phoneNumber')" required />
                 </div>
               </div>
             </div>
@@ -61,7 +61,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
             <div class="form-row">
               <div class="form-group">
                 <label>Primary Teaching Specialization *</label>
-                <input type="text" [(ngModel)]="form.specialization" name="specialization" placeholder="e.g. Full-Stack Web Dev / Physics / SAT Math" required />
+                <input type="text" [(ngModel)]="form.specialization" name="specialization" placeholder="e.g. Full-Stack Web Dev / Physics / SAT Math" [class.is-invalid]="isFieldInvalid('specialization')" required />
               </div>
               <div class="form-group">
                 <label>Years of Teaching Experience *</label>
@@ -72,7 +72,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
             <div class="form-row">
               <div class="form-group">
                 <label>Upload CV / Resume Document (PDF or Photo Document) *</label>
-                <input type="file" (change)="onCvSelected($event)" accept=".pdf,image/*" required />
+                <input type="file" (change)="onCvSelected($event)" accept=".pdf,image/*" [class.is-invalid]="isFieldInvalid('cvDocumentUrl')" required />
                 @if (cvFileName()) {
                   <div class="file-attached-badge">
                     <svg class="ui-icon file-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -94,7 +94,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
             <div class="form-group">
               <label>Professional Bio & Teaching Methodology *</label>
-              <textarea [(ngModel)]="form.bioSummary" name="bioSummary" rows="4" placeholder="Briefly describe your teaching experience and approach..." required></textarea>
+              <textarea [(ngModel)]="form.bioSummary" name="bioSummary" rows="4" placeholder="Briefly describe your teaching experience and approach..." [class.is-invalid]="isFieldInvalid('bioSummary')" required></textarea>
             </div>
 
             <div class="form-actions">
@@ -175,6 +175,12 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
       background: var(--color-surface);
       color: var(--color-text);
       font-size: 0.95rem;
+    }
+
+    .is-invalid, input.is-invalid, select.is-invalid, textarea.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
     }
 
     .file-attached-badge {
@@ -294,6 +300,7 @@ export class TeacherApplyComponent {
 
   submitting = signal<boolean>(false);
   submitted = signal<boolean>(false);
+  formSubmitted = signal<boolean>(false);
 
   form = {
     firstName: '',
@@ -309,6 +316,20 @@ export class TeacherApplyComponent {
 
   private teacherService = inject(TeacherApplicationService);
   private toastService = inject(ToastService);
+
+  isFieldInvalid(fieldName: string): boolean {
+    if (!this.formSubmitted()) return false;
+    switch (fieldName) {
+      case 'firstName': return !this.form.firstName || !this.form.firstName.trim();
+      case 'lastName': return !this.form.lastName || !this.form.lastName.trim();
+      case 'email': return !this.form.email || !this.form.email.trim();
+      case 'phoneNumber': return !this.phoneNumberInput || !this.phoneNumberInput.trim();
+      case 'specialization': return !this.form.specialization || !this.form.specialization.trim();
+      case 'cvDocumentUrl': return !this.form.cvDocumentUrl;
+      case 'bioSummary': return !this.form.bioSummary || !this.form.bioSummary.trim();
+      default: return false;
+    }
+  }
 
   getSelectedCountryFlagUrl(dialCode: string): string {
     const item = this.countryList.find(c => c.dialCode === dialCode);
@@ -340,13 +361,19 @@ export class TeacherApplyComponent {
   }
 
   onSubmitApplication(): void {
-    if (!this.form.firstName || !this.form.email || !this.form.specialization || !this.phoneNumberInput) {
-      this.toastService.show('Please fill in required fields including phone number.', 'error');
-      return;
-    }
+    this.formSubmitted.set(true);
+    const missing: string[] = [];
 
-    if (!this.form.cvDocumentUrl) {
-      this.toastService.show('Please attach your CV / Resume document (PDF or Photo).', 'error');
+    if (!this.form.firstName || !this.form.firstName.trim()) missing.push('First Name');
+    if (!this.form.lastName || !this.form.lastName.trim()) missing.push('Last Name');
+    if (!this.form.email || !this.form.email.trim()) missing.push('Email Address');
+    if (!this.phoneNumberInput || !this.phoneNumberInput.trim()) missing.push('Phone Number');
+    if (!this.form.specialization || !this.form.specialization.trim()) missing.push('Primary Specialization');
+    if (!this.form.cvDocumentUrl) missing.push('CV / Resume Document');
+    if (!this.form.bioSummary || !this.form.bioSummary.trim()) missing.push('Professional Bio Summary');
+
+    if (missing.length > 0) {
+      this.toastService.show(`You did not fill: ${missing.join(', ')}. Please complete these required fields.`, 'error');
       return;
     }
 

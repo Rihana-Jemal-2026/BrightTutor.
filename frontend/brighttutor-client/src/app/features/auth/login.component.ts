@@ -101,22 +101,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <div class="form-row">
                   <div class="form-group">
                     <label>First Name *</label>
-                    <input type="text" [(ngModel)]="studentForm.firstName" name="sFirstName" placeholder="Samuel" required />
+                    <input type="text" [(ngModel)]="studentForm.firstName" name="sFirstName" placeholder="Samuel" [class.is-invalid]="isStudentFieldInvalid('firstName')" required />
                   </div>
                   <div class="form-group">
                     <label>Last Name *</label>
-                    <input type="text" [(ngModel)]="studentForm.lastName" name="sLastName" placeholder="Bekele" required />
+                    <input type="text" [(ngModel)]="studentForm.lastName" name="sLastName" placeholder="Bekele" [class.is-invalid]="isStudentFieldInvalid('lastName')" required />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
                     <label>Email Address *</label>
-                    <input type="email" [(ngModel)]="studentForm.email" name="sEmail" placeholder="samuel@gmail.com" required />
+                    <input type="email" [(ngModel)]="studentForm.email" name="sEmail" placeholder="samuel@gmail.com" [class.is-invalid]="isStudentFieldInvalid('email')" required />
                   </div>
                   <div class="form-group">
                     <label>Insert Your Phone Number *</label>
-                    <div class="phone-input-container">
+                    <div class="phone-input-container" [class.is-invalid]="isStudentFieldInvalid('phoneNumber')">
                       <div class="flag-badge" title="Selected Country Flag">
                         <img [src]="getSelectedCountryFlagUrl(studentCountryCode)" [alt]="studentCountryCode" class="flag-img" />
                       </div>
@@ -125,7 +125,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                           <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
                         }
                       </select>
-                      <input type="tel" [(ngModel)]="studentPhoneInput" name="studentPhoneInput" placeholder="Insert your phone number (e.g. 911 000 000)" required />
+                      <input type="tel" [(ngModel)]="studentPhoneInput" name="studentPhoneInput" placeholder="Insert your phone number (e.g. 911 000 000)" [class.is-invalid]="isStudentFieldInvalid('phoneNumber')" required />
                     </div>
                   </div>
                 </div>
@@ -143,7 +143,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   <div class="form-group">
                     <label>Home Address / GPS *</label>
                     <div class="address-input-wrapper">
-                      <input type="text" [(ngModel)]="studentForm.address" name="sAddress" placeholder="Bole Subcity, Woreda 03, Addis Ababa" required />
+                      <input type="text" [(ngModel)]="studentForm.address" name="sAddress" placeholder="Bole Subcity, Woreda 03, Addis Ababa" [class.is-invalid]="isStudentFieldInvalid('address')" required />
                       <button type="button" class="btn-gps-inline" (click)="detectGpsLocation()" [disabled]="detectingGps()" [title]="'Detect GPS Coordinates'">
                         📍 {{ detectingGps() ? 'Locating...' : (gpsCaptured() ? 'GPS Captured' : 'Get GPS') }}
                       </button>
@@ -162,7 +162,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                   </div>
                   <div class="form-group">
                     <label>Course Catalog Selection</label>
-                    <select [(ngModel)]="selectedStudentCourseOption" name="sCourseId">
+                    <select [(ngModel)]="selectedStudentCourseOption" name="sCourseId" [class.is-invalid]="isStudentFieldInvalid('course')">
                       <option value="">-- Choose From Available Course Catalog --</option>
                       @for (c of courses(); track c.id) {
                         <option [value]="c.id">{{ c.name }}</option>
@@ -174,7 +174,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
                 <!-- SPECIFIC GRADE PROMPT FOR KG-UNIVERSITY TUTORING -->
                 @if (isKgUnivSelected()) {
-                  <div class="kg-univ-prompt-box">
+                  <div class="kg-univ-prompt-box" [class.is-invalid]="isStudentFieldInvalid('kgUnivGradeDetail')">
                     <label class="kg-univ-label">
                       <svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                       Specify Target Grade & Subjects for KG-University Tutoring *
@@ -184,6 +184,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                       [(ngModel)]="kgUnivGradeDetail"
                       name="kgUnivGradeDetailInput"
                       placeholder="Specify target grade/subject (e.g. Grade 7 Math & Physics, KG2 Phonics, Grade 11 Chemistry)"
+                      [class.is-invalid]="isStudentFieldInvalid('kgUnivGradeDetail')"
                       required
                     />
                     <span class="field-hint">Please enter the exact grade level and subject focus so we can assign the best tutor.</span>
@@ -216,13 +217,14 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 }
 
                 <!-- DEDICATED PERMANENT PLACE FOR CUSTOM REQUESTED COURSE -->
-                <div class="form-group custom-course-box">
+                <div class="form-group custom-course-box" [class.is-invalid]="isStudentFieldInvalid('course')">
                   <label class="custom-label"><svg class="ui-icon action-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3a2.1 2.1 0 0 1 3 3L7 18l-4 1 1-4L16 3ZM14 5l3 3"/></svg> Can't find your course above? Insert your requested course or subject here:</label>
                   <input
                     type="text"
                     [(ngModel)]="customStudentCourseInput"
                     name="customCourseNameInput"
                     placeholder="Insert the custom course name or subject you want to learn (e.g. Python for Data Science, SAT Chemistry, Amharic Literature)"
+                    [class.is-invalid]="isStudentFieldInvalid('course')"
                   />
                 </div>
 
@@ -251,11 +253,11 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                     <div class="form-row">
                       <div class="form-group">
                         <label>Wanted Learning Time (From) *</label>
-                        <input type="time" [(ngModel)]="wantedTimeFrom" name="sWantedFrom" required />
+                        <input type="time" [(ngModel)]="wantedTimeFrom" name="sWantedFrom" [class.is-invalid]="isStudentFieldInvalid('wantedTimeFrom')" required />
                       </div>
                       <div class="form-group">
                         <label>Wanted Learning Time (To) *</label>
-                        <input type="time" [(ngModel)]="wantedTimeTo" name="sWantedTo" required />
+                        <input type="time" [(ngModel)]="wantedTimeTo" name="sWantedTo" [class.is-invalid]="isStudentFieldInvalid('wantedTimeTo')" required />
                       </div>
                     </div>
                   </div>
@@ -312,22 +314,22 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <div class="form-row">
                   <div class="form-group">
                     <label>First Name *</label>
-                    <input type="text" [(ngModel)]="teacherForm.firstName" name="tFirstName" placeholder="Abebe" required />
+                    <input type="text" [(ngModel)]="teacherForm.firstName" name="tFirstName" placeholder="Abebe" [class.is-invalid]="isTeacherFieldInvalid('firstName')" required />
                   </div>
                   <div class="form-group">
                     <label>Last Name *</label>
-                    <input type="text" [(ngModel)]="teacherForm.lastName" name="tLastName" placeholder="Kebede" required />
+                    <input type="text" [(ngModel)]="teacherForm.lastName" name="tLastName" placeholder="Kebede" [class.is-invalid]="isTeacherFieldInvalid('lastName')" required />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
                     <label>Email Address *</label>
-                    <input type="email" [(ngModel)]="teacherForm.email" name="tEmail" placeholder="abebe@gmail.com" required />
+                    <input type="email" [(ngModel)]="teacherForm.email" name="tEmail" placeholder="abebe@gmail.com" [class.is-invalid]="isTeacherFieldInvalid('email')" required />
                   </div>
                   <div class="form-group">
                     <label>Insert Your Phone Number *</label>
-                    <div class="phone-input-container">
+                    <div class="phone-input-container" [class.is-invalid]="isTeacherFieldInvalid('phoneNumber')">
                       <div class="flag-badge" title="Selected Country Flag">
                         <img [src]="getSelectedCountryFlagUrl(teacherCountryCode)" [alt]="teacherCountryCode" class="flag-img" />
                       </div>
@@ -336,7 +338,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                           <option [value]="c.dialCode">{{ c.flag }} {{ c.dialCode }} ({{ c.name }})</option>
                         }
                       </select>
-                      <input type="tel" [(ngModel)]="teacherPhoneInput" name="teacherPhoneInput" placeholder="Insert your phone number (e.g. 911 222 333)" required />
+                      <input type="tel" [(ngModel)]="teacherPhoneInput" name="teacherPhoneInput" placeholder="Insert your phone number (e.g. 911 222 333)" [class.is-invalid]="isTeacherFieldInvalid('phoneNumber')" required />
                     </div>
                   </div>
                 </div>
@@ -344,7 +346,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
                 <div class="form-row">
                   <div class="form-group">
                     <label>Primary Specialization *</label>
-                    <input type="text" [(ngModel)]="teacherForm.specialization" name="tSpec" placeholder="Web Dev / Physics / SAT Math" required />
+                    <input type="text" [(ngModel)]="teacherForm.specialization" name="tSpec" placeholder="Web Dev / Physics / SAT Math" [class.is-invalid]="isTeacherFieldInvalid('specialization')" required />
                   </div>
                   <div class="form-group">
                     <label>Years of Experience *</label>
@@ -354,7 +356,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
                 <div class="form-group">
                   <label>Upload CV / Resume Document (PDF or Photo Document) *</label>
-                  <input type="file" (change)="onTeacherCvSelected($event)" accept=".pdf,image/*" required />
+                  <input type="file" (change)="onTeacherCvSelected($event)" accept=".pdf,image/*" [class.is-invalid]="isTeacherFieldInvalid('cvDocumentUrl')" required />
                   @if (teacherCvFileName()) {
                     <div class="file-attached-badge">
                       <svg class="ui-icon file-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -365,7 +367,7 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
 
                 <div class="form-group">
                   <label>Professional Bio Summary *</label>
-                  <textarea [(ngModel)]="teacherForm.bioSummary" name="tBio" rows="3" placeholder="Describe your teaching methodology..." required></textarea>
+                  <textarea [(ngModel)]="teacherForm.bioSummary" name="tBio" rows="3" placeholder="Describe your teaching methodology..." [class.is-invalid]="isTeacherFieldInvalid('bioSummary')" required></textarea>
                 </div>
 
                 <button type="submit" class="btn-submit" [disabled]="submittingTeacher()">
@@ -440,6 +442,15 @@ import { COUNTRY_PHONE_LIST } from '../../models/country-phone.data';
     .form-group input, .form-group select, .form-group textarea {
       width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border-radius: 8px; border: 1px solid var(--color-border); font-size: 0.9rem; background: var(--color-surface); color: var(--color-text);
       &:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.2); }
+    }
+    .is-invalid, input.is-invalid, select.is-invalid, textarea.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+    }
+    .kg-univ-prompt-box.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
     }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; width: 100%; box-sizing: border-box; }
 
@@ -798,26 +809,67 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  studentFormSubmitted = signal<boolean>(false);
+  teacherFormSubmitted = signal<boolean>(false);
+
+  isStudentFieldInvalid(fieldName: string): boolean {
+    if (!this.studentFormSubmitted()) return false;
+    switch (fieldName) {
+      case 'firstName': return !this.studentForm.firstName || !this.studentForm.firstName.trim();
+      case 'lastName': return !this.studentForm.lastName || !this.studentForm.lastName.trim();
+      case 'email': return !this.studentForm.email || !this.studentForm.email.trim();
+      case 'phoneNumber': return !this.studentPhoneInput || !this.studentPhoneInput.trim();
+      case 'address': return !this.studentForm.address || !this.studentForm.address.trim();
+      case 'course': return !this.selectedStudentCourseOption && (!this.customStudentCourseInput || !this.customStudentCourseInput.trim());
+      case 'kgUnivGradeDetail': return this.isKgUnivSelected() && (!this.kgUnivGradeDetail || !this.kgUnivGradeDetail.trim());
+      case 'wantedTimeFrom': return (this.studentForm.desiredServiceType === 1 || this.studentForm.desiredServiceType === 3) && !this.wantedTimeFrom;
+      case 'wantedTimeTo': return (this.studentForm.desiredServiceType === 1 || this.studentForm.desiredServiceType === 3) && !this.wantedTimeTo;
+      default: return false;
+    }
+  }
+
+  isTeacherFieldInvalid(fieldName: string): boolean {
+    if (!this.teacherFormSubmitted()) return false;
+    switch (fieldName) {
+      case 'firstName': return !this.teacherForm.firstName || !this.teacherForm.firstName.trim();
+      case 'lastName': return !this.teacherForm.lastName || !this.teacherForm.lastName.trim();
+      case 'email': return !this.teacherForm.email || !this.teacherForm.email.trim();
+      case 'phoneNumber': return !this.teacherPhoneInput || !this.teacherPhoneInput.trim();
+      case 'specialization': return !this.teacherForm.specialization || !this.teacherForm.specialization.trim();
+      case 'cvDocumentUrl': return !this.teacherForm.cvDocumentUrl;
+      case 'bioSummary': return !this.teacherForm.bioSummary || !this.teacherForm.bioSummary.trim();
+      default: return false;
+    }
+  }
+
   onSubmitStudentReg(): void {
-    if (!this.studentForm.firstName || !this.studentForm.email || (!this.selectedStudentCourseOption && !this.customStudentCourseInput) || !this.studentPhoneInput) {
-      this.toastService.showError('Please fill in all required fields including phone number and selected/custom course.');
-      return;
+    this.studentFormSubmitted.set(true);
+    const missing: string[] = [];
+
+    if (!this.studentForm.firstName || !this.studentForm.firstName.trim()) missing.push('First Name');
+    if (!this.studentForm.lastName || !this.studentForm.lastName.trim()) missing.push('Last Name');
+    if (!this.studentForm.email || !this.studentForm.email.trim()) missing.push('Email Address');
+    if (!this.studentPhoneInput || !this.studentPhoneInput.trim()) missing.push('Phone Number');
+    if (!this.studentForm.address || !this.studentForm.address.trim()) missing.push('Home Address / GPS');
+    if (!this.selectedStudentCourseOption && (!this.customStudentCourseInput || !this.customStudentCourseInput.trim())) missing.push('Course Selection');
+
+    if (this.isKgUnivSelected() && (!this.kgUnivGradeDetail || !this.kgUnivGradeDetail.trim())) {
+      missing.push('Target Grade & Subject details for KG-University');
     }
 
     if (this.studentForm.desiredServiceType === 1 || this.studentForm.desiredServiceType === 3) {
-      if (this.selectedDays.length === 0 || !this.wantedTimeFrom || !this.wantedTimeTo) {
-        this.toastService.showError('Please select wanted learning days and wanted time window (From - To hr).');
-        return;
-      }
+      if (this.selectedDays.length === 0) missing.push('Preferred Learning Days');
+      if (!this.wantedTimeFrom || !this.wantedTimeTo) missing.push('Preferred Learning Time Window (From - To)');
+    }
+
+    if (missing.length > 0) {
+      this.toastService.showError(`You did not fill: ${missing.join(', ')}. Please complete these required fields.`);
+      return;
     }
 
     let gradeDetails = this.studentForm.gradeLevel ? this.studentForm.gradeLevel.trim() : 'Educational Status: Not Specified';
 
     if (this.isKgUnivSelected()) {
-      if (!this.kgUnivGradeDetail || !this.kgUnivGradeDetail.trim()) {
-        this.toastService.showError('Please specify the exact target grade level and subject focus for KG-University Tutoring.');
-        return;
-      }
       gradeDetails += ` | Target Grade/Subject Request: ${this.kgUnivGradeDetail.trim()}`;
     }
 
@@ -885,10 +937,22 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmitTeacherApp(): void {
-    if (!this.teacherForm.firstName || !this.teacherForm.email || !this.teacherForm.specialization || !this.teacherPhoneInput) {
-      this.toastService.showError('Please fill in all required fields including phone number.');
+    this.teacherFormSubmitted.set(true);
+    const missing: string[] = [];
+
+    if (!this.teacherForm.firstName || !this.teacherForm.firstName.trim()) missing.push('First Name');
+    if (!this.teacherForm.lastName || !this.teacherForm.lastName.trim()) missing.push('Last Name');
+    if (!this.teacherForm.email || !this.teacherForm.email.trim()) missing.push('Email Address');
+    if (!this.teacherPhoneInput || !this.teacherPhoneInput.trim()) missing.push('Phone Number');
+    if (!this.teacherForm.specialization || !this.teacherForm.specialization.trim()) missing.push('Primary Specialization');
+    if (!this.teacherForm.cvDocumentUrl) missing.push('CV / Resume Document');
+    if (!this.teacherForm.bioSummary || !this.teacherForm.bioSummary.trim()) missing.push('Professional Bio Summary');
+
+    if (missing.length > 0) {
+      this.toastService.showError(`You did not fill: ${missing.join(', ')}. Please complete these required fields.`);
       return;
     }
+
     this.teacherForm.phoneNumber = `${this.teacherCountryCode} ${this.teacherPhoneInput.trim()}`;
 
     this.submittingTeacher.set(true);
