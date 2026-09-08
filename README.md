@@ -140,10 +140,22 @@ Dedicated workspace for certified educators to manage assigned student cohorts, 
 *Figure 6.9: Teacher View Attendance History console listing attendance records across Group, Online, and Home Tutoring sessions.*
 
 ![Teacher Class Attendance Report Workspace](docs/screenshots/media_1788903881894.png)
-*Figure 6.10: Teacher Class Attendance Report workspace for generating attendance summary analytics.*
+*Figure 6.10: Teacher Class Attendance Report workspace for generating class attendance summary analytics.*
+
+![Teacher Attendance Report Portal](docs/screenshots/media_1788904228453.png)
+*Figure 6.11: Teacher Attendance Report portal for selecting date ranges and evaluating individual educator attendance records.*
+
+![Teacher Homework & Gradebook Portal](docs/screenshots/media_1788904228477.png)
+*Figure 6.12: Teacher Homework & Gradebook portal with assessment creation tools, course filters, and master gradebook matrix tabs.*
+
+![Teacher 1-Year Service Certificate Recognition](docs/screenshots/media_1788904228524.png)
+*Figure 6.13: Official Digital Certificates workspace displaying teacher eligibility for 1-Year Service Excellence Certificate (365 active service days completed).*
+
+![Teacher Profile & Security Password Modal](docs/screenshots/media_1788904228532.png)
+*Figure 6.14: Educator Account Profile & Security modal for updating password credentials and managing account details.*
 
 ![Teacher Dashboard Console](docs/screenshots/media_1788814426930.png)
-*Figure 6.11: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
+*Figure 6.15: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
 
 ---
 
