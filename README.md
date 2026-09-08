@@ -110,7 +110,7 @@ Personalized student portal giving learners access to their enrolled courses, da
 ---
 
 ### 6. Teacher Portal & Classroom Management Console
-Dedicated workspace for certified educators to manage assigned student cohorts, schedule timetable sessions, broadcast class notices, record attendance across all delivery modes, and track service excellence certification eligibility.
+Dedicated workspace for certified educators to manage assigned student cohorts, schedule timetable sessions, broadcast class notices, record attendance across all delivery modes, verify home visit GPS geofences, and track service excellence certification eligibility.
 
 ![Teacher Portal Dashboard Overview](docs/screenshots/media_1788903632231.png)
 *Figure 6.1: Teacher Portal Dashboard showing Active Certified Educator status, Teacher Code (TCH-000002), teaching attendance rate, completed sessions, and 1-Year Service Excellence Certificate printer.*
@@ -127,8 +127,23 @@ Dedicated workspace for certified educators to manage assigned student cohorts, 
 ![Teacher 1-on-1 Online Attendance Tool](docs/screenshots/media_1788903632333.png)
 *Figure 6.5: Teacher 1-on-1 Online Attendance tool for tracking private video tutoring sessions with assigned students (Raniya Ali).*
 
+![Teacher Classroom Projector Display & QR Token](docs/screenshots/media_1788903881774.png)
+*Figure 6.6: Classroom Projector Display & Live Roll Call mode allowing teachers to display live QR tokens for classroom mobile check-ins.*
+
+![Teacher Home Tutoring Visit Check-In](docs/screenshots/media_1788903881820.png)
+*Figure 6.7: Teacher Home Tutoring Visit Check-In interface for recording home visits with assigned students (Raniya Ali).*
+
+![Teacher Home Visit Live GPS Cross-Check](docs/screenshots/media_1788903881915.png)
+*Figure 6.8: Live GPS Location Cross-Check interface verifying educator device coordinates (Lat: 8.9983, Long: 38.7033) against student registered home address.*
+
+![Teacher View Attendance History Console](docs/screenshots/media_1788903881871.png)
+*Figure 6.9: Teacher View Attendance History console listing attendance records across Group, Online, and Home Tutoring sessions.*
+
+![Teacher Class Attendance Report Workspace](docs/screenshots/media_1788903881894.png)
+*Figure 6.10: Teacher Class Attendance Report workspace for generating attendance summary analytics.*
+
 ![Teacher Dashboard Console](docs/screenshots/media_1788814426930.png)
-*Figure 6.6: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
+*Figure 6.11: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
 
 ---
 
