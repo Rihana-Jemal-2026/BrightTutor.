@@ -42,7 +42,7 @@ The Student Admission Portal enables Grade 9-12 STEM candidates across Ethiopia 
 *Figure 2.4: Admin-side Student Admissions & Tutoring Portal featuring Admission Notice & Transparency Policy (500 ETB registration fee, status pending availability check).*
 
 ![Track Admission Status & Payment Lookup](docs/screenshots/media_1788902709250.png)
-*Figure 2.5: Admin-side Track Admission Status & Payment lookup portal for checking tutor assignments and fee approval states.*
+*Figure 2.5: Admin-side Track Admission Status & Payment lookup portal for checking candidate tutor assignments and fee approval states.*
 
 ---
 
@@ -64,7 +64,7 @@ Educator onboarding and screening workflow capturing academic qualifications, sp
 ---
 
 ### 4. Executive System Authority Console (Admin Portal)
-Central administrative command center providing real-time telemetry over system metrics, user account governance, course catalog management, student enrollment rosters, faculty allocations, class schedules, and campus announcements.
+Central administrative command center providing real-time telemetry over system metrics, user account governance, course catalog management, student enrollment rosters, faculty allocations, class schedules, campus announcements, permission matrix, system audit tools, and faculty payroll clearinghouse.
 
 ![Executive Admin Dashboard Telemetry](docs/screenshots/media_1788901495077.png)
 *Figure 4.1: Executive Admin Dashboard displaying real-time system metrics (5 System Users, 2 Active Students, 2 Registered Teachers, 22 Active Courses), Academic Certificate Management launcher, and Campus Announcements Bulletin.*
@@ -86,6 +86,15 @@ Central administrative command center providing real-time telemetry over system 
 
 ![Class Schedules & Timetables Planner](docs/screenshots/media_1788901803970.png)
 *Figure 4.7: Class Schedules & Timetables planner supporting session filtering by course, class group, assigned teacher, and status.*
+
+![Dynamic Role & Permission Matrix](docs/screenshots/media_1788902975650.png)
+*Figure 4.8: Dynamic Role & Permission Matrix configuring granular module action permissions per user role (Admin, Teacher, Student, Parent).*
+
+![Administrative Operations & System Tools](docs/screenshots/media_1788902975673.png)
+*Figure 4.9: Administrative Operations & System Tools for rectifying attendance records and auditing home tutoring GPS geofences.*
+
+![Integrated Payroll & Student Invoicing Clearinghouse](docs/screenshots/media_1788902975703.png)
+*Figure 4.10: Integrated Payroll & Student Invoicing clearinghouse calculating teacher payout statements and student billing in Ethiopian Birr (ETB).*
 
 ---
 
