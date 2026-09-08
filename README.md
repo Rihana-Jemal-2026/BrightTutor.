@@ -137,6 +137,15 @@ Personalized student portal giving learners access to their enrolled courses, da
 ![Student Academic Transcript & Assessment Breakdown](docs/screenshots/media_1788904557989.png)
 *Figure 5.12: Student Course Assessment Breakdown & Academic Transcript workspace detailing real-time task weights, scores, and teacher feedback.*
 
+![Student 3-Month Course Completion Certificate Verification](docs/screenshots/media_1788904832506.png)
+*Figure 5.13: Student Digital Certificates workspace allowing learners to select enrolled courses and verify 3-month course completion diploma eligibility (requires >= 80% attendance rate).*
+
+![Student Account Profile & Password Security Modal](docs/screenshots/media_1788904832546.png)
+*Figure 5.14: Student Account Profile & Security modal for managing student account details (Raniya Ali) and updating portal passwords.*
+
+![Student Academic Standing & Honors Tier Calculator](docs/screenshots/media_1788904832557.png)
+*Figure 5.15: Student Academic Standing & Honors Tier interface displaying live dynamic calculations for course progression and honors classification.*
+
 ---
 
 ### 6. Teacher Portal & Classroom Management Console
