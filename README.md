@@ -18,91 +18,102 @@
 
 ## 📸 Complete Visual Tour & Page Screenshots
 
-### 1. Student Self-Registration & Admission Portal
-The Student Admission Portal enables Grade 9-12 STEM candidates across Ethiopia to register online, select learning delivery methods (Home Visit 1-on-1, Live Online Classes, or Group Cohorts), and receive unique student identification codes.
+### 1. Portal Authentication & Account Login
+The central gateway for Students, Teachers, Parents, and Administrators to access their role-specific dashboards using registered email addresses or student ID codes (`#STU-XXXXXX`).
 
-![Student Admission Form](docs/screenshots/media_1788813598040.png)
-*Figure 1.1: Student Admission Form capturing candidate details, village location, grade level, and tutoring preferences.*
+![Account Login Portal](docs/screenshots/media_1788901345528.png)
+*Figure 1.1: BrightTutor Portal Authentication Card supporting Email or Student ID Code login.*
+
+---
+
+### 2. Student Self-Registration & Course Enrollment Form
+The Student Admission Portal enables Grade 9-12 STEM candidates across Ethiopia to register online, set their home address with GPS mapping, select learning delivery methods (Home Visit 1-on-1, Live Online Classes, or Group Cohorts), choose custom subjects, and request preferred learning days/hours.
+
+![Student Admission Form - Candidate Info](docs/screenshots/media_1788901345549.png)
+*Figure 2.1: Student Course Enrollment Form capturing personal details, Ethiopian (+251) phone number, GPS village location, and service delivery method.*
+
+![Student Admission Form - Schedule Request](docs/screenshots/media_1788901345623.png)
+*Figure 2.2: Course catalog selector, custom subject request field, and interactive learning days/hours picker (Mon, Wed, Fri 10:00 AM - 12:00 PM).*
 
 ![Student Registration Confirmation](docs/screenshots/media_1788813598065.png)
-*Figure 1.2: Instant admission confirmation modal with generated student ID code and portal credentials.*
+*Figure 2.3: Instant admission confirmation modal with generated student ID code and portal credentials.*
 
 ---
 
-### 2. Teacher Screening & Application Portal
+### 3. Educator Job Application & Screening Portal
 Educator onboarding and screening workflow capturing academic qualifications, specialization subjects, degree uploads, CV documents, and background check statuses.
 
-![Teacher Screening Application](docs/screenshots/media_1788812430090.png)
-*Figure 2.1: Teacher Application Portal capturing personal information, university background, and teaching experience.*
+![Educator Job Application - Personal Details](docs/screenshots/media_1788901345579.png)
+*Figure 3.1: Educator Application Form capturing full name, email, Ethiopian (+251) contact number, primary specialization, and years of experience.*
+
+![Educator Job Application - CV & Bio Upload](docs/screenshots/media_1788901345632.png)
+*Figure 3.2: CV / Resume document upload portal and professional teaching methodology bio summary.*
 
 ![Teacher Application Qualifications](docs/screenshots/media_1788812392593.png)
-*Figure 2.2: Subject specialization selector, tutoring service preferences, and wage expectations.*
-
-![Teacher Qualification Uploads](docs/screenshots/media_1788812481732.png)
-*Figure 2.3: Verification document attachment portal for academic degrees, certifications, and government ID.*
+*Figure 3.3: Subject specialization selector, tutoring service preferences, and wage expectations.*
 
 ---
 
-### 3. Executive System Authority Console (Admin Portal)
+### 4. Executive System Authority Console (Admin Portal)
 Central administrative command center providing real-time telemetry over system usage, tuition revenue clearinghouse in Ethiopian Birr (`ETB`), tutor allocations, and platform configuration.
 
 ![Executive System Authority Console](docs/screenshots/dashboard.png)
-*Figure 3.1: Executive Dashboard showing total active students, tutor metrics, ETB revenue summaries, and quick action shortcuts.*
+*Figure 4.1: Executive Dashboard showing total active students, tutor metrics, ETB revenue summaries, and quick action shortcuts.*
 
 ![Courses & Curriculum Management](docs/screenshots/courses.png)
-*Figure 3.2: Course & Curriculum Management catalog for Grade 9-12 Ethiopian University Entrance Exam (EUEE) prep courses.*
+*Figure 4.2: Course & Curriculum Management catalog for Grade 9-12 Ethiopian University Entrance Exam (EUEE) prep courses.*
 
 ![Teacher Assignment & Allocation Console](docs/screenshots/media_1788813629451.png)
-*Figure 3.3: Administrative Teacher Assignment matrix matching vetted educators to specific student cohorts and home visit schedules.*
+*Figure 4.3: Administrative Teacher Assignment matrix matching vetted educators to specific student cohorts and home visit schedules.*
 
 ---
 
-### 4. Student Portal & Learning Dashboard
+### 5. Student Portal & Learning Dashboard
 Personalized student portal giving learners access to their enrolled courses, daily class schedules, assignment submissions, attendance history, and grade reports.
 
 ![Student Dashboard Portal](docs/screenshots/media_1788813785440.png)
-*Figure 4.1: Student Portal Overview featuring upcoming class notifications, active courses, and tutor details.*
+*Figure 5.1: Student Portal Overview featuring upcoming class notifications, active courses, and tutor details.*
 
 ![Student Learning Telemetry](docs/screenshots/media_1788814116108.png)
-*Figure 4.2: Course progress tracker, lesson completion stats, and downloadable study materials.*
+*Figure 5.2: Course progress tracker, lesson completion stats, and downloadable study materials.*
 
 ---
 
-### 5. Teacher Portal & Classroom Management Console
+### 6. Teacher Portal & Classroom Management Console
 Dedicated workspace for tutors to manage assigned student cohorts, record lesson progress, mark attendance, conduct online quizzes, and enter weighted grades.
 
 ![Teacher Dashboard Console](docs/screenshots/media_1788814426930.png)
-*Figure 5.1: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
+*Figure 6.1: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
 
 ---
 
-### 6. Academic Assessments & Gradebook Matrix
+### 7. Academic Assessments & Gradebook Matrix
 Automated MoE weighted gradebook engine supporting quiz administration, assignment grading, midterms, and final exam calculations.
 
 ![Assessments & Gradebook Matrix](docs/screenshots/media_1788814348369.png)
-*Figure 6.1: Academic Assessment Gradebook with MoE weighted formula calculation and export capabilities.*
+*Figure 7.1: Academic Assessment Gradebook with MoE weighted formula calculation and export capabilities.*
 
 ---
 
-### 7. Digital Certificate Authority & Accreditation
+### 8. Digital Certificate Authority & Accreditation
 High-resolution vector diploma generation for 3-month course completion and 1-year tutor service awards, equipped with SHA-256 cryptographic hashes and verification QR codes.
 
 ![Digital Certificate Authority](docs/screenshots/media_1788814775781.png)
-*Figure 7.1: Official 3-month completion diploma with security border, signature authorization, and vector QR code.*
+*Figure 8.1: Official 3-month completion diploma with security border, signature authorization, and vector QR code.*
 
 ![Certificate Verification Details](docs/screenshots/media_1788814775803.png)
-*Figure 7.2: Public verification modal validating certificate authenticity, recipient identity, and issue timestamp.*
+*Figure 8.2: Public verification modal validating certificate authenticity, recipient identity, and issue timestamp.*
 
 ---
 
-### 8. Biometric Attendance & Financial Clearinghouse
+### 9. Biometric Attendance & Financial Clearinghouse
 Integrated facial liveness detection scanner and Ethiopian Birr (`ETB`) tuition payment approval system.
 
 ![Facial Biometric Attendance Scanner](docs/screenshots/media_1788718096096.png)
-*Figure 8.1: AI-powered facial biometric attendance verification using live web camera feed.*
+*Figure 9.1: AI-powered facial biometric attendance verification using live web camera feed.*
 
 ![Financial Clearinghouse Console](docs/screenshots/media_1788719490468.png)
-*Figure 8.2: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
+*Figure 9.2: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
 
 ---
 
