@@ -4,6 +4,7 @@
 
 [![Angular](https://img.shields.io/badge/Angular-22.1-dd0031.svg?style=for-the-badge&logo=angular)](https://angular.dev/)
 [![.NET Core](https://img.shields.io/badge/.NET_Core-8.0-512bd4.svg?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
+[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-blue.svg?style=for-the-badge)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Production_Ready-006948.svg?style=for-the-badge)](https://github.com/Rihana-Jemal-2026/BrightTutor)
 
@@ -11,103 +12,142 @@
 
 ## 📌 Executive Overview
 
-**BrightTutor** is a state-of-the-art educational management portal engineered for Ethiopian secondary STEM cohorts, home tutoring networks, and institutional academic governance. Integrated directly with Ministry of Education (MoE) curriculum standards, BrightTutor streamlines candidate admissions, facial biometric attendance, automated QR check-ins, automated ETB payroll clearing, weighted academic gradebooks, and digital certificate verification.
+**BrightTutor** is a state-of-the-art educational management portal engineered for Ethiopian secondary STEM cohorts, home tutoring networks, and institutional academic governance. Built directly in alignment with Ministry of Education (MoE) curriculum standards, BrightTutor streamlines candidate admissions, facial biometric attendance, automated QR check-ins, automated ETB payroll clearing, weighted academic gradebooks, and digital certificate verification.
 
 ---
 
-## 📸 Portal Screenshots & User Interfaces
+## 📸 Complete Visual Tour & Page Screenshots
 
-### 1. Executive System Authority Console (Admin Dashboard)
+### 1. Student Self-Registration & Admission Portal
+The Student Admission Portal enables Grade 9-12 STEM candidates across Ethiopia to register online, select learning delivery methods (Home Visit 1-on-1, Live Online Classes, or Group Cohorts), and receive unique student identification codes.
+
+![Student Admission Form](docs/screenshots/media_1788813598040.png)
+*Figure 1.1: Student Admission Form capturing candidate details, village location, grade level, and tutoring preferences.*
+
+![Student Registration Confirmation](docs/screenshots/media_1788813598065.png)
+*Figure 1.2: Instant admission confirmation modal with generated student ID code and portal credentials.*
+
+---
+
+### 2. Teacher Screening & Application Portal
+Educator onboarding and screening workflow capturing academic qualifications, specialization subjects, degree uploads, CV documents, and background check statuses.
+
+![Teacher Screening Application](docs/screenshots/media_1788812430090.png)
+*Figure 2.1: Teacher Application Portal capturing personal information, university background, and teaching experience.*
+
+![Teacher Application Qualifications](docs/screenshots/media_1788812392593.png)
+*Figure 2.2: Subject specialization selector, tutoring service preferences, and wage expectations.*
+
+![Teacher Qualification Uploads](docs/screenshots/media_1788812481732.png)
+*Figure 2.3: Verification document attachment portal for academic degrees, certifications, and government ID.*
+
+---
+
+### 3. Executive System Authority Console (Admin Portal)
+Central administrative command center providing real-time telemetry over system usage, tuition revenue clearinghouse in Ethiopian Birr (`ETB`), tutor allocations, and platform configuration.
+
 ![Executive System Authority Console](docs/screenshots/dashboard.png)
-*Real-time system telemetry, active student counts, ETB financial clearinghouse metrics, and role-based portal switcher.*
+*Figure 3.1: Executive Dashboard showing total active students, tutor metrics, ETB revenue summaries, and quick action shortcuts.*
+
+![Courses & Curriculum Management](docs/screenshots/courses.png)
+*Figure 3.2: Course & Curriculum Management catalog for Grade 9-12 Ethiopian University Entrance Exam (EUEE) prep courses.*
+
+![Teacher Assignment & Allocation Console](docs/screenshots/media_1788813629451.png)
+*Figure 3.3: Administrative Teacher Assignment matrix matching vetted educators to specific student cohorts and home visit schedules.*
 
 ---
 
-### 2. Courses & Curriculum Management
-![Course & Curriculum Management](docs/screenshots/courses.png)
-*Comprehensive catalog for Grade 9-12 Ethiopian University Entrance Exam (EUEE) prep courses, cohort section groups, and tutor allocations.*
+### 4. Student Portal & Learning Dashboard
+Personalized student portal giving learners access to their enrolled courses, daily class schedules, assignment submissions, attendance history, and grade reports.
+
+![Student Dashboard Portal](docs/screenshots/media_1788813785440.png)
+*Figure 4.1: Student Portal Overview featuring upcoming class notifications, active courses, and tutor details.*
+
+![Student Learning Telemetry](docs/screenshots/media_1788814116108.png)
+*Figure 4.2: Course progress tracker, lesson completion stats, and downloadable study materials.*
 
 ---
 
-### 3. Student Admission & Registration Portal
-![Student Admission Portal](docs/screenshots/media_1788813598040.png)
-*Candidate self-registration capturing personal details, grade level, village GPS location, and delivery method preferences.*
+### 5. Teacher Portal & Classroom Management Console
+Dedicated workspace for tutors to manage assigned student cohorts, record lesson progress, mark attendance, conduct online quizzes, and enter weighted grades.
+
+![Teacher Dashboard Console](docs/screenshots/media_1788814426930.png)
+*Figure 5.1: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
 
 ---
 
-### 4. Teacher Screening & Application Portal
-![Teacher Application Portal](docs/screenshots/media_1788812430090.png)
-*Educator onboarding workflow capturing academic qualifications, specialization subjects, CV documents, and vetting status.*
+### 6. Academic Assessments & Gradebook Matrix
+Automated MoE weighted gradebook engine supporting quiz administration, assignment grading, midterms, and final exam calculations.
+
+![Assessments & Gradebook Matrix](docs/screenshots/media_1788814348369.png)
+*Figure 6.1: Academic Assessment Gradebook with MoE weighted formula calculation and export capabilities.*
 
 ---
 
-### 5. Academic Assessments & Gradebook Matrix
-![Assessments & Gradebook](docs/screenshots/media_1788814348369.png)
-*Curriculum assessment tracking, timed online quiz engine, and MoE weighted gradebook matrix.*
+### 7. Digital Certificate Authority & Accreditation
+High-resolution vector diploma generation for 3-month course completion and 1-year tutor service awards, equipped with SHA-256 cryptographic hashes and verification QR codes.
 
----
-
-### 6. Official Digital Diploma & Accreditation Authority
 ![Digital Certificate Authority](docs/screenshots/media_1788814775781.png)
-*High-resolution 3-month course completion diploma and 1-year service awards with SHA-256 verification and vector QR codes.*
+*Figure 7.1: Official 3-month completion diploma with security border, signature authorization, and vector QR code.*
+
+![Certificate Verification Details](docs/screenshots/media_1788814775803.png)
+*Figure 7.2: Public verification modal validating certificate authenticity, recipient identity, and issue timestamp.*
 
 ---
 
-## 🚀 Key Portal Features
+### 8. Biometric Attendance & Financial Clearinghouse
+Integrated facial liveness detection scanner and Ethiopian Birr (`ETB`) tuition payment approval system.
 
-### 👨‍🎓 1. Student Admission & Registration Portal
-* **Digital Self-Registration**: Streamlined admission workflows for Grade 9-12 STEM candidates with instant student code generation (`#STU-XXXX`).
-* **GPS & Village Geocoding**: Automatic location tag mapping for Ethiopian home-visit tutoring routes.
-* **Course Catalog & Delivery Choice**: Support for 1-on-1 Home Visit Tutoring, Online Live Classes, and Group Section Cohorts.
-* **Real-time Field Validation**: Form validation with instant error highlights and toast notifications.
+![Facial Biometric Attendance Scanner](docs/screenshots/media_1788718096096.png)
+*Figure 8.1: AI-powered facial biometric attendance verification using live web camera feed.*
 
-### 👩‍🏫 2. Teacher Screening & Application Portal
-* **Educator Onboarding**: Comprehensive application workflow capturing specialization, qualification tier, CV uploads, and identification.
-* **Administrative Vetting**: Multi-stage review pipeline supporting application approvals, status tracking, and structured rejection feedback modals.
-* **Workload Allocation**: Assign educators to specific curriculum courses and class section groups.
-
-### 🛡️ 3. Executive Admin Authority Console
-* **System Metrics Dashboard**: Real-time financial volume tracking in Ethiopian Birr (`ETB`), active student ratios, and tutor metrics.
-* **Role-Based Access Control (RBAC)**: Fine-grained permissions matrix across Super Admin, Admin, Certified Teacher, and Student/Parent roles.
-* **Payment Clearinghouse & Approvals**: Student tuition fee verification, bank receipt upload checking, and automated invoice approval workflows.
-* **Faculty Payroll System**: Automatic salary computation based on verified attendance records, hourly rates, and home visit travel allowances.
-
-### 📊 4. Academic Assessments & Gradebook Matrix
-* **MoE Curriculum Weighted Gradebook**: Automated calculation model:
-  $$\text{Final Grade} = 30\% \text{ Homework} + 30\% \text{ Quizzes/Labs} + 40\% \text{ Midterm/Exam}$$
-* **Interactive Testing Engine**: Online timed quizzes with auto-grading, question banks, and instant score reports.
-* **Digital Certificate Authority**: Automated 3-month course completion diploma generation and 1-year educator service awards with SHA-256 verification and vector QR codes.
-
-### 📷 5. Biometric & QR Attendance Telemetry
-* **Face ID & Liveness Verification**: Biometric face detection using `@vladmandic/face-api`.
-* **QR Code Scanner**: Fast mobile QR check-ins for home visit and classroom attendance.
-* **Telemetry Scoreboards**: Comprehensive daily attendance logs, presence rates, tardiness tracking, and monthly reporting.
+![Financial Clearinghouse Console](docs/screenshots/media_1788719490468.png)
+*Figure 8.2: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
 
 ---
 
-## 🏛️ System Architecture
+## 🏛️ System Architecture & Clean Architecture Directory Structure
 
+### High-Level Component Flow
 ```mermaid
 graph TD
     User([User / Browser]) <--> AngularFrontend[Angular 22 Client<br/>Standalone Components & Signals]
     AngularFrontend <--> REST_API[ASP.NET Core Web API<br/>Clean Architecture & MediatR]
-    REST_API <--> DB[(SQL Server / Entity Framework Core)]
+    REST_API <--> DB[(PostgreSQL / Entity Framework Core)]
     REST_API <--> FaceAPI[Face-API & Biometric Engine]
     REST_API <--> CertificateEngine[PDF & Certificate Generator]
 ```
 
+### Backend Clean Architecture Directory Structure
+The backend repository is organized following strict **Clean Architecture** separation of concerns:
+
+```
+backend/
+├── BrightTutor.slnx
+├── src/
+│   ├── BrightTutor.Api/                # Presentation Layer (Controllers, Middleware, Swagger)
+│   ├── BrightTutor.Application/        # Application Layer (CQRS Commands, Queries, MediatR, DTOs)
+│   ├── BrightTutor.Domain/             # Domain Layer (Entities, Enums, Value Objects, Domain Logic)
+│   ├── BrightTutor.Infrastructure/     # Infrastructure Layer (EF Core DbContext, Auth, Migrations)
+│   └── BrightTutor.LivenessChecks/     # System Health Telemetry & Diagnostic Probes
+└── tests/
+    ├── BrightTutor.UnitTests/          # xUnit Domain & Application Unit Tests
+    └── BrightTutor.IntegrationTests/   # xUnit API Controller & Infrastructure Integration Tests
+```
+
 ---
 
-## 💻 Tech Stack
+## 💻 Technology Stack
 
 | Layer | Technologies & Tools |
 | :--- | :--- |
-| **Frontend** | Angular 22, TypeScript 6.0, RxJS, Signals, Modern SCSS |
-| **Backend** | .NET 8.0 C#, ASP.NET Core Web API, Entity Framework Core, MediatR |
-| **Biometrics & PDF** | `@vladmandic/face-api`, `html2canvas`, `jsPDF`, `qrcode` |
-| **Database** | Microsoft SQL Server |
-| **Design System** | Google Material Symbols, Custom Tokens, Responsive Layouts |
-| **Currency** | Ethiopian Birr (`ETB`) |
+| **Frontend Framework** | Angular 22, TypeScript 6.0, RxJS, Angular Signals, Modern SCSS |
+| **Backend Architecture** | .NET 8.0 C#, ASP.NET Core Web API, Clean Architecture, MediatR (CQRS) |
+| **Data Persistence** | Entity Framework Core 8.0, PostgreSQL |
+| **Biometrics & Rendering** | `@vladmandic/face-api`, `html2canvas`, `jsPDF`, `qrcode` |
+| **Testing Suite** | xUnit, Microsoft.NET.Test.Sdk, Coverlet |
+| **Design System** | Google Material Symbols Outlined, Custom CSS Tokens, Glassmorphism |
+| **Financial Clearing** | Ethiopian Birr (`ETB`) |
 
 ---
 
@@ -116,35 +156,41 @@ graph TD
 ### Prerequisites
 * **Node.js**: `v20.x` or higher
 * **npm**: `v10.x` or higher
-* **.NET SDK**: `8.0`
-* **SQL Server**: 2019+ or LocalDB
+* **.NET SDK**: `8.0` / `10.0`
+* **PostgreSQL / SQL Database**: Running instance configured in `appsettings.json`
 
-### 1. Backend Setup (.NET API)
+### 1. Backend Setup (.NET Core API)
 ```bash
-# Navigate to backend directory
-cd backend/BrightTutor.Api
+# Navigate to backend folder
+cd backend
 
-# Restore dependencies & apply database migrations
+# Restore dependencies across all Clean Architecture projects
 dotnet restore
-dotnet ef database update
 
-# Run backend API server
+# Build backend solution
+dotnet build
+
+# Run unit and integration tests
+dotnet test
+
+# Launch API server
+cd src/BrightTutor.Api
 dotnet run
 ```
-> Server will start at `http://localhost:5198`.
+> Server will start at `http://localhost:5198` (Swagger UI available at `http://localhost:5198`).
 
 ### 2. Frontend Setup (Angular Client)
 ```bash
-# Navigate to client directory
+# Navigate to frontend client folder
 cd frontend/brighttutor-client
 
-# Install dependencies
+# Install frontend packages
 npm install
 
-# Launch Angular development server
+# Start Angular dev server
 npm start
 ```
-> Client portal will be accessible at `http://localhost:4200`.
+> Portal will be accessible at `http://localhost:4200`.
 
 ---
 
