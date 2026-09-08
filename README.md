@@ -119,22 +119,34 @@ High-resolution vector diploma generation for 3-month course completion and 1-ye
 ---
 
 ### 9. Attendance Telemetry & Biometric System
-Multi-modal attendance system supporting Group Roster Attendance, Teacher Staff Attendance, 1-on-1 Online Session Attendance, and AI Facial Biometric Scanner.
+Multi-modal attendance system supporting Group Roster Attendance, Teacher Staff Attendance, 1-on-1 Online Session Attendance, Home Tutoring GPS Verification, and AI Facial Biometric Scanner.
 
-![Facial Biometric Attendance Scanner](docs/screenshots/media_1788718096096.png)
-*Figure 9.1: AI-powered facial biometric attendance verification using live web camera feed.*
+![Facial Biometric & Camera Check-In](docs/screenshots/media_1788902206942.png)
+*Figure 9.1: AI-powered facial biometric scanner with live camera alignment oval, master face ID enrollment, and token nonce verification.*
+
+![Classroom Projector Display QR Code](docs/screenshots/media_1788902206857.png)
+*Figure 9.2: Classroom Projector Display & Live Roll Call mode displaying dynamic QR tokens for instant student mobile check-ins.*
+
+![Home Tutoring Visit Check-In & GPS Verification](docs/screenshots/media_1788902206831.png)
+*Figure 9.3: Home Tutoring Visit Check-In & Check-Out module with live GPS coordinate recording (Lat: 8.9983, Long: 38.7039).*
 
 ![Mark Group Attendance Interface](docs/screenshots/media_1788901803996.png)
-*Figure 9.2: Mark Group Attendance roster tool with assigned teacher selection, session date picker, and 1-click bulk marking.*
+*Figure 9.4: Mark Group Attendance roster tool with assigned teacher selection, session date picker, and 1-click bulk marking.*
 
-![Mark Teacher Attendance Interface](docs/screenshots/media_1788901804047.png)
-*Figure 9.3: Mark Teacher Staff Attendance form recording daily check-in/out times, presence status (Present/Absent/Late/Excused), and observer notes.*
+![Mark Teacher Staff Attendance Interface](docs/screenshots/media_1788901804047.png)
+*Figure 9.5: Mark Teacher Staff Attendance form recording daily check-in/out times, presence status (Present/Absent/Late/Excused), and observer notes.*
 
 ![Mark 1-on-1 Online Attendance Interface](docs/screenshots/media_1788901804060.png)
-*Figure 9.4: Mark 1-on-1 Online Tutoring Attendance form tracking private video session dates and student presence.*
+*Figure 9.6: Mark 1-on-1 Online Tutoring Attendance form tracking private video session dates and student presence.*
+
+![View Attendance History Records](docs/screenshots/media_1788902206943.png)
+*Figure 9.7: View Attendance History Records console filtering across Group, Online, and Home Tutoring sessions.*
+
+![Class Attendance Analytical Reports](docs/screenshots/media_1788902206880.png)
+*Figure 9.8: Class Attendance Analytical Reports interface with custom date range filtering and presence summary metrics.*
 
 ![Financial Clearinghouse Console](docs/screenshots/media_1788719490468.png)
-*Figure 9.5: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
+*Figure 9.9: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
 
 ---
 
