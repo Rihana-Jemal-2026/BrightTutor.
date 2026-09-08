@@ -102,8 +102,11 @@ Dedicated workspace for tutors to manage assigned student cohorts, record lesson
 ### 7. Academic Assessments & Gradebook Matrix
 Automated MoE weighted gradebook engine supporting quiz administration, assignment grading, midterms, and final exam calculations.
 
+![Homework, Tests, Gradebook & Certification Console](docs/screenshots/media_1788902531060.png)
+*Figure 7.1: Homework, Tests, Gradebook & Certification Console supporting test creation, course tasks filtering, master gradebook matrix, and final course grading.*
+
 ![Assessments & Gradebook Matrix](docs/screenshots/media_1788814348369.png)
-*Figure 7.1: Academic Assessment Gradebook with MoE weighted formula calculation and export capabilities.*
+*Figure 7.2: Academic Assessment Gradebook with MoE weighted formula calculation and export capabilities.*
 
 ---
 
@@ -145,8 +148,20 @@ Multi-modal attendance system supporting Group Roster Attendance, Teacher Staff 
 ![Class Attendance Analytical Reports](docs/screenshots/media_1788902206880.png)
 *Figure 9.8: Class Attendance Analytical Reports interface with custom date range filtering and presence summary metrics.*
 
+![Student Attendance Summary Report](docs/screenshots/media_1788902530941.png)
+*Figure 9.9: Student Attendance Summary Report interface providing date range filtering for individual learner telemetry.*
+
+![Teacher Staff Attendance Summary Report](docs/screenshots/media_1788902530970.png)
+*Figure 9.10: Teacher Staff Attendance Summary Report tracking individual educator attendance records over specified date ranges.*
+
+![Student Attendance Calendar View](docs/screenshots/media_1788902530996.png)
+*Figure 9.11: Student Attendance Calendar View providing monthly visual attendance heatmaps by year and month.*
+
+![Daily Attendance Overview Dashboard](docs/screenshots/media_1788902531045.png)
+*Figure 9.12: Daily Attendance Overview Dashboard summarizing campus-wide presence and absence telemetry for any selected date.*
+
 ![Financial Clearinghouse Console](docs/screenshots/media_1788719490468.png)
-*Figure 9.9: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
+*Figure 9.13: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
 
 ---
 
