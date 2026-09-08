@@ -55,16 +55,22 @@ Educator onboarding and screening workflow capturing academic qualifications, sp
 ---
 
 ### 4. Executive System Authority Console (Admin Portal)
-Central administrative command center providing real-time telemetry over system usage, tuition revenue clearinghouse in Ethiopian Birr (`ETB`), tutor allocations, and platform configuration.
+Central administrative command center providing real-time telemetry over system metrics, user account governance, course catalog management, student enrollment rosters, and faculty allocations.
 
-![Executive System Authority Console](docs/screenshots/dashboard.png)
-*Figure 4.1: Executive Dashboard showing total active students, tutor metrics, ETB revenue summaries, and quick action shortcuts.*
+![Executive Admin Dashboard Telemetry](docs/screenshots/media_1788901495077.png)
+*Figure 4.1: Executive Admin Dashboard displaying real-time system metrics (5 System Users, 2 Active Students, 2 Registered Teachers, 22 Active Courses), Academic Certificate Management launcher, and Campus Announcements Bulletin.*
 
-![Courses & Curriculum Management](docs/screenshots/courses.png)
-*Figure 4.2: Course & Curriculum Management catalog for Grade 9-12 Ethiopian University Entrance Exam (EUEE) prep courses.*
+![System Users Management Table](docs/screenshots/media_1788901495125.png)
+*Figure 4.2: System Users Management interface listing accounts (Teachers, Students, Parents), Ethiopian (+251) phone contacts, active statuses, and account pause/edit actions.*
 
-![Teacher Assignment & Allocation Console](docs/screenshots/media_1788813629451.png)
-*Figure 4.3: Administrative Teacher Assignment matrix matching vetted educators to specific student cohorts and home visit schedules.*
+![Course Group & Class Management Catalog](docs/screenshots/media_1788901495153.png)
+*Figure 4.3: Course & Class Management catalog managing Grade 12 National Exam Prep, Grade 8 Prep, Grade 6 Prep, KG-University Regular Tutoring, and Online 1-on-1 tutoring sessions.*
+
+![Student Enrollments Management Console](docs/screenshots/media_1788901495168.png)
+*Figure 4.4: Student Enrollments Management interface assigning registered candidates (seid Jemal #STU-000002, emran Jemal #STU-000001) to courses such as Artificial Intelligence & Machine Learning.*
+
+![Teacher Course & Group Allocations Matrix](docs/screenshots/media_1788901495286.png)
+*Figure 4.5: Teacher Course & Group Allocations matrix matching faculty members (Rihana Jemal TCH-296506) to curriculum courses and custom subject specializations.*
 
 ---
 
