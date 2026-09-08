@@ -55,7 +55,7 @@ Educator onboarding and screening workflow capturing academic qualifications, sp
 ---
 
 ### 4. Executive System Authority Console (Admin Portal)
-Central administrative command center providing real-time telemetry over system metrics, user account governance, course catalog management, student enrollment rosters, and faculty allocations.
+Central administrative command center providing real-time telemetry over system metrics, user account governance, course catalog management, student enrollment rosters, faculty allocations, class schedules, and campus announcements.
 
 ![Executive Admin Dashboard Telemetry](docs/screenshots/media_1788901495077.png)
 *Figure 4.1: Executive Admin Dashboard displaying real-time system metrics (5 System Users, 2 Active Students, 2 Registered Teachers, 22 Active Courses), Academic Certificate Management launcher, and Campus Announcements Bulletin.*
@@ -71,6 +71,12 @@ Central administrative command center providing real-time telemetry over system 
 
 ![Teacher Course & Group Allocations Matrix](docs/screenshots/media_1788901495286.png)
 *Figure 4.5: Teacher Course & Group Allocations matrix matching faculty members (Rihana Jemal TCH-296506) to curriculum courses and custom subject specializations.*
+
+![Campus Announcements & Notifications](docs/screenshots/media_1788901803944.png)
+*Figure 4.6: Campus Announcements & Push Dispatcher console allowing admins to target notices to Teachers, Students, Parents, or All Users.*
+
+![Class Schedules & Timetables Planner](docs/screenshots/media_1788901803970.png)
+*Figure 4.7: Class Schedules & Timetables planner supporting session filtering by course, class group, assigned teacher, and status.*
 
 ---
 
@@ -112,14 +118,23 @@ High-resolution vector diploma generation for 3-month course completion and 1-ye
 
 ---
 
-### 9. Biometric Attendance & Financial Clearinghouse
-Integrated facial liveness detection scanner and Ethiopian Birr (`ETB`) tuition payment approval system.
+### 9. Attendance Telemetry & Biometric System
+Multi-modal attendance system supporting Group Roster Attendance, Teacher Staff Attendance, 1-on-1 Online Session Attendance, and AI Facial Biometric Scanner.
 
 ![Facial Biometric Attendance Scanner](docs/screenshots/media_1788718096096.png)
 *Figure 9.1: AI-powered facial biometric attendance verification using live web camera feed.*
 
+![Mark Group Attendance Interface](docs/screenshots/media_1788901803996.png)
+*Figure 9.2: Mark Group Attendance roster tool with assigned teacher selection, session date picker, and 1-click bulk marking.*
+
+![Mark Teacher Attendance Interface](docs/screenshots/media_1788901804047.png)
+*Figure 9.3: Mark Teacher Staff Attendance form recording daily check-in/out times, presence status (Present/Absent/Late/Excused), and observer notes.*
+
+![Mark 1-on-1 Online Attendance Interface](docs/screenshots/media_1788901804060.png)
+*Figure 9.4: Mark 1-on-1 Online Tutoring Attendance form tracking private video session dates and student presence.*
+
 ![Financial Clearinghouse Console](docs/screenshots/media_1788719490468.png)
-*Figure 9.2: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
+*Figure 9.5: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
 
 ---
 
