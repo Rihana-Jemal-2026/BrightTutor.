@@ -110,10 +110,25 @@ Personalized student portal giving learners access to their enrolled courses, da
 ---
 
 ### 6. Teacher Portal & Classroom Management Console
-Dedicated workspace for tutors to manage assigned student cohorts, record lesson progress, mark attendance, conduct online quizzes, and enter weighted grades.
+Dedicated workspace for certified educators to manage assigned student cohorts, schedule timetable sessions, broadcast class notices, record attendance across all delivery modes, and track service excellence certification eligibility.
+
+![Teacher Portal Dashboard Overview](docs/screenshots/media_1788903632231.png)
+*Figure 6.1: Teacher Portal Dashboard showing Active Certified Educator status, Teacher Code (TCH-000002), teaching attendance rate, completed sessions, and 1-Year Service Excellence Certificate printer.*
+
+![Teacher Class Schedules Workspace](docs/screenshots/media_1788903632252.png)
+*Figure 6.2: Teacher Class Schedules workspace for planning recurring timetables, video classrooms, and home tutoring sessions.*
+
+![Class Notices & Student Inquiries Hub](docs/screenshots/media_1788903632278.png)
+*Figure 6.3: Class Notices & Student Inquiries hub featuring Student Messaging Availability toggle and "+ Post Class Notice" button.*
+
+![Teacher Group Attendance Marking Tool](docs/screenshots/media_1788903632324.png)
+*Figure 6.4: Teacher Group Attendance marking tool pre-filled with educator credentials (emran jemal) and class roster.*
+
+![Teacher 1-on-1 Online Attendance Tool](docs/screenshots/media_1788903632333.png)
+*Figure 6.5: Teacher 1-on-1 Online Attendance tool for tracking private video tutoring sessions with assigned students (Raniya Ali).*
 
 ![Teacher Dashboard Console](docs/screenshots/media_1788814426930.png)
-*Figure 6.1: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
+*Figure 6.6: Teacher Dashboard displaying active class rosters, student attendance metrics, and quick gradebook entry.*
 
 ---
 
