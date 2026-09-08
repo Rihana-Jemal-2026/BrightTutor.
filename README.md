@@ -99,13 +99,28 @@ Central administrative command center providing real-time telemetry over system 
 ---
 
 ### 5. Student Portal & Learning Dashboard
-Personalized student portal giving learners access to their enrolled courses, daily class schedules, assignment submissions, attendance history, and grade reports.
+Personalized student portal giving learners access to their enrolled courses, daily class schedules, assignment submissions, attendance history, grade reports, downloadable study guides, and embedded video tutorials.
 
 ![Student Dashboard Portal](docs/screenshots/media_1788813785440.png)
 *Figure 5.1: Student Portal Overview featuring upcoming class notifications, active courses, and tutor details.*
 
 ![Student Learning Telemetry](docs/screenshots/media_1788814116108.png)
 *Figure 5.2: Course progress tracker, lesson completion stats, and downloadable study materials.*
+
+![Student Learning Portal Dashboard](docs/screenshots/media_1788904529076.png)
+*Figure 5.3: Student Learning Portal Overview displaying student welcome banner (Raniya Ali), attendance rate metrics, active assigned certified educator card, and weekly timetable schedule.*
+
+![Student Class Schedules & Timetables](docs/screenshots/media_1788904529099.png)
+*Figure 5.4: Student Class Schedules & Timetables planner supporting course filters, class group selectors, and session status windows.*
+
+![Campus Bulletins & Contact My Tutor](docs/screenshots/media_1788904529119.png)
+*Figure 5.5: Campus Bulletins & Contact My Tutor communication hub allowing students to read school announcements and message assigned course educators directly.*
+
+![Yearly Lesson Plan & Academic Curriculum Roadmap](docs/screenshots/media_1788904529394.png)
+*Figure 5.6: Yearly Lesson Plan & Academic Curriculum roadmap detailing Term 1 (Foundation), Term 2 (Intermediate), Term 3 (National Exam Review), and Term 4 (Final Certification) with modular study guides.*
+
+![Study Guides Download & Video Tutorials Library](docs/screenshots/media_1788904529416.png)
+*Figure 5.7: Study Guides download section featuring Module 4 Final Review PDF downloads and embedded YouTube video tutorial cards for STEM subjects.*
 
 ---
 
