@@ -15,6 +15,44 @@
 
 ---
 
+## 📸 Portal Screenshots & User Interfaces
+
+### 1. Executive System Authority Console (Admin Dashboard)
+![Executive System Authority Console](docs/screenshots/dashboard.png)
+*Real-time system telemetry, active student counts, ETB financial clearinghouse metrics, and role-based portal switcher.*
+
+---
+
+### 2. Courses & Curriculum Management
+![Course & Curriculum Management](docs/screenshots/courses.png)
+*Comprehensive catalog for Grade 9-12 Ethiopian University Entrance Exam (EUEE) prep courses, cohort section groups, and tutor allocations.*
+
+---
+
+### 3. Student Admission & Registration Portal
+![Student Admission Portal](docs/screenshots/media_1788813598040.png)
+*Candidate self-registration capturing personal details, grade level, village GPS location, and delivery method preferences.*
+
+---
+
+### 4. Teacher Screening & Application Portal
+![Teacher Application Portal](docs/screenshots/media_1788812430090.png)
+*Educator onboarding workflow capturing academic qualifications, specialization subjects, CV documents, and vetting status.*
+
+---
+
+### 5. Academic Assessments & Gradebook Matrix
+![Assessments & Gradebook](docs/screenshots/media_1788814348369.png)
+*Curriculum assessment tracking, timed online quiz engine, and MoE weighted gradebook matrix.*
+
+---
+
+### 6. Official Digital Diploma & Accreditation Authority
+![Digital Certificate Authority](docs/screenshots/media_1788814775781.png)
+*High-resolution 3-month course completion diploma and 1-year service awards with SHA-256 verification and vector QR codes.*
+
+---
+
 ## 🚀 Key Portal Features
 
 ### 👨‍🎓 1. Student Admission & Registration Portal
