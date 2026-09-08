@@ -122,6 +122,21 @@ Personalized student portal giving learners access to their enrolled courses, da
 ![Study Guides Download & Video Tutorials Library](docs/screenshots/media_1788904529416.png)
 *Figure 5.7: Study Guides download section featuring Module 4 Final Review PDF downloads and embedded YouTube video tutorial cards for STEM subjects.*
 
+![Student View Attendance History Console](docs/screenshots/media_1788904557856.png)
+*Figure 5.8: Student View Attendance History console for inspecting attendance logs across Group, Online, and Home Tutoring delivery modes.*
+
+![Student Attendance Summary Report](docs/screenshots/media_1788904557910.png)
+*Figure 5.9: Student Attendance Summary report interface allowing students to select custom date ranges to evaluate personal session attendance.*
+
+![Student Attendance Calendar Inspector](docs/screenshots/media_1788904557944.png)
+*Figure 5.10: Student Attendance Calendar inspector for viewing attendance history filtered by year and month.*
+
+![Student Tasks, Quizzes & Gradebook Weighting](docs/screenshots/media_1788904557971.png)
+*Figure 5.11: Student Course Tasks, Quizzes & Grades portal displaying enrolled course details (G12 National Exam Prep), MoE weighted grade distribution (30% Homework, 30% Quizzes, 40% Exams), and cumulative GPA.*
+
+![Student Academic Transcript & Assessment Breakdown](docs/screenshots/media_1788904557989.png)
+*Figure 5.12: Student Course Assessment Breakdown & Academic Transcript workspace detailing real-time task weights, scores, and teacher feedback.*
+
 ---
 
 ### 6. Teacher Portal & Classroom Management Console
