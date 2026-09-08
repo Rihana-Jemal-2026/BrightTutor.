@@ -38,6 +38,12 @@ The Student Admission Portal enables Grade 9-12 STEM candidates across Ethiopia 
 ![Student Registration Confirmation](docs/screenshots/media_1788813598065.png)
 *Figure 2.3: Instant admission confirmation modal with generated student ID code and portal credentials.*
 
+![Student Admissions & Tutoring Portal](docs/screenshots/media_1788902709223.png)
+*Figure 2.4: Admin-side Student Admissions & Tutoring Portal featuring Admission Notice & Transparency Policy (500 ETB registration fee, status pending availability check).*
+
+![Track Admission Status & Payment Lookup](docs/screenshots/media_1788902709250.png)
+*Figure 2.5: Admin-side Track Admission Status & Payment lookup portal for checking tutor assignments and fee approval states.*
+
 ---
 
 ### 3. Educator Job Application & Screening Portal
@@ -51,6 +57,9 @@ Educator onboarding and screening workflow capturing academic qualifications, sp
 
 ![Teacher Application Qualifications](docs/screenshots/media_1788812392593.png)
 *Figure 3.3: Subject specialization selector, tutoring service preferences, and wage expectations.*
+
+![Join BrightTutor as a Certified Educator](docs/screenshots/media_1788902709263.png)
+*Figure 3.4: Admin-side Educator Screening Portal for reviewing applicant academic background and teaching credentials.*
 
 ---
 
@@ -113,11 +122,14 @@ Automated MoE weighted gradebook engine supporting quiz administration, assignme
 ### 8. Digital Certificate Authority & Accreditation
 High-resolution vector diploma generation for 3-month course completion and 1-year tutor service awards, equipped with SHA-256 cryptographic hashes and verification QR codes.
 
+![Official Digital Certificates Evaluator](docs/screenshots/media_1788902709154.png)
+*Figure 8.1: Official Digital Certificates Evaluator for Student 3-Month Course Completion (<20.0% absences) and Teacher 1-Year Service Excellence Certificate eligibility.*
+
 ![Digital Certificate Authority](docs/screenshots/media_1788814775781.png)
-*Figure 8.1: Official 3-month completion diploma with security border, signature authorization, and vector QR code.*
+*Figure 8.2: Official 3-month completion diploma with security border, signature authorization, and vector QR code.*
 
 ![Certificate Verification Details](docs/screenshots/media_1788814775803.png)
-*Figure 8.2: Public verification modal validating certificate authenticity, recipient identity, and issue timestamp.*
+*Figure 8.3: Public verification modal validating certificate authenticity, recipient identity, and issue timestamp.*
 
 ---
 
@@ -162,6 +174,14 @@ Multi-modal attendance system supporting Group Roster Attendance, Teacher Staff 
 
 ![Financial Clearinghouse Console](docs/screenshots/media_1788719490468.png)
 *Figure 9.13: Ethiopian Birr (ETB) tuition payment clearinghouse, bank slip verification, and automated invoice approval.*
+
+---
+
+### 10. Account Security & Profile Governance
+Integrated profile management modal supporting secure password updates and administrative credential management.
+
+![My Account Profile & Security Modal](docs/screenshots/media_1788902709196.png)
+*Figure 10.1: Account Profile & Security modal allowing administrators and users to change passwords securely.*
 
 ---
 
@@ -240,7 +260,7 @@ dotnet run
 
 ### 2. Frontend Setup (Angular Client)
 ```bash
-# Navigate to frontend client folder
+# Navigate to client folder
 cd frontend/brighttutor-client
 
 # Install frontend packages
